@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
 	unsigned char * modbuffer;
 	FILE *f;
 	filefoundinfo fileinfo;
-	modcontext modctx;
+	modcontext * modctx;
 	char fullpath[512];
 	int first_effect;
 	int entry_in_dir,entry_index;
@@ -271,6 +271,13 @@ int main(int argc, char *argv[])
 	memset(layout_buffer,0,layout_size+1);
 	fseek(flayout,0, SEEK_SET);
 
+	modctx = (modcontext*)malloc(sizeof(modcontext));
+	if(!modctx)
+	{
+		printf("mod context alloc error!\n");
+		exit(-1);
+	}
+
 	if( fread(layout_buffer,layout_size,1,flayout) != 1 )
 	{
 		free(layout_buffer);
@@ -320,15 +327,15 @@ int main(int argc, char *argv[])
 						exit(-3);
 					}						
 
-					if(hxcmod_init(&modctx))
+					if(hxcmod_init(modctx))
 					{
-						hxcmod_setcfg( &modctx, 4000, 100, 0);
+						hxcmod_setcfg( modctx, 4000, 100, 0);
 
-						if( hxcmod_load( &modctx, modbuffer, fileinfo_list[entry_index].size ) )
+						if( hxcmod_load( modctx, modbuffer, fileinfo_list[entry_index].size ) )
 						{
 							for(i=0;i<4*60;i++)
 							{
-								hxcmod_fillbuffer(  &modctx, (msample*)&outbuffer, 2000, 0 );
+								hxcmod_fillbuffer(  modctx, (msample*)&outbuffer, 2000, 0 );
 							}
 
 							printf("\t\t\t\t\t<div>\n");
@@ -338,12 +345,12 @@ int main(int argc, char *argv[])
 								(char*)&fileinfo_list[entry_index].filename,
 								(char*)&fileinfo_list[entry_index].filename,
 								fileinfo_list[entry_index].size,
-								modctx.number_of_channels);
+								modctx->number_of_channels);
 							first_effect = 1;
 							printf("\t\t\t\t\t\t<div style=\x22 font-size: 55%%\x3B\x22>Effects: ");
 							for(j=0;j<32;j++)
 							{
-								if(modctx.effects_event_counts[j])
+								if(modctx->effects_event_counts[j])
 								{
 									if(j < 0x10 )
 									{
@@ -374,7 +381,7 @@ int main(int argc, char *argv[])
 
 						}
 
-						hxcmod_unload( &modctx );
+						hxcmod_unload( modctx );
 					}
 					fclose(f);
 				}
@@ -392,6 +399,7 @@ int main(int argc, char *argv[])
 
 	free(fileinfo_list);
 	free(layout_buffer);
+	free(modctx);
 
 	return 0;
 }
