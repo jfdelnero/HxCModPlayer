@@ -132,23 +132,24 @@ modtype modlist[]=
 {
 	{ "M!K!",4},
 	{ "M.K.",4},
-	{ "FLT4",4},
-	{ "FLT8",8},
-	{ "4CHN",4},
-	{ "6CHN",6},
-	{ "8CHN",8},
-	{ "10CH",10},
-	{ "12CH",12},
-	{ "14CH",14},
-	{ "16CH",16},
-	{ "18CH",18},
-	{ "20CH",20},
-	{ "22CH",22},
-	{ "24CH",24},
-	{ "26CH",26},
-	{ "28CH",28},
-	{ "30CH",30},
-	{ "32CH",32},
+	{ "M&K!",4},
+	{ "PATT",4},
+	{ "NSMS",4},
+	{ "LARD",4},
+	{ "FEST",4},
+	{ "FIST",4},
+	{ "N.T.",4},
+	{ "OKTA",8},
+	{ "OCTA",8},
+	{ "$CHN",-1},
+	{ "$$CH",-1},
+	{ "$$CN",-1},
+	{ "$$$C",-1},
+	{ "FLT$",-1},
+	{ "EXO$",-1},
+	{ "CD$1",-1},
+	{ "TDZ$",-1},
+	{ "FA0$",-1},
 	{ "",0}
 };
 
@@ -172,29 +173,11 @@ static void memclear( void * dest, unsigned char value, unsigned long size )
 	unsigned long i;
 	unsigned char * d;
 
-	d=(unsigned char*)dest;
+	d = (unsigned char*)dest;
 	for(i=0;i<size;i++)
 	{
 		d[i]=value;
 	}
-}
-
-static int memcompare( unsigned char * buf1, unsigned char * buf2, unsigned int size )
-{
-	unsigned int i;
-
-	i = 0;
-
-	while(i<size)
-	{
-		if(buf1[i] != buf2[i])
-		{
-			return 0;
-		}
-		i++;
-	}
-
-	return 1;
 }
 
 static int getnote( modcontext * mod, unsigned short period, int finetune )
@@ -1121,7 +1104,7 @@ int hxcmod_setcfg(modcontext * modctx, int samplerate, int stereo_separation, in
 
 int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 {
-	muint i, max;
+	muint i, j, max, digitfactor;
 	unsigned short t;
 	sample *sptr;
 	unsigned char * modmemory,* endmodmemory;
@@ -1129,7 +1112,7 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 	modmemory = (unsigned char *)mod_data;
 	endmodmemory = modmemory + mod_data_size;
 
-	if(modmemory)
+	if( modmemory )
 	{
 		if( modctx )
 		{
@@ -1140,11 +1123,56 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 
 			i = 0;
 			modctx->number_of_channels = 0;
-			while(modlist[i].numberofchannels)
+			while(modlist[i].numberofchannels && !modctx->number_of_channels)
 			{
-				if(memcompare(modctx->song.signature,modlist[i].signature,4))
+				digitfactor = 0;
+
+				j = 0;
+				while( j < 4 )
 				{
-					modctx->number_of_channels = modlist[i].numberofchannels;
+					if( modlist[i].signature[j] == '$' )
+					{
+						if(digitfactor)
+							digitfactor *= 10;
+						else
+							digitfactor = 1;
+					}
+					j++;
+				}
+
+				modctx->number_of_channels = 0;
+
+				j = 0;
+				while( j < 4 )
+				{
+					if( (modlist[i].signature[j] == modctx->song.signature[j]) || modlist[i].signature[j] == '$' )
+					{
+						if( modlist[i].signature[j] == '$' )
+						{
+							if(modctx->song.signature[j] >= '0' && modctx->song.signature[j] <= '9')
+							{
+								modctx->number_of_channels += (modctx->song.signature[j] - '0') * digitfactor;
+								digitfactor /= 10;
+							}
+							else
+							{
+								modctx->number_of_channels = 0;
+								break;
+							}
+						}
+						j++;
+					}
+					else
+					{
+						modctx->number_of_channels = 0;
+						break;
+					}
+				}
+
+				if( j == 4 )
+				{
+					if(!modctx->number_of_channels)
+						modctx->number_of_channels = modlist[i].numberofchannels;
 				}
 
 				i++;
@@ -1164,6 +1192,9 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 			{
 				modmemory += 1084;
 			}
+
+			if( modctx->number_of_channels > NUMMAXCHANNELS )
+				return 0; // Too much channels ! - Increase/define MAXCHANNELS !
 
 			if( modmemory >= endmodmemory )
 				return 0; // End passed ? - Probably a bad file !
@@ -1242,7 +1273,7 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 {
 	unsigned long i, j;
 	unsigned long k;
-	unsigned char c;
+	unsigned int c;
 	unsigned int state_remaining_steps;
 #ifndef HXCMOD_MONO_OUTPUT
 	int l,ll,tl;
@@ -1350,7 +1381,7 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 #endif
 				r=0;
 
-				for(j =0, cptr = modctx->channels; j < modctx->number_of_channels ; j++, cptr++)
+				for( j = 0, cptr = modctx->channels; j < modctx->number_of_channels ; j++, cptr++)
 				{
 					if( cptr->period != 0 )
 					{

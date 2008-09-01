@@ -40,7 +40,12 @@ typedef unsigned long   mulong;
 	#endif
 #endif
 
-#define NUMMAXCHANNELS 32
+#ifdef MAXCHANNELS
+	#define NUMMAXCHANNELS MAXCHANNELS
+#else
+	#define NUMMAXCHANNELS 32
+#endif
+
 #define MAXNOTES 12*12
 #define SAMPLE_RATE 44100
 //
@@ -202,7 +207,7 @@ typedef struct tracker_state_
 	int cur_pattern_pos;
 	int cur_pattern_table_pos;
 	unsigned int buf_index;
-	track_state tracks[32];
+	track_state tracks[NUMMAXCHANNELS];
 }tracker_state;
 
 typedef struct tracker_state_instrument_
