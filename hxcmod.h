@@ -40,8 +40,8 @@ typedef unsigned long   mulong;
 	#endif
 #endif
 
-#ifdef MAXCHANNELS
-	#define NUMMAXCHANNELS MAXCHANNELS
+#ifdef HXCMOD_MAXCHANNELS
+	#define NUMMAXCHANNELS HXCMOD_MAXCHANNELS
 #else
 	#define NUMMAXCHANNELS 32
 #endif

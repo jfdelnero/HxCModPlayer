@@ -1194,7 +1194,7 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 			}
 
 			if( modctx->number_of_channels > NUMMAXCHANNELS )
-				return 0; // Too much channels ! - Increase/define MAXCHANNELS !
+				return 0; // Too much channels ! - Increase/define HXCMOD_MAXCHANNELS !
 
 			if( modmemory >= endmodmemory )
 				return 0; // End passed ? - Probably a bad file !

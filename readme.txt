@@ -65,7 +65,7 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 
 - Generate and return the next samples chunk to outbuffer.
   nbsample specify the number of stereo 16bits samples you want.
-  The default output format is signed 44100Hz 16-bit Stereo PCM samples. 
+  The default output format is signed 44100Hz 16-bit Stereo PCM samples.
   The output format can be changed with the C flags HXCMOD_MONO_OUTPUT, HXCMOD_8BITS_OUTPUT and HXCMOD_UNSIGNED_OUTPUT.
   The output buffer size in byte must be equal to ( nbsample * sample_size * (mono=1 or stereo=2) ).
   The optional trkbuf parameter can be used to get detailed status of the player. Put NULL/0 if unused.
@@ -79,6 +79,9 @@ Compile-time C defines options :
 HXCMOD_MONO_OUTPUT : Turn the output format in mono mode.
 HXCMOD_8BITS_OUTPUT : Set the output wave format in 8bits.
 HXCMOD_UNSIGNED_OUTPUT : Set the output wave format unsigned.
+HXCMOD_MAXCHANNELS : Set the maximum supported channels (default : 32).
+                     Reduce it to gain some RAM space.
+                     Increase it if you want to support some specials mods (up to 999).
 
 --------------------------------------------------------------------------------------
  Files on the repository
