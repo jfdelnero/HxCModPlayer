@@ -78,7 +78,7 @@ int graphprintf(framegenerator * fg,int xpos,int ypos,char * chaine, ...)
 	printstring(fg,tmpbuf,xpos,ypos);
 
 	va_end( marker );
-    return 0;
+	return 0;
 }
 
 

@@ -21,22 +21,22 @@
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-#define EFFECT_ARPEGGIO            0x0 // Supported
-#define EFFECT_PORTAMENTO_UP       0x1 // Supported
-#define EFFECT_PORTAMENTO_DOWN     0x2 // Supported
-#define EFFECT_TONE_PORTAMENTO     0x3 // Supported
-#define EFFECT_VIBRATO             0x4 // Supported
-#define EFFECT_VOLSLIDE_TONEPORTA  0x5 // Supported
-#define EFFECT_VOLSLIDE_VIBRATO    0x6 // Supported
-#define EFFECT_VOLSLIDE_TREMOLO    0x7 // - TO BE DONE -
-#define EFFECT_SET_PANNING         0x8 // - TO BE DONE -
-#define EFFECT_SET_OFFSET          0x9 // Supported
-#define EFFECT_VOLUME_SLIDE        0xA // Supported
-#define EFFECT_JUMP_POSITION       0xB // Supported
-#define EFFECT_SET_VOLUME          0xC // Supported
-#define EFFECT_PATTERN_BREAK       0xD // Supported
+#define EFFECT_ARPEGGIO              0x0 // Supported
+#define EFFECT_PORTAMENTO_UP         0x1 // Supported
+#define EFFECT_PORTAMENTO_DOWN       0x2 // Supported
+#define EFFECT_TONE_PORTAMENTO       0x3 // Supported
+#define EFFECT_VIBRATO               0x4 // Supported
+#define EFFECT_VOLSLIDE_TONEPORTA    0x5 // Supported
+#define EFFECT_VOLSLIDE_VIBRATO      0x6 // Supported
+#define EFFECT_VOLSLIDE_TREMOLO      0x7 // - TO BE DONE -
+#define EFFECT_SET_PANNING           0x8 // - TO BE DONE -
+#define EFFECT_SET_OFFSET            0x9 // Supported
+#define EFFECT_VOLUME_SLIDE          0xA // Supported
+#define EFFECT_JUMP_POSITION         0xB // Supported
+#define EFFECT_SET_VOLUME            0xC // Supported
+#define EFFECT_PATTERN_BREAK         0xD // Supported
 
-#define EFFECT_EXTENDED		       0xE
+#define EFFECT_EXTENDED              0xE
 #define EFFECT_E_FINE_PORTA_UP       0x1 // Supported
 #define EFFECT_E_FINE_PORTA_DOWN     0x2 // Supported
 #define EFFECT_E_GLISSANDO_CTRL      0x3 // - TO BE DONE -
@@ -52,8 +52,8 @@
 #define EFFECT_E_NOTE_DELAY          0xD // - TO BE DONE -
 #define EFFECT_E_PATTERN_DELAY       0xE // Supported
 #define EFFECT_E_INVERT_LOOP         0xF // - TO BE DONE -
-#define EFFECT_SET_SPEED           0xF0 // Supported
-#define EFFECT_SET_TEMPO           0xF2 // Supported
+#define EFFECT_SET_SPEED             0xF0 // Supported
+#define EFFECT_SET_TEMPO             0xF2 // Supported
 
 #define NUMMAXCHANNELS 32
 
@@ -72,15 +72,15 @@ static short periodtable[]=
 	27392,25856,24384,23040,21696,20480,19328,18240,17216,16256,15360,14496,
 	13696,12928,12192,11520,10848,10240,9664,9120,8606,8128,7680,7248,
 	6848,6464,6096,5760,5424,5120,4832,4560,4304,4064,3840,3624,
-    3424,3232,3048,2880,2712,2560,2416,2280,2152,2032,1920,1812,
-    1712,1616,1524,1440,1356,1280,1208,1140,1076,1016,960,906,
+	3424,3232,3048,2880,2712,2560,2416,2280,2152,2032,1920,1812,
+	1712,1616,1524,1440,1356,1280,1208,1140,1076,1016,960,906,
 	856,808,762,720,678,640,604,570,538,508,480,453,
 	428,404,381,360,339,320,302,285,269,254,240,226,
 	214,202,190,180,170,160,151,143,135,127,120,113,
-    107,101, 95, 90, 85, 80, 75, 71, 67, 63, 60, 56,
-     53, 50, 47, 45, 42, 40, 37, 35, 33, 31, 30, 28,
-	 27, 25, 24, 22, 21, 20, 19, 18, 17, 16, 15, 14,
-	 13, 13, 12, 11, 11, 10,  9,  9,  8,  8,  7,  7
+	107,101, 95, 90, 85, 80, 75, 71, 67, 63, 60, 56,
+	53, 50, 47, 45, 42, 40, 37, 35, 33, 31, 30, 28,
+	27, 25, 24, 22, 21, 20, 19, 18, 17, 16, 15, 14,
+	13, 13, 12, 11, 11, 10,  9,  9,  8,  8,  7,  7
 };
 
 static short sintable[]={
@@ -261,13 +261,13 @@ static int getnote(modcontext * mod,unsigned short period,int finetune)
 {
 	int i;
 
-    for(i = 0; i < (sizeof(mod->fullperiod)/sizeof(unsigned short)); i++)
-    {
-        if(period >= mod->fullperiod[i])
-        {
-            return i;
-        }
-    }
+	for(i = 0; i < (sizeof(mod->fullperiod)/sizeof(unsigned short)); i++)
+	{
+		if(period >= mod->fullperiod[i])
+		{
+			return i;
+		}
+	}
 
 	return MAXNOTES;
 }
