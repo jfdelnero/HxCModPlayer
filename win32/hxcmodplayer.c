@@ -96,7 +96,7 @@ int loadmod(char * file)
 		modfile = 0;
 	}
 
-	f = fopen(file,"r+b");
+	f = fopen(file,"rb");
 	if(f)
 	{
 		fseek(f,0,SEEK_END);
