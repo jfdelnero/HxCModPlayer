@@ -1003,10 +1003,11 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 	if( mod && buffer )
 	{
 		state_remaining_steps = 0;
-		trkbuf->cur_rd_index = 0;
 
 		if( trkbuf )
 		{
+			trkbuf->cur_rd_index = 0;
+
 			memcopy(trkbuf->name,mod->song.title,sizeof(mod->song.title));
 
 			for(i=0;i<31;i++)
