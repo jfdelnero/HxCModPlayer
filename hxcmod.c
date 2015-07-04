@@ -857,16 +857,18 @@ static void workeffect(note * nptr, channel * cptr)
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-void * hxcmod_load(void * moddata)
+void * hxcmod_load(void * moddata, int size)
 {
 	muint	i,j, max;
 	unsigned short t;
 	sample	*sptr;
 	modcontext * mod;
-	unsigned char * modmemory;
+	unsigned char * modmemory,* endmodmemory;
 
 	mod = 0;
 	modmemory = (unsigned char *)moddata;
+	endmodmemory = modmemory + size;
+
 	if(modmemory)
 	{
 		//mod=(modcontext *)malloc(sizeof(modcontext));
@@ -912,6 +914,9 @@ void * hxcmod_load(void * moddata)
 				modmemory += 1084;
 			}
 
+			if( modmemory >= endmodmemory )
+				return 0; // End passed ? - Probably a bad file !
+
 			// Patterns loading
 			for (i = max = 0; i < 128; i++)
 			{
@@ -920,6 +925,9 @@ void * hxcmod_load(void * moddata)
 					mod->patterndata[max] = (note*)modmemory;
 					modmemory += (256*mod->number_of_channels);
 					max++;
+
+					if( modmemory >= endmodmemory )
+						return 0; // End passed ? - Probably a bad file !
 				}
 			}
 
@@ -930,13 +938,13 @@ void * hxcmod_load(void * moddata)
 			for (i = 0, sptr = mod->song.samples; i <31; i++, sptr++)
 			{
 				t= (sptr->length &0xFF00)>>8 | (sptr->length &0xFF)<<8;
-				sptr->length=t*2;
+				sptr->length = t*2;
 
 				t= (sptr->reppnt &0xFF00)>>8 | (sptr->reppnt &0xFF)<<8;
-				sptr->reppnt=t*2;
+				sptr->reppnt = t*2;
 
 				t= (sptr->replen &0xFF00)>>8 | (sptr->replen &0xFF)<<8;
-				sptr->replen=t*2;
+				sptr->replen = t*2;
 
 
 				if (sptr->length == 0) continue;
@@ -947,6 +955,8 @@ void * hxcmod_load(void * moddata)
 				if (sptr->replen + sptr->reppnt > sptr->length)
 					sptr->replen = sptr->length - sptr->reppnt;
 
+				if( modmemory > endmodmemory )
+					return 0; // End passed ? - Probably a bad file !
 			}
 
 			// States init
@@ -1020,7 +1030,7 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 					cptr = mod->channels;
 
 					mod->patternticks = 0;
-					mod->patterntickse=0;
+					mod->patterntickse = 0;
 
 					for(c=0;c<mod->number_of_channels;c++)
 					{
@@ -1044,7 +1054,7 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 				{
 					mod->patterndelay--;
 					mod->patternticks = 0;
-					mod->patterntickse=0;
+					mod->patterntickse = 0;
 				}
 
 			}
@@ -1060,7 +1070,7 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 					workeffect(nptr+c, cptr+c);
 				}
 
-				mod->patterntickse=0;
+				mod->patterntickse = 0;
 			}
 
 			//---------------------------------------
@@ -1134,9 +1144,7 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 						trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_volume = cptr->volume;
 						trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].instrument_number = cptr->sampnum;
 					}
-
 				}
-
 			}
 
 			if( trkbuf && !state_remaining_steps )

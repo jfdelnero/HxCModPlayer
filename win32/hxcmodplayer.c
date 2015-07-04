@@ -110,7 +110,7 @@ int loadmod(char * file)
 				memset(modfile,0,filesize);
 				fread(modfile,filesize,1,f);
 
-				modloaded = hxcmod_load((void*)modfile);
+				modloaded = hxcmod_load((void*)modfile,filesize);
 			}
 		}
 
@@ -428,7 +428,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 				Shell_NotifyIcon(NIM_ADD,&notificon);	
 
 				modfile = unpack(data_cartoon_dreams_n_fantasies_mod->data,data_cartoon_dreams_n_fantasies_mod->csize ,data_cartoon_dreams_n_fantasies_mod->data, data_cartoon_dreams_n_fantasies_mod->size);
-				modloaded = hxcmod_load((void*)modfile);
+				modloaded = hxcmod_load((void*)modfile,data_cartoon_dreams_n_fantasies_mod->size);
 
 				///////////////////////////////////////
 				// Main message loop:

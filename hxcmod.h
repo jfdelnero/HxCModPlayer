@@ -57,7 +57,7 @@ typedef struct tracker_buffer_state_
 	tracker_state * track_state_buf;
 }tracker_buffer_state;
 
-void * hxcmod_load(void * modmemory);
+void * hxcmod_load(void * moddata, int size);
 void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsample,tracker_buffer_state * trkbuf);
 void hxcmod_unload(void * modcontext);
 
