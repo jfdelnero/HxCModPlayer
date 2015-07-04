@@ -799,9 +799,9 @@ static void workeffect(note * nptr, channel * cptr)
 			cptr->vibraperiod=((cptr->vibraparam&0xF)*sintable[cptr->vibrapointeur&0x1F])>>7;
 
 			if(cptr->vibrapointeur>31)
-				cptr->vibraperiod=-cptr->vibraperiod;
+				cptr->vibraperiod = -cptr->vibraperiod;
 
-			cptr->vibrapointeur=(cptr->vibrapointeur+((cptr->vibraparam>>4)&0xf))&0x1F;
+			cptr->vibrapointeur=(cptr->vibrapointeur+((cptr->vibraparam>>4)&0xf))& 0x3F;
 
 			if(cptr->effect == EFFECT_VOLSLIDE_VIBRATO)
 			{
