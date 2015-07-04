@@ -181,6 +181,9 @@ typedef struct {
 	muchar  vibrapointeur;
 
 	muchar  finetune;
+
+	muint   patternloopcnt;
+	muint   patternloopstartpoint;
 } channel;
 
 typedef struct {
@@ -192,8 +195,6 @@ typedef struct {
 	muint   tablepos;
 	muint   patternpos;
 	muint   patterndelay;
-	muint   patternloopcnt;
-	muint   patternloopstartpoint;
 	muint   jump_loop_effect;
 	muchar  bpm;
 	mulong  patternticks;
@@ -610,29 +611,29 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 				case EFFECT_E_PATTERN_LOOP:
 					if( effect & 0xF )
 					{
-						if( mod->patternloopcnt )
+						if( cptr->patternloopcnt )
 						{
-							mod->patternloopcnt--;
-							if( mod->patternloopcnt )
+							cptr->patternloopcnt--;
+							if( cptr->patternloopcnt )
 							{
-								mod->patternpos = mod->patternloopstartpoint;
+								mod->patternpos = cptr->patternloopstartpoint;
 								mod->jump_loop_effect = 1;
 							}
 							else
 							{
-								mod->patternloopstartpoint = mod->patternpos ;
+								cptr->patternloopstartpoint = mod->patternpos ;
 							}
 						}
 						else
 						{
-							mod->patternloopcnt = (effect & 0xF);
-							mod->patternpos = mod->patternloopstartpoint;
+							cptr->patternloopcnt = (effect & 0xF);
+							mod->patternpos = cptr->patternloopstartpoint;
 							mod->jump_loop_effect = 1;
 						}
 					}
 					else // Start point
 					{
-						mod->patternloopstartpoint = mod->patternpos;
+						cptr->patternloopstartpoint = mod->patternpos;
 					}
 
 				break;
