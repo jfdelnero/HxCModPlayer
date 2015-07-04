@@ -69,25 +69,25 @@ typedef unsigned long	mulong;
 
 static short periodtable[]=
 {
-	27392,25856,24384,23040,21696,20480,19328,18240,17216,16256,15360,14496,
-	13696,12928,12192,11520,10848,10240,9664,9120,8606,8128,7680,7248,
-	6848,6464,6096,5760,5424,5120,4832,4560,4304,4064,3840,3624,
-	3424,3232,3048,2880,2712,2560,2416,2280,2152,2032,1920,1812,
-	1712,1616,1524,1440,1356,1280,1208,1140,1076,1016,960,906,
-	856,808,762,720,678,640,604,570,538,508,480,453,
-	428,404,381,360,339,320,302,285,269,254,240,226,
-	214,202,190,180,170,160,151,143,135,127,120,113,
-	107,101, 95, 90, 85, 80, 75, 71, 67, 63, 60, 56,
-	53, 50, 47, 45, 42, 40, 37, 35, 33, 31, 30, 28,
-	27, 25, 24, 22, 21, 20, 19, 18, 17, 16, 15, 14,
-	13, 13, 12, 11, 11, 10,  9,  9,  8,  8,  7,  7
+	27392, 25856, 24384, 23040, 21696, 20480, 19328, 18240, 17216, 16256, 15360, 14496,
+	13696, 12928, 12192, 11520, 10848, 10240,  9664,  9120,  8606,  8128,  7680,  7248,
+	 6848,  6464,  6096,  5760,  5424,  5120,  4832,  4560,  4304,  4064,  3840,  3624,
+	 3424,  3232,  3048,  2880,  2712,  2560,  2416,  2280,  2152,  2032,  1920,  1812,
+	 1712,  1616,  1524,  1440,  1356,  1280,  1208,  1140,  1076,  1016,   960,   906,
+	  856,   808,   762,   720,   678,   640,   604,   570,   538,   508,   480,   453,
+	  428,   404,   381,   360,   339,   320,   302,   285,   269,   254,   240,   226,
+	  214,   202,   190,   180,   170,   160,   151,   143,   135,   127,   120,   113,
+	  107,   101,    95,    90,    85,    80,    75,    71,    67,    63,    60,    56,
+	   53,    50,    47,    45,    42,    40,    37,    35,    33,    31,    30,    28,
+	   27,    25,    24,    22,    21,    20,    19,    18,    17,    16,    15,    14,
+	   13,    13,    12,    11,    11,    10,     9,     9,     8,     8,     7,     7
 };
 
 static short sintable[]={
-	0, 24, 49, 74, 97,120,141,161,
-	180,197,212,224,235,244,250,253,
-	255,253,250,244,235,224,212,197,
-	180,161,141,120, 97, 74, 49, 24
+	  0,  24,  49,  74,  97, 120, 141,161,
+	180, 197, 212, 224, 235, 244, 250,253,
+	255, 253, 250, 244, 235, 224, 212,197,
+	180, 161, 141, 120,  97,  74,  49, 24
 };
 
 typedef struct modtype_
@@ -98,6 +98,7 @@ typedef struct modtype_
 
 modtype modlist[]=
 {
+	{ "M!K!",4},
 	{ "M.K.",4},
 	{ "FLT4",4},
 	{ "FLT8",8},
@@ -220,6 +221,7 @@ static void memcopy(void * dest,void *source,unsigned long size)
 {
 	unsigned long i;
 	unsigned char * d,*s;
+
 	d=(unsigned char*)dest;
 	s=(unsigned char*)source;
 	for(i=0;i<size;i++)
@@ -232,6 +234,7 @@ static void memclear(void * dest,unsigned char value,unsigned long size)
 {
 	unsigned long i;
 	unsigned char * d;
+
 	d=(unsigned char*)dest;
 	for(i=0;i<size;i++)
 	{
@@ -281,16 +284,16 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 	period = ((nptr->sampperiod & 0xF) << 8) | nptr->period;
 	effect = ((nptr->sampeffect & 0xF) << 8) | nptr->effect;
 
-	operiod=cptr->period;
+	operiod = cptr->period;
 
-	if (period != 0 || sample != 0)
+	if ( period || sample )
 	{
-		if (sample != 0 && sample<32)
+		if( sample && sample<32 )
 		{
 			cptr->sampnum = sample-1;
 		}
 
-		if (period != 0 || sample != 0)
+		if( period || sample )
 		{
 			cptr->sampdata =(char *) mod->sampledata[cptr->sampnum];
 			cptr->length = mod->song.samples[cptr->sampnum].length;
@@ -307,24 +310,24 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 
 		}
 
-		if((sample != 0) && (effect>>8) != EFFECT_VOLSLIDE_TONEPORTA)
+		if( (sample != 0) && ( (effect>>8) != EFFECT_VOLSLIDE_TONEPORTA ) )
 		{
 			cptr->volume = mod->song.samples[cptr->sampnum].volume;
 			cptr->volumeslide = 0;
 		}
 
-		if(( (effect>>8) != EFFECT_TONE_PORTAMENTO && (effect>>8)!=EFFECT_VOLSLIDE_TONEPORTA) /*&& (period != 0 || sample != 0)*/)
+		if( ( (effect>>8) != EFFECT_TONE_PORTAMENTO && (effect>>8)!=EFFECT_VOLSLIDE_TONEPORTA) /*&& (period != 0 || sample != 0)*/ )
 		{
 			if (period!=0)
 				cptr->samppos = 0;
 		}
 
 		cptr->decalperiod=0;
-		if(period!=0)
+		if( period )
 		{
 			if(cptr->finetune)
 			{
-				if(cptr->finetune <= 7)
+				if( cptr->finetune <= 7 )
 				{
 					period = mod->fullperiod[getnote(mod,period,0) + cptr->finetune];
 				}
@@ -405,7 +408,7 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 			*/
 
 			cptr->effect = EFFECT_PORTAMENTO_DOWN;
-			cptr->parameffect=effect&0xff;
+			cptr->parameffect = effect&0xff;
 		break;
 
 		case EFFECT_TONE_PORTAMENTO:
@@ -421,9 +424,9 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 			*/
 
 			cptr->effect = EFFECT_TONE_PORTAMENTO;
-			if((effect&0xff)!=0)
+			if( (effect&0xff) != 0 )
 			{
-				cptr->portaspeed=(short)(effect&0xff);
+				cptr->portaspeed = (short)(effect&0xff);
 			}
 
 			if(period!=0)
@@ -445,8 +448,11 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 			*/
 
 			cptr->effect = EFFECT_VIBRATO;
-			if( ( effect & 0xff ) != 0 )
-				cptr->vibraparam = effect & 0xff;
+			if( ( effect & 0x0F ) != 0 ) // Depth continue or change ?
+				cptr->vibraparam = (cptr->vibraparam & 0xF0) | ( effect & 0x0F );
+			if( ( effect & 0xF0 ) != 0 ) // Speed continue or change ?
+				cptr->vibraparam = (cptr->vibraparam & 0x0F) | ( effect & 0xF0 );
+
 		break;
 
 		case EFFECT_VOLSLIDE_TONEPORTA:
@@ -460,13 +466,13 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 			effect, and hence is not played.
 			*/
 
-			if(period!=0)
+			if( period != 0 )
 			{
 				cptr->portaperiod = period;
 				cptr->period = operiod;
 			}
 
-			cptr->effect=EFFECT_VOLSLIDE_TONEPORTA;
+			cptr->effect = EFFECT_VOLSLIDE_TONEPORTA;
 			if( ( effect & 0xFF ) != 0 )
 				cptr->volumeslide = ( effect & 0xFF );
 
@@ -481,7 +487,7 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 			You cannot slide outside the volume range 0..64.
 			*/
 
-			cptr->effect=EFFECT_VOLSLIDE_VIBRATO;
+			cptr->effect = EFFECT_VOLSLIDE_VIBRATO;
 			if( (effect & 0xFF) != 0 )
 				cptr->volumeslide = (effect & 0xFF);
 		break;
@@ -557,7 +563,7 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 		break;
 
 		case EFFECT_EXTENDED:
-			switch((effect>>4)&0xF)
+			switch( (effect>>4) & 0xF )
 			{
 				case EFFECT_E_FINE_PORTA_UP:
 					/*
@@ -569,7 +575,7 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 					*/
 
 					cptr->period -= (effect & 0xF);
-					if(cptr->period < 113)
+					if( cptr->period < 113 )
 						cptr->period = 113;
 				break;
 
@@ -582,7 +588,7 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 					*/
 
 					cptr->period += (effect & 0xF);
-					if(cptr->period > 856)
+					if( cptr->period > 856 )
 						cptr->period = 856;
 				break;
 
@@ -604,10 +610,10 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 				case EFFECT_E_PATTERN_LOOP:
 					if( effect & 0xF )
 					{
-						if(mod->patternloopcnt)
+						if( mod->patternloopcnt )
 						{
 							mod->patternloopcnt--;
-							if(mod->patternloopcnt)
+							if( mod->patternloopcnt )
 							{
 								mod->patternpos = mod->patternloopstartpoint;
 								mod->jump_loop_effect = 1;
@@ -682,16 +688,16 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 			widest usage.
 			*/
 
-			if((effect&0xFF)<0x21)
+			if( (effect&0xFF) < 0x21 )
 			{
-				if(effect&0xFF)
+				if( effect&0xFF )
 				{
 					mod->song.speed = effect&0xFF;
 					mod->patternticksaim = (long)mod->song.speed * ((mod->playrate * 5 ) / (((long)2 * (long)mod->bpm)));
 				}
 			}
 
-			if((effect&0xFF)>=0x21)
+			if( (effect&0xFF) >= 0x21 )
 			{
 				///	 HZ = 2 * BPM / 5
 				mod->bpm = effect&0xFF;
@@ -715,12 +721,12 @@ static void workeffect(note * nptr, channel * cptr)
 	{
 		case EFFECT_ARPEGGIO:
 
-			if(cptr->parameffect)
+			if( cptr->parameffect )
 			{
 				cptr->decalperiod = cptr->period - cptr->Arpperiods[cptr->ArpIndex];
 
 				cptr->ArpIndex++;
-				if(cptr->ArpIndex>2)
+				if( cptr->ArpIndex>2 )
 					cptr->ArpIndex = 0;
 			}
 		break;
@@ -729,7 +735,7 @@ static void workeffect(note * nptr, channel * cptr)
 
 			cptr->period -= cptr->parameffect;
 
-			if(cptr->period < 113 || cptr->period > 20000)
+			if( cptr->period < 113 || cptr->period > 20000 )
 				cptr->period = 113;
 
 		break;
@@ -738,7 +744,7 @@ static void workeffect(note * nptr, channel * cptr)
 
 			cptr->period += cptr->parameffect;
 
-			if(cptr->period > 20000)
+			if( cptr->period > 20000 )
 				cptr->period = 20000;
 
 		break;
@@ -746,11 +752,11 @@ static void workeffect(note * nptr, channel * cptr)
 		case EFFECT_VOLSLIDE_TONEPORTA:
 		case EFFECT_TONE_PORTAMENTO:
 
-			if((cptr->period != cptr->portaperiod) && cptr->portaperiod)
+			if( ( cptr->period != cptr->portaperiod ) && cptr->portaperiod )
 			{
 				if( cptr->period > cptr->portaperiod )
 				{
-					if(cptr->period - cptr->portaperiod >= cptr->portaspeed)
+					if(cptr->period - cptr->portaperiod >= cptr->portaspeed )
 					{
 						cptr->period -= cptr->portaspeed;
 					}
@@ -761,7 +767,7 @@ static void workeffect(note * nptr, channel * cptr)
 				}
 				else
 				{
-					if( cptr->portaperiod - cptr->period >= cptr->portaspeed)
+					if( cptr->portaperiod - cptr->period >= cptr->portaspeed )
 					{
 						cptr->period += cptr->portaspeed;
 					}
@@ -774,7 +780,7 @@ static void workeffect(note * nptr, channel * cptr)
 
 			if(cptr->effect==EFFECT_VOLSLIDE_TONEPORTA)
 			{
-				if(cptr->volumeslide>0x0F)
+				if( cptr->volumeslide > 0x0F )
 				{
 					cptr->volume = cptr->volume + (cptr->volumeslide>>4);
 
@@ -796,27 +802,28 @@ static void workeffect(note * nptr, channel * cptr)
 		case EFFECT_VOLSLIDE_VIBRATO:
 		case EFFECT_VIBRATO:
 
-			cptr->vibraperiod=((cptr->vibraparam&0xF)*sintable[cptr->vibrapointeur&0x1F])>>7;
+			cptr->vibraperiod = ( (cptr->vibraparam&0xF) * sintable[cptr->vibrapointeur&0x1F] )>>7;
 
-			if(cptr->vibrapointeur>31)
+			if( cptr->vibrapointeur > 31 )
 				cptr->vibraperiod = -cptr->vibraperiod;
 
-			cptr->vibrapointeur=(cptr->vibrapointeur+((cptr->vibraparam>>4)&0xf))& 0x3F;
+			cptr->vibrapointeur = (cptr->vibrapointeur+(((cptr->vibraparam>>4))&0xf)) & 0x3F;
 
-			if(cptr->effect == EFFECT_VOLSLIDE_VIBRATO)
+			if( cptr->effect == EFFECT_VOLSLIDE_VIBRATO )
 			{
-				if(cptr->volumeslide>0xF)
+				if( cptr->volumeslide > 0xF )
 				{
-					cptr->volume=cptr->volume+(cptr->volumeslide>>4);
+					cptr->volume = cptr->volume+(cptr->volumeslide>>4);
 
-					if(cptr->volume>64)cptr->volume=64;
+					if( cptr->volume > 64 )
+						cptr->volume = 64;
 				}
 				else
 				{
-					cptr->volume=cptr->volume-(cptr->volumeslide);
+					cptr->volume = cptr->volume - cptr->volumeslide;
 
-					if(cptr->volume>63)
-						cptr->volume=0;
+					if( cptr->volume > 63 )
+						cptr->volume = 0;
 				}
 			}
 
@@ -824,7 +831,7 @@ static void workeffect(note * nptr, channel * cptr)
 
 		case EFFECT_VOLUME_SLIDE:
 
-			if(cptr->volumeslide>0xF)
+			if( cptr->volumeslide > 0xF )
 			{
 				cptr->volume += (cptr->volumeslide>>4);
 
@@ -863,10 +870,9 @@ void * hxcmod_load(void * moddata)
 	{
 		//mod=(modcontext *)malloc(sizeof(modcontext));
 		mod = (modcontext *) &g_modcontext;
-		if(mod)
+		if( mod )
 		{
 			memclear(mod,0,sizeof(modcontext));
-
 
 			for(i=0;i<(sizeof(periodtable)/sizeof(unsigned short)) - 1;i++)
 			{
@@ -875,7 +881,6 @@ void * hxcmod_load(void * moddata)
 					mod->fullperiod[(i*8) + j] = periodtable[i] - ((( periodtable[i] - periodtable[i+1] ) / 8) * j);
 				}
 			}
-			//
 
 			memcopy(&(mod->song.title),modmemory,1084);
 
@@ -891,10 +896,10 @@ void * hxcmod_load(void * moddata)
 				i++;
 			}
 
-			if(!mod->number_of_channels)
+			if( !mod->number_of_channels )
 			{
-				// traitement des mods 15 samples
-				// decalage...
+				// 15 Samples modules support
+				// Shift the whole datas to make it look likes a standard 4 channels mod.
 				memcopy(&(mod->song.signature), "M.K.", 4);
 				memcopy(&(mod->song.length), &(mod->song.samples[15]), 130);
 				memclear(&(mod->song.samples[15]), 0, 480);
@@ -906,7 +911,7 @@ void * hxcmod_load(void * moddata)
 				modmemory += 1084;
 			}
 
-			//Chargement des patterns
+			// Patterns loading
 			for (i = max = 0; i < 128; i++)
 			{
 				while (max <= mod->song.patterntable[i])
@@ -984,12 +989,12 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 
 	mod = (modcontext *)modctx;
 
-	if(mod && buffer)
+	if( mod && buffer )
 	{
 		state_remaining_steps = 0;
 		trkbuf->cur_rd_index = 0;
 
-		if(trkbuf)
+		if( trkbuf )
 		{
 			memcopy(trkbuf->name,mod->song.title,sizeof(mod->song.title));
 
@@ -1005,9 +1010,9 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 		for (i = 0; i < nbsample; i++)
 		{
 			//---------------------------------------
-			if (mod->patternticks++ > mod->patternticksaim)
+			if( mod->patternticks++ > mod->patternticksaim )
 			{
-				if(!mod->patterndelay)
+				if( !mod->patterndelay )
 				{
 					nptr = mod->patterndata[mod->song.patterntable[mod->tablepos]];
 					nptr = nptr + mod->patternpos;
@@ -1021,16 +1026,17 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 						worknote((note*)(nptr+c), (channel*)(cptr+c),(char)(c+1),mod);
 					}
 
-					if(!mod->jump_loop_effect)
+					if( !mod->jump_loop_effect )
 						mod->patternpos += mod->number_of_channels;
 					else
 						mod->jump_loop_effect = 0;
 
-					if (mod->patternpos == 64*mod->number_of_channels)
+					if( mod->patternpos == 64*mod->number_of_channels )
 					{
 						mod->tablepos++;
 						mod->patternpos = 0;
-						if(mod->tablepos >= mod->song.length) mod->tablepos = 0;
+						if(mod->tablepos >= mod->song.length)
+							mod->tablepos = 0;
 					}
 				}
 				else
@@ -1042,7 +1048,7 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 
 			}
 
-			if (mod->patterntickse++ > (mod->patternticksaim/mod->song.speed))
+			if( mod->patterntickse++ > (mod->patternticksaim/mod->song.speed) )
 			{
 				nptr = mod->patterndata[mod->song.patterntable[mod->tablepos]];
 				nptr = nptr + mod->patternpos;
@@ -1059,9 +1065,9 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 			//---------------------------------------
 
 
-			if(trkbuf && !state_remaining_steps)
+			if( trkbuf && !state_remaining_steps )
 			{
-				if(trkbuf->nb_of_state < trkbuf->nb_max_of_state)
+				if( trkbuf->nb_of_state < trkbuf->nb_max_of_state )
 				{
 					memclear(&trkbuf->track_state_buf[trkbuf->nb_of_state],0,sizeof(tracker_state));
 				}
@@ -1070,25 +1076,25 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 			l=0;
 			r=0;
 
-			for (j =0, cptr = mod->channels; (j < mod->number_of_channels) && (cptr->period!=0); j++, cptr++)
+			for(j =0, cptr = mod->channels; (j < mod->number_of_channels) && (cptr->period!=0); j++, cptr++)
 			{
 
 				finalperiod = cptr->period - cptr->decalperiod - cptr->vibraperiod;
-				if(finalperiod)
+				if( finalperiod )
 				{
 					cptr->samppos += ( (mod->sampleticksconst<<10) / finalperiod );
 				}
 
 				cptr->ticks++;
 
-				if(cptr->replen<=2)
+				if( cptr->replen<=2 )
 				{
-					if ((cptr->samppos>>10) >= (cptr->length))
+					if( (cptr->samppos>>10) >= (cptr->length) )
 					{
 						cptr->length = 0;
 						cptr->reppnt = 0;
 
-						if(cptr->length)
+						if( cptr->length )
 							cptr->samppos = cptr->samppos % (((unsigned long)cptr->length)<<10);
 						else
 							cptr->samppos = 0;
@@ -1096,7 +1102,7 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 				}
 				else
 				{
-					if ((cptr->samppos>>10) >= (unsigned long)(cptr->replen+cptr->reppnt))
+					if( (cptr->samppos>>10) >= (unsigned long)(cptr->replen+cptr->reppnt) )
 					{
 						cptr->samppos = ((unsigned long)(cptr->reppnt)<<10) + (cptr->samppos % ((unsigned long)(cptr->replen+cptr->reppnt)<<10));
 					}
@@ -1104,16 +1110,16 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 
 				k = cptr->samppos >> 10;
 
-				if(cptr->sampdata!=0 && (((j&3)==1) || ((j&3)==2) ))
-					r += ( (cptr->sampdata[k] *  cptr->volume));
+				if( cptr->sampdata!=0 && ( ((j&3)==1) || ((j&3)==2) ) )
+					r += ( cptr->sampdata[k] *  cptr->volume );
 
-				if(cptr->sampdata!=0 && (((j&3)==0) || ((j&3)==3) ))
-					l += ( (cptr->sampdata[k] *  cptr->volume));
+				if( cptr->sampdata!=0 && ( ((j&3)==0) || ((j&3)==3) ) )
+					l += ( cptr->sampdata[k] *  cptr->volume );
 
 
-				if(trkbuf && !state_remaining_steps)
+				if( trkbuf && !state_remaining_steps )
 				{
-					if(trkbuf->nb_of_state < trkbuf->nb_max_of_state)
+					if( trkbuf->nb_of_state < trkbuf->nb_max_of_state )
 					{
 						trkbuf->track_state_buf[trkbuf->nb_of_state].number_of_tracks = mod->number_of_channels;
 						trkbuf->track_state_buf[trkbuf->nb_of_state].buf_index = i;
@@ -1132,7 +1138,7 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 
 			}
 
-			if(trkbuf && !state_remaining_steps)
+			if( trkbuf && !state_remaining_steps )
 			{
 				state_remaining_steps = trkbuf->sample_step;
 
