@@ -166,6 +166,8 @@ typedef struct {
 	mulong  ticks;
 	muchar  effect;
 	muchar  parameffect;
+	muint   effect_code;
+
 
 	short   decalperiod;
 	short   portaspeed;
@@ -344,6 +346,7 @@ static void worknote(note * nptr, channel * cptr,char t,modcontext * mod)
 
 	cptr->effect = 0;
 	cptr->parameffect = 0;
+	cptr->effect_code = effect;
 
 	switch (effect >> 8)
 	{
@@ -990,9 +993,9 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 	unsigned long k;
 	unsigned char c;
 	unsigned int state_remaining_steps;
-	short l,r;
-	short ll,lr;
-	short tl,tr;
+	int l,r;
+	int ll,lr;
+	int tl,tr;
 	short finalperiod;
 	modcontext * mod;
 	note	*nptr;
@@ -1123,10 +1126,14 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 				k = cptr->samppos >> 10;
 
 				if( cptr->sampdata!=0 && ( ((j&3)==1) || ((j&3)==2) ) )
+				{
 					r += ( cptr->sampdata[k] *  cptr->volume );
+				}
 
 				if( cptr->sampdata!=0 && ( ((j&3)==0) || ((j&3)==3) ) )
+				{
 					l += ( cptr->sampdata[k] *  cptr->volume );
+				}
 
 
 				if( trkbuf && !state_remaining_steps )
@@ -1140,10 +1147,11 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 						trkbuf->track_state_buf[trkbuf->nb_of_state].cur_pattern_table_pos = mod->tablepos;
 						trkbuf->track_state_buf[trkbuf->nb_of_state].bpm = mod->bpm;
 						trkbuf->track_state_buf[trkbuf->nb_of_state].speed = mod->song.speed;
-						trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_effect = cptr->effect;
+						trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_effect = cptr->effect_code;
+						trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_parameffect = cptr->parameffect;
 						trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_period = finalperiod;
 						trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_volume = cptr->volume;
-						trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].instrument_number = cptr->sampnum;
+						trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].instrument_number = (unsigned char)cptr->sampnum;
 					}
 				}
 			}
@@ -1160,14 +1168,26 @@ void hxcmod_fillbuffer(void * modctx,unsigned short * buffer, unsigned long nbsa
 				state_remaining_steps--;
 			}
 
-			tr=r;
-			tl=l;
+			tr = (short)r;
+			tl = (short)l;
 
-			l=(l+ll)>>1;
-			r=(r+lr)>>1;
+			// Filter
+			l = (l+ll)>>1;
+			r = (r+lr)>>1;
 
-			buffer[(i*2)]   = (l+(r>>1));
-			buffer[(i*2)+1] = (r+(l>>1));
+			// Left & Right Stereo panning
+			l = (l+(r>>1));
+			r = (r+(l>>1));
+
+			// Level limitation
+			if( l > 32767 ) l = 32767;
+			if( l < -32768 ) l = -32768;
+			if( r > 32767 ) r = 32767;
+			if( r < -32768 ) r = -32768;
+
+			// Store the final sample.
+			buffer[(i*2)]   = l;
+			buffer[(i*2)+1] = r;
 
 			ll=tl;
 			lr=tr;

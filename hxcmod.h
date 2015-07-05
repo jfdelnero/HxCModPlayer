@@ -26,6 +26,7 @@ typedef struct track_state_
 	unsigned short cur_period;
 	unsigned char  cur_volume;
 	unsigned short cur_effect;
+	unsigned short cur_parameffect;
 }track_state;
 
 typedef struct tracker_state_
