@@ -406,9 +406,11 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 	for(j=0;j<tb->track_state_buf[i].number_of_tracks;j++)
 	{
 		instnum = tb->track_state_buf[i].tracks[j].instrument_number;
-
-		box(fg,16,16+16+instnum*9,8*26,7,getcodecolor(tb->track_state_buf[i].tracks[j].cur_volume,tb->track_state_buf[i].tracks[j].cur_period));
-		trackbox(fg, 4 ,16+16+instnum*9,j,tb->track_state_buf[i].number_of_tracks,tb->track_state_buf[i].tracks[j].cur_period | 0xC00000);
+		if(instnum<=30)
+		{
+			box(fg,16,16+16+instnum*9,8*26,7,getcodecolor(tb->track_state_buf[i].tracks[j].cur_volume,tb->track_state_buf[i].tracks[j].cur_period));
+			trackbox(fg, 4 ,16+16+instnum*9,j,tb->track_state_buf[i].number_of_tracks,tb->track_state_buf[i].tracks[j].cur_period | 0xC00000);
+		}
 	}
 
 	// Print channels status
