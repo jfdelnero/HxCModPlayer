@@ -28,5 +28,5 @@ typedef struct framegenerator_
 }framegenerator;
 
 framegenerator * init_fg(unsigned int xres,unsigned int yres);
-unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,int currentsampleoffset);
+unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,unsigned int currentsampleoffset);
 void deinit_fg(framegenerator * fg);
