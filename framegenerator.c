@@ -157,39 +157,42 @@ void trackbox(framegenerator * fg,int xpos,int ypos,int track,int nbtrack,unsign
 
 	int i,j;
 
-	switch(nbtrack)
+	if( (xpos < fg->xres-8) && (ypos < fg->yres-8) && track<nbtrack )
 	{
-		case 2:
-		case 4:
-			trk_box_xsize = 4;
-			trk_box_ysize = 4;
-		break;
-		case 6:
-		case 8:
-			trk_box_xsize = 4;
-			trk_box_ysize = 2;
-		break;
-		case 10:
-		case 12:
-		case 14:
-		case 16:
-			trk_box_xsize = 2;
-			trk_box_ysize = 2;
-		break;
-		default:
-			trk_box_xsize = 2;
-			trk_box_ysize = 1;
-		break;
-	}
-
-	trk_box_ypos = track / (8 / trk_box_xsize);
-	trk_box_xpos = track  -  (trk_box_ypos * (8 / trk_box_xsize));
-
-	for(i=0;i<trk_box_ysize;i++)
-	{
-		for(j=0;j<trk_box_xsize;j++)
+		switch(nbtrack)
 		{
-			fg->textbuffer[((ypos+(trk_box_ypos*trk_box_ysize)+i)*fg->xres)+ xpos + (trk_box_xpos*trk_box_xsize) + j] = fg_color;
+			case 2:
+			case 4:
+				trk_box_xsize = 4;
+				trk_box_ysize = 4;
+			break;
+			case 6:
+			case 8:
+				trk_box_xsize = 4;
+				trk_box_ysize = 2;
+			break;
+			case 10:
+			case 12:
+			case 14:
+			case 16:
+				trk_box_xsize = 2;
+				trk_box_ysize = 2;
+			break;
+			default:
+				trk_box_xsize = 2;
+				trk_box_ysize = 1;
+			break;
+		}
+
+		trk_box_ypos = track / (8 / trk_box_xsize);
+		trk_box_xpos = track  -  (trk_box_ypos * (8 / trk_box_xsize));
+
+		for(i=0;i<trk_box_ysize;i++)
+		{
+			for(j=0;j<trk_box_xsize;j++)
+			{
+				fg->textbuffer[((ypos+(trk_box_ypos*trk_box_ysize)+i)*fg->xres)+ xpos + (trk_box_xpos*trk_box_xsize) + j] = fg_color;
+			}
 		}
 	}
 }
@@ -394,7 +397,10 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 		s--;
 	}
 
-	tb->cur_rd_index = i - 1;
+	if(i)
+		tb->cur_rd_index = i - 1;
+	else
+		tb->cur_rd_index = 0;
 
 	graphprintf(fg,FONT_XSIZE*2,1,0xFFFFFF,0x000000,"%d Channels, Pos %.3d, Pattern %.3d:%.2d, %.3d BPM, Speed %.3d",tb->track_state_buf[i-1].number_of_tracks,tb->track_state_buf[i-1].cur_pattern_table_pos,tb->track_state_buf[i-1].cur_pattern,tb->track_state_buf[i-1].cur_pattern_pos,tb->track_state_buf[i-1].bpm,tb->track_state_buf[i-1].speed);
 
@@ -433,7 +439,7 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 	i=0;
 	while(effectlist[i])
 	{
-		graphprintf(fg,FONT_XSIZE*2 + (i * 20 * FONT_XSIZE),EFFECT_Y_POS + (((i&~3)>>2)*8),0x444444,0x000000,  (char*)effectlist[i]);
+		graphprintf(fg,FONT_XSIZE*2 + (i%4 * 20 * FONT_XSIZE),EFFECT_Y_POS + (((i&~3)>>2)*8),0x444444,0x000000,  (char*)effectlist[i]);
 		i++;
 	}
 
@@ -441,7 +447,7 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 	i=0;
 	while(exteffectlist[i])
 	{
-		graphprintf(fg,FONT_XSIZE*2 + (i * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((i&~3)>>2)*8),0x444444,0x000000,  (char*)exteffectlist[i]);
+		graphprintf(fg,FONT_XSIZE*2 + (i%4 * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((i&~3)>>2)*8),0x444444,0x000000,  (char*)exteffectlist[i]);
 		i++;
 	}
 
@@ -458,14 +464,14 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 			{
 				if(tb->track_state_buf[i].tracks[j].cur_parameffect)
 				{
-					graphprintf(fg,FONT_XSIZE*2 + (effnum * 20 * FONT_XSIZE),EFFECT_Y_POS + (((effnum&~3)>>2)*8),0xFFFFFF,0x000000,  (char*)effectlist[effnum]);
-					trackbox(fg, 6 + (effnum * 20 * FONT_XSIZE),EFFECT_Y_POS + (((effnum&~3)>>2)*8),j,tb->track_state_buf[i].number_of_tracks,0xFF0000 | (effparam<<8));
+					graphprintf(fg,FONT_XSIZE*2 + (effnum%4 * 20 * FONT_XSIZE),EFFECT_Y_POS + (((effnum&~3)>>2)*8),0xFFFFFF,0x000000,  (char*)effectlist[effnum]);
+					trackbox(fg, 6 + (effnum%4 * 20 * FONT_XSIZE),EFFECT_Y_POS + (((effnum&~3)>>2)*8),j,tb->track_state_buf[i].number_of_tracks,0xFF0000 | (effparam<<8));
 				}
 			}
 			else
 			{
-				graphprintf(fg,FONT_XSIZE*2 + (effnum * 20 * FONT_XSIZE),EFFECT_Y_POS + (((effnum&~3)>>2)*8),0xFFFFFF,0x000000,  (char*)effectlist[effnum]);
-				trackbox(fg, 6 + (effnum * 20 * FONT_XSIZE),EFFECT_Y_POS + (((effnum&~3)>>2)*8),j,tb->track_state_buf[i].number_of_tracks,0xFF0000 | (effparam<<8));
+				graphprintf(fg,FONT_XSIZE*2 + (effnum%4 * 20 * FONT_XSIZE),EFFECT_Y_POS + (((effnum&~3)>>2)*8),0xFFFFFF,0x000000,  (char*)effectlist[effnum]);
+				trackbox(fg, 6 + (effnum%4 * 20 * FONT_XSIZE),EFFECT_Y_POS + (((effnum&~3)>>2)*8),j,tb->track_state_buf[i].number_of_tracks,0xFF0000 | (effparam<<8));
 			}
 		}
 		else
@@ -476,8 +482,8 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 				if(effnum)
 				{
 					effnum--;
-					graphprintf(fg,FONT_XSIZE*2 + (effnum * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((effnum&~3)>>2)*8),0xFFFFFF,0x000000,  (char*)exteffectlist[effnum]);
-					trackbox(fg, FONT_XSIZE + (effnum * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((effnum&~3)>>2)*8),j,tb->track_state_buf[i].number_of_tracks,0xFF0000 | (effparam<<8));
+					graphprintf(fg,FONT_XSIZE*2 + (effnum%4 * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((effnum&~3)>>2)*8),0xFFFFFF,0x000000,  (char*)exteffectlist[effnum]);
+					trackbox(fg, FONT_XSIZE + (effnum%4 * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((effnum&~3)>>2)*8),j,tb->track_state_buf[i].number_of_tracks,0xFF0000 | (effparam<<8));
 				}
 			}
 			else
@@ -491,8 +497,8 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 					effnum = 16;
 				}
 
-				graphprintf(fg,FONT_XSIZE*2 + (effnum * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((effnum&~3)>>2)*8),0xFFFFFF,0x000000,  (char*)exteffectlist[effnum]);
-				trackbox(fg, FONT_XSIZE + (effnum * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((effnum&~3)>>2)*8),j,tb->track_state_buf[i].number_of_tracks,0xFF0000 | (effparam<<8));
+				graphprintf(fg,FONT_XSIZE*2 + (effnum%4 * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((effnum&~3)>>2)*8),0xFFFFFF,0x000000,  (char*)exteffectlist[effnum]);
+				trackbox(fg, FONT_XSIZE + (effnum%4 * 20 * FONT_XSIZE),EXT_EFFECT_Y_POS + (((effnum&~3)>>2)*8),j,tb->track_state_buf[i].number_of_tracks,0xFF0000 | (effparam<<8));
 			}
 		}
 	}
