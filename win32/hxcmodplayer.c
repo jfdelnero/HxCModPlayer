@@ -324,8 +324,8 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 	{
 		MyRegisterClass(hInstance);
 
-		TailleX = 640 + 5;
-		TailleY = 480 + GetSystemMetrics(SM_CYCAPTION)+GetSystemMetrics(SM_CYBORDER)-3;
+		TailleX = (640 + GetSystemMetrics(SM_CXFRAME)*2) - 1;
+		TailleY = (480 + GetSystemMetrics(SM_CYCAPTION)+(GetSystemMetrics(SM_CYFRAME)*2)) - 1;
 
 		hWnd = CreateWindowEx(WS_EX_LEFT,WINDOW_CLASS,NOMFENETRE,WS_OVERLAPPED|WS_SYSMENU|WS_MINIMIZEBOX,16,16,TailleX,TailleY,NULL,NULL,hInstance,NULL);
 		if (!hWnd)
