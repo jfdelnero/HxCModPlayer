@@ -126,7 +126,10 @@ typedef struct {
 
 	muint   fullperiod[MAXNOTES * 8];
 
-	muint	mod_loaded;
+	muint   mod_loaded;
+
+	mint    last_r_sample;
+	mint    last_l_sample;
 } modcontext;
 
 //

@@ -999,8 +999,8 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 				}
 			}
 
-			ll=0;
-			lr=0;
+			ll = modctx->last_l_sample;
+			lr = modctx->last_r_sample;
 
 			for (i = 0; i < nbsample; i++)
 			{
@@ -1171,6 +1171,9 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 				lr=tr;
 
 			}
+
+			modctx->last_l_sample = ll;
+			modctx->last_r_sample = lr;
 
 			modctx->samplenb = modctx->samplenb+nbsample;
 		}
