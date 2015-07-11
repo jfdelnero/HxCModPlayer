@@ -26,7 +26,6 @@ int generateModAVI(int min, char * modfile, char * basename,int xres,int yres,in
 	void *bits;
 	float frame_rate;
 	unsigned long frameperiod, audiooffset,mainaudiooffset;
-	unsigned long *fbuffer;
 	unsigned char *dbits,*module;
 	int filesize;
 	FILE * fmod;
@@ -153,9 +152,9 @@ int generateModAVI(int min, char * modfile, char * basename,int xres,int yres,in
 			{
 				for(j=0;j<xres;j++)
 				{
-					dbits[(((((yres-1)-i)*xres)+j)*3)+0]=GETBLUE(framebuf[(((i*xres)+j))]);
-					dbits[(((((yres-1)-i)*xres)+j)*3)+1]=GETGREEN(framebuf[(((i*xres)+j))]);
-					dbits[(((((yres-1)-i)*xres)+j)*3)+2]=GETRED(framebuf[(((i*xres)+j))]);
+					dbits[(((((yres-1)-i)*xres)+j)*3)+0] = (unsigned char)GETBLUE(framebuf[(((i*xres)+j))]);
+					dbits[(((((yres-1)-i)*xres)+j)*3)+1] = (unsigned char)GETGREEN(framebuf[(((i*xres)+j))]);
+					dbits[(((((yres-1)-i)*xres)+j)*3)+2] = (unsigned char)GETRED(framebuf[(((i*xres)+j))]);
 				}
 			}
 
