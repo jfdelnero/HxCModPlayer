@@ -60,18 +60,18 @@ BEGIN
     BEGIN
         BLOCK "040c04b0"
         BEGIN
-            VALUE "Comments", "HxCMod V2.06 by Jean Fran«ois DEL NERO\0"
+            VALUE "Comments", "HxCMod V2.07 by Jean Fran«ois DEL NERO\0"
             VALUE "CompanyName", "HxC2001 (http:\\\\hxc2001.free.fr\\)\0"
             VALUE "FileDescription", "HxCMod Player\0"
-            VALUE "FileVersion", "2, 0, 0, 6\0"
+            VALUE "FileVersion", "2, 0, 0, 7\0"
             VALUE "InternalName", "HxCMoD\0"
             VALUE "LegalCopyright", "© HxC2001 ©\0"
             VALUE "LegalTrademarks", "HxC2001\0"
             VALUE "OriginalFilename", "hxcmod.exe\0"
-            VALUE "PrivateBuild", "HxCMod V2.06 (07/07/2015)\0"
+            VALUE "PrivateBuild", "HxCMod V2.07 (11 July 2015)\0"
             VALUE "ProductName", "HxCMod Player\0"
             VALUE "ProductVersion", "2, 0, 0, 6\0"
-            VALUE "SpecialBuild", "V2.06 (07/07/2015)\0"
+            VALUE "SpecialBuild", "V2.06 (11 July 2015)\0"
         END
     END
     BLOCK "VarFileInfo"

@@ -50,7 +50,8 @@ tracker_buffer_state trackbuf_state1;
 unsigned short sndbuffer2[NBSTEREO16BITSAMPLES*2];
 tracker_buffer_state trackbuf_state2;
 
-void * modloaded;
+modcontext modloaded;
+
 unsigned char * modfile;
 
 framegenerator * fg;
@@ -84,11 +85,7 @@ int loadmod(char * file)
 	FILE * f;
 	int filesize;
 
-	if(modloaded)
-	{
-		hxcmod_unload(modloaded);
-		modloaded = 0;
-	}
+	hxcmod_unload(&modloaded);
 
 	if(modfile)
 	{
@@ -110,7 +107,7 @@ int loadmod(char * file)
 				memset(modfile,0,filesize);
 				fread(modfile,filesize,1,f);
 
-				modloaded = hxcmod_load((void*)modfile,filesize);
+				hxcmod_load(&modloaded,(void*)modfile,filesize);
 			}
 		}
 
@@ -261,19 +258,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		case MM_WOM_DONE:
 			pwhOut = (struct wavehdr_tag *)lParam;
-			if(modloaded)
+		
+			if(pwhOut->lpData == (char*)&sndbuffer1)
 			{
-				if(pwhOut->lpData == (char*)&sndbuffer1)
-				{
-					trackbuf_state1.nb_of_state = 0;
-					hxcmod_fillbuffer(modloaded,(unsigned short*)pwhOut->lpData, pwhOut->dwBufferLength /4,&trackbuf_state1);
-				}
-				else
-				{
-					trackbuf_state2.nb_of_state = 0;
-					hxcmod_fillbuffer(modloaded,(unsigned short*)pwhOut->lpData, pwhOut->dwBufferLength /4,&trackbuf_state2);
-				}
+				trackbuf_state1.nb_of_state = 0;
+				hxcmod_fillbuffer(&modloaded,(unsigned short*)pwhOut->lpData, pwhOut->dwBufferLength /4,&trackbuf_state1);
 			}
+			else
+			{
+				trackbuf_state2.nb_of_state = 0;
+				hxcmod_fillbuffer(&modloaded,(unsigned short*)pwhOut->lpData, pwhOut->dwBufferLength /4,&trackbuf_state2);
+			}
+
 			waveOutWrite((HWAVEOUT)wParam,pwhOut,sizeof(WAVEHDR));
 			nb_wr_block++;
 
@@ -375,7 +371,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			fg = init_fg(FRAMEXRES,FRAMEYRES);
 
 			nb_wr_block = 0;
-			modloaded = 0;
 			modfile = 0;
 
 			pwfx.wFormatTag=1;
@@ -430,8 +425,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 				Shell_NotifyIcon(NIM_ADD,&notificon);
 
+				hxcmod_init(&modloaded);
 				modfile = unpack(data_cartoon_dreams_n_fantasies_mod->data,data_cartoon_dreams_n_fantasies_mod->csize ,data_cartoon_dreams_n_fantasies_mod->data, data_cartoon_dreams_n_fantasies_mod->size);
-				modloaded = hxcmod_load((void*)modfile,data_cartoon_dreams_n_fantasies_mod->size);
+				hxcmod_load(&modloaded,(void*)modfile,data_cartoon_dreams_n_fantasies_mod->size);
 
 				///////////////////////////////////////
 				// Main message loop:

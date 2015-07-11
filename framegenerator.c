@@ -157,7 +157,7 @@ void trackbox(framegenerator * fg,int xpos,int ypos,int track,int nbtrack,unsign
 
 	int i,j;
 
-	if( (xpos < fg->xres-8) && (ypos < fg->yres-8) && track<nbtrack )
+	if( (xpos < (int)(fg->xres-8)) && (ypos < (int)(fg->yres-8)) && track<nbtrack )
 	{
 		switch(nbtrack)
 		{
@@ -403,13 +403,14 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 	else
 		tb->cur_rd_index = 0;
 
-	graphprintf(fg,fg->xres - (FONT_XSIZE*12),fg->yres - (FONT_XSIZE),0x585888,0x000000,"HxCMOD v2.06");
+	i = tb->cur_rd_index;
 
-	graphprintf(fg,FONT_XSIZE*2,1,0xFFFFFF,0x000000,"%d Channels, Pos %.3d, Pattern %.3d:%.2d, %.3d BPM, Speed %.3d",tb->track_state_buf[i-1].number_of_tracks,tb->track_state_buf[i-1].cur_pattern_table_pos,tb->track_state_buf[i-1].cur_pattern,tb->track_state_buf[i-1].cur_pattern_pos,tb->track_state_buf[i-1].bpm,tb->track_state_buf[i-1].speed);
+	graphprintf(fg,fg->xres - (FONT_XSIZE*12),fg->yres - (FONT_XSIZE),0x585888,0x000000,"HxCMOD v2.07");
+
+	graphprintf(fg,FONT_XSIZE*2,1,0xFFFFFF,0x000000,"%d Channels, Pos %.3d, Pattern %.3d:%.2d, %.3d BPM, Speed %.3d",tb->track_state_buf[i].number_of_tracks,tb->track_state_buf[i].cur_pattern_table_pos,tb->track_state_buf[i].cur_pattern,tb->track_state_buf[i].cur_pattern_pos,tb->track_state_buf[i].bpm,tb->track_state_buf[i].speed);
 
 	graphprintf(fg,FONT_XSIZE*2,16,0xFFFFFF,0xFF000000,"%s",tb->name);
 
-	i = tb->cur_rd_index;
 
 	// Display the active tracks & samples
 	for(j=0;j<tb->track_state_buf[i].number_of_tracks;j++)
@@ -505,7 +506,6 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 			}
 		}
 	}
-
 
 	// Text layer over the effect layer.
 	for(i=0;i<(int)(fg->xres*fg->yres);i++)
