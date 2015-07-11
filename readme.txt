@@ -49,7 +49,7 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
   nbsample specify the number of stereo 16bits samples you want.
   The output format is signed 44100Hz 16-bit Stereo PCM samples.
   The output buffer size in byte must be equal to ( nbsample * 2 * 2 ).
-  The optional trkbuf parameter can be used to get detailed status of the player. Put NULL/0 is unused.
+  The optional trkbuf parameter can be used to get detailed status of the player. Put NULL/0 if unused.
 
 
 void hxcmod_unload( modcontext * modctx )
