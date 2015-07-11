@@ -17,11 +17,16 @@
 // Change History (most recent first):
 ///////////////////////////////////////////////////////////////////////////////////
 #include <windows.h>
+#include <io.h>
+#include <fcntl.h>
+#include <Shellapi.h>
+
 #include <commctrl.h>
 #include <stdio.h>
 #include <time.h>
 #include <mmsystem.h>
 
+#include "generateModAvi.h"
 #include "resource.h"
 #include "fileselector.h"
 #include "../hxcmod.h"
@@ -342,6 +347,24 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 	return hWnd;
 }
 
+void SetStdOutToNewConsole()
+{
+	int hConHandle;
+	long lStdHandle;
+	FILE *fp;
+
+	// allocate a console for this app
+	AllocConsole();
+
+	// redirect unbuffered STDOUT to the console
+	lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen( hConHandle, "w" );
+	*stdout = *fp;
+
+	setvbuf( stdout, NULL, _IONBF, 0 );
+}
+
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPSTR     lpCmdLine,
@@ -358,6 +381,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	NOTIFYICONDATA notificon;
 
 	fg = 0;
+	if(strstr(lpCmdLine,"avi:"))
+	{
+		SetStdOutToNewConsole();
+		printf("Command line %s\n",lpCmdLine);
+
+		generateModAVI(2, strstr(lpCmdLine,"avi:")+4, "out",640,480,1000);
+		return 0;
+	}
 
 	hWnd = InitInstance(hInstance, nCmdShow);
 
