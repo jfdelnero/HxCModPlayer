@@ -14,12 +14,14 @@
 #define GETGREEN(RGB)   ((RGB>>8)&0xFF)
 #define CONVRGB(r,v,b)  ((b&0x1F) | (v&0x3F)<<5 | (r&0x1F)<<11)
 
-int generateModAVI(int min, char * modfile, char * basename,int xres,int yres,int nbimage)
+short sound_buffer[128*1024];
+
+int generateModAVI(int min, char * modfile, char * basename,int xres,int yres,int nbavi)
 {
 	HBITMAP hbm;
 	HAVI avi;
 	AVICOMPRESSOPTIONS opts;
-	short sound_buffer[16*1024];
+
 	int i,j,filenb,fileend,frame;
 	int audiosize,totalimg;
 	char filename[512];
@@ -47,21 +49,21 @@ int generateModAVI(int min, char * modfile, char * basename,int xres,int yres,in
 
 	ZeroMemory(&bi,sizeof(bi));
 
-	bi.bmiHeader.biSize=sizeof(bi.bmiHeader);
-	bi.bmiHeader.biWidth=xres;
-	bi.bmiHeader.biHeight=yres;
-	bi.bmiHeader.biPlanes=1;
-	bi.bmiHeader.biBitCount=24;
-	bi.bmiHeader.biCompression=BI_RGB;
+	bi.bmiHeader.biSize = sizeof(bi.bmiHeader);
+	bi.bmiHeader.biWidth = xres;
+	bi.bmiHeader.biHeight = yres;
+	bi.bmiHeader.biPlanes = 1;
+	bi.bmiHeader.biBitCount = 24;
+	bi.bmiHeader.biCompression = BI_RGB;
 	bi.bmiHeader.biSizeImage = ((bi.bmiHeader.biWidth*bi.bmiHeader.biBitCount/8)&0xFFFFFFFC)*bi.bmiHeader.biHeight;
-	bi.bmiHeader.biXPelsPerMeter=10000;
-	bi.bmiHeader.biYPelsPerMeter=10000;
-	bi.bmiHeader.biClrUsed=0;
-	bi.bmiHeader.biClrImportant=0;
+	bi.bmiHeader.biXPelsPerMeter = 10000;
+	bi.bmiHeader.biYPelsPerMeter = 10000;
+	bi.bmiHeader.biClrUsed = 0;
+	bi.bmiHeader.biClrImportant = 0;
 
 	hbm = CreateDIBSection(comphdc,(BITMAPINFO*)&bi.bmiHeader,DIB_RGB_COLORS,&bits,NULL,0);
 
-	frame_rate = (float)15;//29.97;
+	frame_rate = (float)29.97;
 	frameperiod = (unsigned long)((1/frame_rate) * (1000 * 1000 * 10));
 
 	fileend = 0;
@@ -122,10 +124,10 @@ int generateModAVI(int min, char * modfile, char * basename,int xres,int yres,in
 		else
 			sprintf(filename,"outavi_%d.avi",filenb);
 
-		wfx.wFormatTag=1;
-		wfx.nChannels=2;
-		wfx.nSamplesPerSec=AUDIORATE;
-		wfx.nAvgBytesPerSec = wfx.nSamplesPerSec*2*2;
+		wfx.wFormatTag = 1;
+		wfx.nChannels = 2;
+		wfx.nSamplesPerSec = AUDIORATE;
+		wfx.nAvgBytesPerSec = AUDIORATE*2*2;
 		wfx.nBlockAlign = 4;
 		wfx.wBitsPerSample = 16;
 		wfx.cbSize = 0;
@@ -134,9 +136,10 @@ int generateModAVI(int min, char * modfile, char * basename,int xres,int yres,in
 
 		ZeroMemory(&opts,sizeof(opts));
 		opts.fccHandler=mmioFOURCC('L','A','G','S');
+		//opts.fccHandler=mmioFOURCC('d','i','v','x');
 		SetAviVideoCompression(avi,hbm,&opts,0,NULL);
 
-		for (frame=0; (frame<=(int)(frame_rate*(float)60*(float)min)) && !fileend && frame<nbimage; frame++)
+		for (frame=0; (frame<=(int)(frame_rate*(float)60*(float)min)) && !fileend; frame++)
 		{
 			printf("file %d :  %d - %.2f \\%\n",filenb,frame,((float)frame*100/(float)((int)(frame_rate*(float)60*(float)min))));
 			dbits=(unsigned char*)bits;
@@ -147,7 +150,7 @@ int generateModAVI(int min, char * modfile, char * basename,int xres,int yres,in
 				audiosize++;
 			}
 
-			framebuf = fg_generateFrame(fg,&trackbuf_state,audiosize*4);
+			framebuf = fg_generateFrame(fg,&trackbuf_state,audiosize/4);
 			for(i=0;i<yres;i++)
 			{
 				for(j=0;j<xres;j++)
@@ -175,7 +178,7 @@ int generateModAVI(int min, char * modfile, char * basename,int xres,int yres,in
 		CloseAvi(avi);
 
 		filenb++;
-	}while(!fileend && totalimg < nbimage );
+	}while(!fileend && filenb < nbavi );
 
 
 	DeleteDC(comphdc);

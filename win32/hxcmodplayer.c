@@ -386,7 +386,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		SetStdOutToNewConsole();
 		printf("Command line %s\n",lpCmdLine);
 
-		generateModAVI(2, strstr(lpCmdLine,"avi:")+4, "out",640,480,1000);
+		generateModAVI(10, strstr(lpCmdLine,"avi:")+4, "out",640,480,1);
 		return 0;
 	}
 
