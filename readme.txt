@@ -27,6 +27,9 @@ You are free to do what you want with this code.
 The test program is into the win32 folder. Just drag and drop a mod on the main
 window to load it. Linux & Mac OS X version it planned.
 
+A video demo of this Mod player can be seen on youtube :
+https://www.youtube.com/watch?v=MEU9FGZzjac
+
 --------------------------------------------------------------------------------------
  HxCMOD Core API
 --------------------------------------------------------------------------------------
