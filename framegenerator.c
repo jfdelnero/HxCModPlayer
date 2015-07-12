@@ -371,7 +371,6 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 		}
 	}
 
-
 	// Draw the periods traces.
 	i = tb->cur_rd_index;
 	while((i<tb->nb_of_state) && (tb->track_state_buf[i].buf_index < currentsampleoffset))
@@ -390,7 +389,7 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 				b = (unsigned char)(((float)tb->track_state_buf[i].tracks[j].cur_volume / (float)64) * (float)((fg->instrucolortable[tb->track_state_buf[i].tracks[j].instrument_number]>>16)&0xFF));
 
 				if(y<FRAME_YRES)
-					buffer[(y*FRAME_XRES)+x] =v | (b<<8) | (r<<16);
+					buffer[(y*FRAME_XRES)+x] = v | (b<<8) | (r<<16);
 			}
 		}
 
