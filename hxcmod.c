@@ -701,26 +701,32 @@ static void workeffect( note * nptr, channel * cptr )
 
 		case EFFECT_PORTAMENTO_UP:
 
-			cptr->period -= cptr->parameffect;
+			if(cptr->period)
+			{
+				cptr->period -= cptr->parameffect;
 
-			if( cptr->period < 113 || cptr->period > 20000 )
-				cptr->period = 113;
+				if( cptr->period < 113 || cptr->period > 20000 )
+					cptr->period = 113;
+			}
 
 		break;
 
 		case EFFECT_PORTAMENTO_DOWN:
 
-			cptr->period += cptr->parameffect;
+			if(cptr->period)
+			{
+				cptr->period += cptr->parameffect;
 
-			if( cptr->period > 20000 )
-				cptr->period = 20000;
+				if( cptr->period > 20000 )
+					cptr->period = 20000;
+			}
 
 		break;
 
 		case EFFECT_VOLSLIDE_TONEPORTA:
 		case EFFECT_TONE_PORTAMENTO:
 
-			if( ( cptr->period != cptr->portaperiod ) && cptr->portaperiod )
+			if( cptr->period && ( cptr->period != cptr->portaperiod ) && cptr->portaperiod )
 			{
 				if( cptr->period > cptr->portaperiod )
 				{
