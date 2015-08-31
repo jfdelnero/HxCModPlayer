@@ -404,7 +404,7 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 
 	i = tb->cur_rd_index;
 
-	graphprintf(fg,fg->xres - (FONT_XSIZE*12),fg->yres - (FONT_XSIZE),0x585888,0x000000,"HxCMOD v2.07");
+	graphprintf(fg,fg->xres - (FONT_XSIZE*12),fg->yres - (FONT_XSIZE),0x585888,0x000000,"HxCMOD v2.08");
 
 	graphprintf(fg,FONT_XSIZE*2,1,0xFFFFFF,0x000000,"%d Channels, Pos %.3d, Pattern %.3d:%.2d, %.3d BPM, Speed %.3d",tb->track_state_buf[i].number_of_tracks,tb->track_state_buf[i].cur_pattern_table_pos,tb->track_state_buf[i].cur_pattern,tb->track_state_buf[i].cur_pattern_pos,tb->track_state_buf[i].bpm,tb->track_state_buf[i].speed);
 
