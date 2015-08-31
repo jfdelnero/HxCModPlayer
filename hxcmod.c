@@ -222,7 +222,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 	{
 		if( sample && sample<32 )
 		{
-			cptr->sampnum = sample-1;
+			cptr->sampnum = sample - 1;
 		}
 
 		if( period || sample )
@@ -270,6 +270,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 
 			cptr->period = period;
 		}
+
 	}
 
 	cptr->effect = 0;
@@ -743,6 +744,12 @@ static void workeffect( note * nptr, channel * cptr )
 						cptr->period = cptr->portaperiod;
 					}
 				}
+
+				if( cptr->period == cptr->portaperiod )
+				{
+					// If the slide is over, don't let it to be retriggered.
+					cptr->portaperiod = 0;
+				}
 			}
 
 			if( cptr->effect == EFFECT_VOLSLIDE_TONEPORTA )
@@ -753,7 +760,6 @@ static void workeffect( note * nptr, channel * cptr )
 
 					if(cptr->volume>63)
 						cptr->volume = 63;
-
 				}
 				else
 				{
@@ -762,7 +768,6 @@ static void workeffect( note * nptr, channel * cptr )
 					if(cptr->volume>63)
 						cptr->volume=0;
 				}
-
 			}
 		break;
 
@@ -789,7 +794,7 @@ static void workeffect( note * nptr, channel * cptr )
 				{
 					cptr->volume = cptr->volume - cptr->volumeslide;
 
-					if( cptr->volume > 63 )
+					if( cptr->volume > 64 )
 						cptr->volume = 0;
 				}
 			}
@@ -956,7 +961,7 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 			for(i=0; i < modctx->number_of_channels; i++)
 			{
 				modctx->channels[i].volume = 0;
-				modctx->channels[i].period = 448;
+				modctx->channels[i].period = 0;
 			}
 
 			modctx->mod_loaded = 1;
@@ -1070,66 +1075,68 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 				l=0;
 				r=0;
 
-				for(j =0, cptr = modctx->channels; (j < modctx->number_of_channels) && (cptr->period!=0); j++, cptr++)
+				for(j =0, cptr = modctx->channels; j < modctx->number_of_channels ; j++, cptr++)
 				{
-
-					finalperiod = cptr->period - cptr->decalperiod - cptr->vibraperiod;
-					if( finalperiod )
+					if( cptr->period != 0 )
 					{
-						cptr->samppos += ( (modctx->sampleticksconst<<10) / finalperiod );
-					}
-
-					cptr->ticks++;
-
-					if( cptr->replen<=2 )
-					{
-						if( (cptr->samppos>>10) >= (cptr->length) )
+						finalperiod = cptr->period - cptr->decalperiod - cptr->vibraperiod;
+						if( finalperiod )
 						{
-							cptr->length = 0;
-							cptr->reppnt = 0;
-
-							if( cptr->length )
-								cptr->samppos = cptr->samppos % (((unsigned long)cptr->length)<<10);
-							else
-								cptr->samppos = 0;
+							cptr->samppos += ( (modctx->sampleticksconst<<10) / finalperiod );
 						}
-					}
-					else
-					{
-						if( (cptr->samppos>>10) >= (unsigned long)(cptr->replen+cptr->reppnt) )
+
+						cptr->ticks++;
+
+						if( cptr->replen<=2 )
 						{
-							cptr->samppos = ((unsigned long)(cptr->reppnt)<<10) + (cptr->samppos % ((unsigned long)(cptr->replen+cptr->reppnt)<<10));
+							if( (cptr->samppos>>10) >= (cptr->length) )
+							{
+								cptr->length = 0;
+								cptr->reppnt = 0;
+
+								if( cptr->length )
+									cptr->samppos = cptr->samppos % (((unsigned long)cptr->length)<<10);
+								else
+									cptr->samppos = 0;
+							}
 						}
-					}
-
-					k = cptr->samppos >> 10;
-
-					if( cptr->sampdata!=0 && ( ((j&3)==1) || ((j&3)==2) ) )
-					{
-						r += ( cptr->sampdata[k] *  cptr->volume );
-					}
-
-					if( cptr->sampdata!=0 && ( ((j&3)==0) || ((j&3)==3) ) )
-					{
-						l += ( cptr->sampdata[k] *  cptr->volume );
-					}
-
-					if( trkbuf && !state_remaining_steps )
-					{
-						if( trkbuf->nb_of_state < trkbuf->nb_max_of_state )
+						else
 						{
-							trkbuf->track_state_buf[trkbuf->nb_of_state].number_of_tracks = modctx->number_of_channels;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].buf_index = i;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].cur_pattern = modctx->song.patterntable[modctx->tablepos];
-							trkbuf->track_state_buf[trkbuf->nb_of_state].cur_pattern_pos = modctx->patternpos / modctx->number_of_channels;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].cur_pattern_table_pos = modctx->tablepos;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].bpm = modctx->bpm;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].speed = modctx->song.speed;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_effect = cptr->effect_code;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_parameffect = cptr->parameffect;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_period = finalperiod;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_volume = cptr->volume;
-							trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].instrument_number = (unsigned char)cptr->sampnum;
+							if( (cptr->samppos>>10) >= (unsigned long)(cptr->replen+cptr->reppnt) )
+							{
+								cptr->samppos = ((unsigned long)(cptr->reppnt)<<10) + (cptr->samppos % ((unsigned long)(cptr->replen+cptr->reppnt)<<10));
+							}
+						}
+
+						k = cptr->samppos >> 10;
+
+						if( cptr->sampdata!=0 && ( ((j&3)==1) || ((j&3)==2) ) )
+						{
+							r += ( cptr->sampdata[k] *  cptr->volume );
+						}
+
+						if( cptr->sampdata!=0 && ( ((j&3)==0) || ((j&3)==3) ) )
+						{
+							l += ( cptr->sampdata[k] *  cptr->volume );
+						}
+
+						if( trkbuf && !state_remaining_steps )
+						{
+							if( trkbuf->nb_of_state < trkbuf->nb_max_of_state )
+							{
+								trkbuf->track_state_buf[trkbuf->nb_of_state].number_of_tracks = modctx->number_of_channels;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].buf_index = i;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].cur_pattern = modctx->song.patterntable[modctx->tablepos];
+								trkbuf->track_state_buf[trkbuf->nb_of_state].cur_pattern_pos = modctx->patternpos / modctx->number_of_channels;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].cur_pattern_table_pos = modctx->tablepos;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].bpm = modctx->bpm;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].speed = modctx->song.speed;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_effect = cptr->effect_code;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_parameffect = cptr->parameffect;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_period = finalperiod;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_volume = cptr->volume;
+								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].instrument_number = (unsigned char)cptr->sampnum;
+							}
 						}
 					}
 				}
