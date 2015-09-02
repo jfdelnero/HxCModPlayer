@@ -130,6 +130,12 @@ typedef struct {
 
 	mint    last_r_sample;
 	mint    last_l_sample;
+
+	mint    stereo;
+	mint    stereo_separation;
+	mint    bits;
+	mint    filter;
+
 } modcontext;
 
 //
@@ -200,6 +206,7 @@ typedef struct tracker_buffer_state_
 ///////////////////////////////////////////////////////////////////////////////////
 
 int  hxcmod_init( modcontext * modctx );
+int  hxcmod_setcfg( modcontext * modctx, int samplerate, int bits, int stereo, int stereo_separation, int filter);
 int  hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size );
 void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigned long nbsample, tracker_buffer_state * trkbuf );
 void hxcmod_unload( modcontext * modctx );

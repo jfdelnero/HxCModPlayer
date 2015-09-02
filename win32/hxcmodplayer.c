@@ -43,6 +43,8 @@
 #define FRAMEXRES 640
 #define FRAMEYRES 480
 
+#define SAMPLERATE 44100
+
 HINSTANCE hInst;
 HWAVEOUT wout;
 
@@ -404,13 +406,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			nb_wr_block = 0;
 			modfile = 0;
 
-			pwfx.wFormatTag=1;
-			pwfx.nChannels=2;
-			pwfx.nSamplesPerSec=44100;
-			pwfx.nAvgBytesPerSec=pwfx.nSamplesPerSec*4;
-			pwfx.nBlockAlign=4;
-			pwfx.wBitsPerSample=16;
-			pwfx.cbSize=0;
+			pwfx.wFormatTag = 1;
+			pwfx.nChannels = 2;
+			pwfx.nSamplesPerSec = SAMPLERATE;
+			pwfx.nAvgBytesPerSec = pwfx.nSamplesPerSec*4;
+			pwfx.nBlockAlign = 4;
+			pwfx.wBitsPerSample = 16;
+			pwfx.cbSize = 0;
 
 			memset(&trackbuf_state1,0,sizeof(tracker_buffer_state));
 			trackbuf_state1.nb_max_of_state = 100;
@@ -457,6 +459,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 				Shell_NotifyIcon(NIM_ADD,&notificon);
 
 				hxcmod_init(&modloaded);
+
+				hxcmod_setcfg(&modloaded, SAMPLERATE, 16, 1, 1, 1);
+
 				modfile = unpack(data_cartoon_dreams_n_fantasies_mod->data,data_cartoon_dreams_n_fantasies_mod->csize ,data_cartoon_dreams_n_fantasies_mod->data, data_cartoon_dreams_n_fantasies_mod->size);
 				hxcmod_load(&modloaded,(void*)modfile,data_cartoon_dreams_n_fantasies_mod->size);
 

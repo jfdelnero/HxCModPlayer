@@ -843,9 +843,57 @@ static void workeffect( note * nptr, channel * cptr )
 ///////////////////////////////////////////////////////////////////////////////////
 int hxcmod_init(modcontext * modctx)
 {
-	if(modctx)
+	muint i,j;
+
+	if( modctx )
 	{
 		memclear(modctx,0,sizeof(modcontext));
+		modctx->playrate = 44100;
+		modctx->stereo = 1;
+		modctx->stereo_separation = 1;
+		modctx->bits = 16;
+		modctx->filter = 1;
+
+		for(i=0;i<PERIOD_TABLE_LENGTH - 1;i++)
+		{
+			for(j=0;j<8;j++)
+			{
+				modctx->fullperiod[(i*8) + j] = periodtable[i] - ((( periodtable[i] - periodtable[i+1] ) / 8) * j);
+			}
+		}
+
+		return 1;
+	}
+
+	return 0;
+}
+
+int hxcmod_setcfg(modcontext * modctx, int samplerate, int bits, int stereo, int stereo_separation, int filter)
+{
+	if( modctx )
+	{
+		modctx->playrate = samplerate;
+
+		if( stereo )
+			modctx->stereo = 1;
+		else
+			modctx->stereo = 0;
+			
+		if(stereo_separation < 4)
+		{
+			modctx->stereo_separation = stereo_separation;
+		}
+
+		if( bits == 8 || bits == 16 )
+		{
+			modctx->bits = bits;
+		}
+
+		if( filter )
+			modctx->filter = 1;
+		else
+			modctx->filter = 0;
+
 		return 1;
 	}
 
@@ -854,9 +902,9 @@ int hxcmod_init(modcontext * modctx)
 
 int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 {
-	muint	i,j, max;
+	muint i, max;
 	unsigned short t;
-	sample	*sptr;
+	sample *sptr;
 	unsigned char * modmemory,* endmodmemory;
 
 	modmemory = (unsigned char *)mod_data;
@@ -866,16 +914,6 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 	{
 		if( modctx )
 		{
-			memclear(modctx,0,sizeof(modcontext));
-
-			for(i=0;i<PERIOD_TABLE_LENGTH - 1;i++)
-			{
-				for(j=0;j<8;j++)
-				{
-					modctx->fullperiod[(i*8) + j] = periodtable[i] - ((( periodtable[i] - periodtable[i+1] ) / 8) * j);
-				}
-			}
-
 			memcopy(&(modctx->song.title),modmemory,1084);
 
 			i = 0;
@@ -952,7 +990,6 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 
 			// States init
 
-			modctx->playrate = SAMPLE_RATE;
 			modctx->tablepos = 0;
 			modctx->patternpos = 0;
 			modctx->song.speed = 6;
@@ -1159,16 +1196,22 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 					state_remaining_steps--;
 				}
 
-				tr = (short)r;
 				tl = (short)l;
+				tr = (short)r;
 
-				// Filter
-				l = (l+ll)>>1;
-				r = (r+lr)>>1;
+				if ( modctx->filter )
+				{
+					// Filter
+					l = (l+ll)>>1;
+					r = (r+lr)>>1;
+				}
 
-				// Left & Right Stereo panning
-				l = (l+(r>>1));
-				r = (r+(l>>1));
+				if ( modctx->stereo_separation == 1 )
+				{
+					// Left & Right Stereo panning
+					l = (l+(r>>1));
+					r = (r+(l>>1));
+				}
 
 				// Level limitation
 				if( l > 32767 ) l = 32767;
@@ -1180,8 +1223,8 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 				outbuffer[(i*2)]   = l;
 				outbuffer[(i*2)+1] = r;
 
-				ll=tl;
-				lr=tr;
+				ll = tl;
+				lr = tr;
 
 			}
 
@@ -1214,5 +1257,29 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 void hxcmod_unload( modcontext * modctx )
 {
 	if(modctx)
-		memclear(modctx,0,sizeof(modcontext));
+	{
+		memclear(&modctx->song,0,sizeof(modctx->song));
+		memclear(&modctx->sampledata,0,sizeof(modctx->sampledata));
+		memclear(&modctx->patterndata,0,sizeof(modctx->patterndata));
+		modctx->tablepos = 0;
+		modctx->patternpos = 0;
+		modctx->patterndelay  = 0;
+		modctx->jump_loop_effect = 0;
+		modctx->bpm = 0;
+		modctx->patternticks = 0;
+		modctx->patterntickse = 0;
+		modctx->patternticksaim = 0;
+		modctx->sampleticksconst = 0;
+
+		modctx->samplenb = 0;
+
+		memclear(modctx->channels,0,sizeof(modctx->channels));
+
+		modctx->number_of_channels = 0;
+
+		modctx->mod_loaded = 0;
+
+		modctx->last_r_sample = 0;
+		modctx->last_l_sample = 0;
+	}
 }
