@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Emscripten HxC MOD player</title>
+    <meta name="description" content="Javascript HxCMOD">
+
+    <meta name="viewport" content="width=device-width">
+
+	<script async type="text/javascript" src="js_hxcmod_player.js"></script>
+    <script type="text/javascript" src="webaudio_layer.js"></script>
+    <script type="text/javascript">
+
+		var modplayer;
+
+		function init_player()
+		{
+			if (modplayer == undefined)
+			{
+				modplayer = new HxCMOD_emscript_js();
+			}
+			else
+			{
+				modplayer.stop();
+			}
+		}
+
+		function loadMOD(path)
+		{
+			init_player();
+			modplayer.load(path, function(buffer) {	modplayer.play(buffer);} );
+		}
+
+		var draganddropfile = document.querySelector('*');
+
+		draganddropfile.ondrop = function(e)
+		{
+			e.preventDefault();
+
+			var file = e.dataTransfer.files[0];
+
+			init_player();
+
+			modplayer.load(file, function(buffer) { modplayer.play(buffer); } );
+		}
+
+		draganddropfile.ondragenter = function(e){e.preventDefault();}
+
+		draganddropfile.ondragover = function(e){e.preventDefault();}
+
+	</script>
+  </head>
+
+  <body>
+      <h1>Emscripten HxCMOD player test page</h1>
+      <p>Drap and drop any module file on this page to play it or click on one of the above mod file</p>
+      <h2>Mod files :</h2>
+		<a onclick="loadMOD('mods/BUD.MOD')" href="#">BUD.MOD</a><br>
+		<a onclick="loadMOD('mods/lunatic.mod')" href="#">lunatic.mod</a><br>
+		<a onclick="loadMOD('mods/PINILL-PRESENT.MOD')" href="#">PINILL-PRESENT.MOD</a><br>
+		<a onclick="loadMOD('mods/overload.mod')" href="#">overload.mod</a><br>
+		<a onclick="loadMOD('mods/man\'s_mi.mod')" href="#">man's_mi.mod</a><br>
+		<a onclick="loadMOD('mods/ASM94.MOD')" href="#">ASM94.MOD</a><br>
+		<a onclick="loadMOD('mods/nugget-highspeed.mod')" href="#">nugget-highspeed.mod</a><br>
+		<a onclick="loadMOD('mods/SUPERLM.MOD')" href="#">SUPERLM.MOD</a><br>
+		<a onclick="loadMOD('mods/Pro%20BMX%20Simulator.mod')" href="#">Pro BMX Simulator.mod</a><br>
+		<a onclick="loadMOD('mods/clawz-fast&friendly.mod')" href="#">clawz-fast&friendly.mod</a><br>
+		<a onclick="loadMOD('mods/dr_awesome-intro_music3.mod')" href="#">dr_awesome-intro_music3.mod</a><br>
+		<a onclick="loadMOD('mods/emax-delicate_oooz!.mod')" href="#">emax-delicate_oooz!.mod</a><br>
+		<a onclick="loadMOD('mods/estrayk-her6.mod')" href="#">estrayk-her6.mod</a><br>
+		<a onclick="loadMOD('mods/estrayk-horizon.mod')" href="#">estrayk-horizon.mod</a><br>
+		<a onclick="loadMOD('mods/estrayk-hybris-ingame.mod')" href="#">estrayk-hybris-ingame.mod</a><br>
+		<a onclick="loadMOD('mods/jason-shortness.mod')" href="#">jason-shortness.mod</a><br>
+		<a onclick="loadMOD('mods/jazz-nuseup42.mod')" href="#">jazz-nuseup42.mod</a><br>
+		<a onclick="loadMOD('mods/juice-the_rising_sun.mod')" href="#">juice-the_rising_sun.mod</a><br>
+		<a onclick="loadMOD('mods/maktone-class6.mod')" href="#">maktone-class6.mod</a><br>
+		<a onclick="loadMOD('mods/maktone-class_cracktro15.mod')" href="#">maktone-class_cracktro15.mod</a><br>
+		<a onclick="loadMOD('mods/maktone-the_crazy_dentist.mod')" href="#">maktone-the_crazy_dentist.mod</a><br>
+		<a onclick="loadMOD('mods/mattis-gonnas_kill_you.mod')" href="#">mattis-gonnas_kill_you.mod</a><br>
+		<a onclick="loadMOD('mods/mattis-lowsi_jeti_maah.mod')" href="#">mattis-lowsi_jeti_maah.mod</a><br>
+		<a onclick="loadMOD('mods/melodee-laxity.mod')" href="#">melodee-laxity.mod</a><br>
+		<a onclick="loadMOD('mods/menumus3.mod')" href="#">menumus3.mod</a><br>
+		<a onclick="loadMOD('mods/meo-sleeping_waste.mod')" href="#">meo-sleeping_waste.mod</a><br>
+		<a onclick="loadMOD('mods/mr_death-red_velvet.mod')" href="#">mr_death-red_velvet.mod</a><br>
+		<a onclick="loadMOD('mods/nao-deceased_by_disease.mod')" href="#">nao-deceased_by_disease.mod</a><br>
+		<a onclick="loadMOD('mods/nao-gabber_astro.mod')" href="#">nao-gabber_astro.mod</a><br>
+		<a onclick="loadMOD('mods/nao-glamour4u.mod')" href="#">nao-glamour4u.mod</a><br>
+		<a onclick="loadMOD('mods/reflex-spotlights.mod')" href="#">reflex-spotlights.mod</a><br>
+		<a onclick="loadMOD('mods/reflex-tiny_diny.mod')" href="#">reflex-tiny_diny.mod</a><br>
+		<a onclick="loadMOD('mods/rez-bubble_toast_score.mod')" href="#">rez-bubble_toast_score.mod</a><br>
+		<a onclick="loadMOD('mods/rez-delta.mod')" href="#">rez-delta.mod</a><br>
+		<a onclick="loadMOD('mods/rez-gigi.mod')" href="#">rez-gigi.mod</a><br>
+		<a onclick="loadMOD('mods/rez-kenzalol.mod')" href="#">rez-kenzalol.mod</a><br>
+		<a onclick="loadMOD('mods/rez-monday.mod')" href="#">rez-monday.mod</a><br>
+		<a onclick="loadMOD('mods/rez-r0t0f3ul.mod')" href="#">rez-r0t0f3ul.mod</a><br>
+		<a onclick="loadMOD('mods/rez-the_no_named.mod')" href="#">rez-the_no_named.mod</a><br>
+		<a onclick="loadMOD('mods/stargazer-chip2.mod')" href="#">stargazer-chip2.mod</a><br>
+
+		<br><br>
+
+		<a href="http://hxc2001.free.fr/">http://hxc2001.free.fr</a><br>
+		<a href="https://github.com/jfdelnero/HxCModPlayer">https://github.com/jfdelnero/HxCModPlayer</a><br>
+
+
+  </body>
+
+</html>
