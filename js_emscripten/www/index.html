@@ -1,61 +1,71 @@
 <!DOCTYPE html>
 <html class="no-js">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Emscripten HxC MOD player</title>
-    <meta name="description" content="Javascript HxCMOD">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Emscriptened HxC MOD player</title>
+		<meta name="description" content="Javascript HxCMOD">
 
-    <meta name="viewport" content="width=device-width">
+		<meta name="viewport" content="width=device-width">
 
-	<script async type="text/javascript" src="js_hxcmod_player.js"></script>
-    <script type="text/javascript" src="webaudio_layer.js"></script>
-    <script type="text/javascript">
+		<script async type="text/javascript" src="js_hxcmod_player.js"></script>
+		<script type="text/javascript" src="webaudio_layer.js"></script>
 
-		var modplayer;
+		<script type="text/javascript">
 
-		function init_player()
-		{
-			if (modplayer == undefined)
+			var modplayer;
+
+			function init_player()
 			{
-				modplayer = new HxCMOD_emscript_js();
+				if (modplayer == undefined)
+				{
+					modplayer = new HxCMOD_emscript_js();
+				}
+				else
+				{
+					modplayer.stop();
+				}
 			}
-			else
+
+			function loadMOD(path)
 			{
-				modplayer.stop();
+				init_player();
+				modplayer.load(path, function(buffer) {	modplayer.play(buffer);} );
 			}
-		}
 
-		function loadMOD(path)
-		{
-			init_player();
-			modplayer.load(path, function(buffer) {	modplayer.play(buffer);} );
-		}
+			var draganddropfile = document.querySelector('*');
 
-		var draganddropfile = document.querySelector('*');
+			draganddropfile.ondrop = function(e)
+			{
+				e.preventDefault();
 
-		draganddropfile.ondrop = function(e)
-		{
-			e.preventDefault();
+				var file = e.dataTransfer.files[0];
 
-			var file = e.dataTransfer.files[0];
+				init_player();
 
-			init_player();
+				modplayer.load(file, function(buffer) { modplayer.play(buffer); } );
+			}
 
-			modplayer.load(file, function(buffer) { modplayer.play(buffer); } );
-		}
+			draganddropfile.ondragenter = function(e){e.preventDefault();}
 
-		draganddropfile.ondragenter = function(e){e.preventDefault();}
+			draganddropfile.ondragover = function(e){e.preventDefault();}
 
-		draganddropfile.ondragover = function(e){e.preventDefault();}
+		</script>
+	</head>
 
-	</script>
-  </head>
+	<body>
+		<h1>Emscriptened HxCMOD player test page</h1>
 
-  <body>
-      <h1>Emscripten HxCMOD player test page</h1>
-      <p>Drap and drop any module file on this page to play it or click on one of the above mod file</p>
-      <h2>Mod files :</h2>
+		<p>Tested on Firefox 40.0.3, Chrome 45.0, Safari 7.0.6, Edge/Spartan, Android 5.0<br>
+		Works on any web browser with the Web Audio API support and a decent JavaScript engine. :)<br>
+		No plugin required. Very low CPU usage, similar to the native version (Thanks to the asm.js support).<br>
+		The sources are available on <a href="https://github.com/jfdelnero/HxCModPlayer"><b>GitHub</b></a>.<br>
+		<a href="http://kripken.github.io/emscripten-site/" target="blank">Emscripten</a> was used to generate the JavaScript code from the HxCMOD C sources code.
+		</p>
+		
+		<p>Drap and drop any MOD music file on this page to play it or click on one of the above MOD files.</p>
+
+		<h2>MOD files (Select the MOD to listen it):</h2>
 		<a onclick="loadMOD('mods/BUD.MOD')" href="#">BUD.MOD</a><br>
 		<a onclick="loadMOD('mods/lunatic.mod')" href="#">lunatic.mod</a><br>
 		<a onclick="loadMOD('mods/PINILL-PRESENT.MOD')" href="#">PINILL-PRESENT.MOD</a><br>
@@ -99,10 +109,14 @@
 
 		<br><br>
 
+		Details about the MOD music file can be found there:<br>
+		<a href="https://en.wikipedia.org/wiki/MOD_%28file_format%29">https://en.wikipedia.org/wiki/MOD_file_format</a><br>
+		<a href="https://en.wikipedia.org/wiki/Music_tracker">https://en.wikipedia.org/wiki/Music_tracker</a><br>
+		
+		<br>
+
+		(c)HxC2001 / Jean-Fran&ccedil;ois DEL NERO<br>
 		<a href="http://hxc2001.free.fr/">http://hxc2001.free.fr</a><br>
 		<a href="https://github.com/jfdelnero/HxCModPlayer">https://github.com/jfdelnero/HxCModPlayer</a><br>
-
-
-  </body>
-
+	</body>
 </html>

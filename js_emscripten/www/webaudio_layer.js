@@ -18,7 +18,7 @@
 
 if('webkitAudioContext' in window)
 {
-    HxCMODAudioContext = webkitAudioContext;
+	HxCMODAudioContext = webkitAudioContext;
 }
 else
 {
@@ -117,7 +117,7 @@ HxCMOD_emscript_js.prototype.load = function(input, callback)
 		XmlHttpReq.responseType = 'arraybuffer';
 		XmlHttpReq.onload = function(e)
 		{
-			if (XmlHttpReq.status === 200 && e.total)
+			if (XmlHttpReq.status === 200)
 			{
 				return callback(XmlHttpReq.response);
 			}
