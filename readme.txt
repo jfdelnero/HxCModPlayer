@@ -27,7 +27,13 @@ You are free to do what you want with this code.
 The test program is into the win32 folder. Just drag and drop a mod on the main
 window to load it. Linux & Mac OS X version it planned.
 
-A video demo of this Mod player can be seen on youtube :
+Please note that this core was "Emscriptened" successfully and is now working in
+JavaScript with Android, Chrome, Firefox, Edge, Safari browsers and probably
+with others browsers supporting the Web Audio API support.
+
+You can test it at this address : http://hxc2001.free.fr/hxcmod/
+
+A video demo of the native Mod player can be seen on youtube :
 https://www.youtube.com/watch?v=MEU9FGZzjac
 
 --------------------------------------------------------------------------------------
@@ -39,6 +45,14 @@ int  hxcmod_init( modcontext * modctx )
 - Initialize the modcontext buffer. Must be called before doing anything else.
   Return 1 if success. 0 in case of error.
 
+int  hxcmod_setcfg( modcontext * modctx, int samplerate, int bits, int stereo, int stereo_separation, int filter);
+
+- Configure the player :
+  samplerate specify the sample rate. (44100 by default).
+  bits specify the number of bits (16 bits only for the moment).
+  stereo - if non null, the stereo mode is selected (default)
+  stereo_separation - Left/Right channel separation.
+  filter - if non null, the filter is applied (default)
 
 int  hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 
@@ -74,6 +88,9 @@ Generate a 640*480 framebuffer from the player status to be displayed in real-ti
 - win32/
 The Windows test software.
 (linux & Mac version planned)
+
+- js_emscripten/
+The Web browser/JavaScript version. (Build with Emscripten)
 
 - packer/
 Data compression utility. Used to embed one mod and some graphical stuff into the executable.
