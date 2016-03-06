@@ -509,8 +509,6 @@ uint32_t* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,unsigned
 		}
 	}
 
-	printchar(fg,bmplist[0],0,0,0x00FFFF,0x000000,'A');
-
 	// Text layer over the effect layer.
 	for(i=0;i<(int)(fg->xres*fg->yres);i++)
 	{

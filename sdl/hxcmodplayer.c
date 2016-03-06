@@ -76,7 +76,6 @@ int main (int argc, char **argv)
 	SDL_Init( SDL_INIT_VIDEO );
 
 	screen = SDL_SetVideoMode( FRAMEXRES, FRAMEYRES, 32, flag);
-    SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 
 	fg = init_fg(FRAMEXRES,FRAMEYRES);
 
