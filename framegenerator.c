@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include <stdarg.h>
+#include <stdint.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -82,32 +83,32 @@ const char * exteffectlist[]=
 	0
 };
 
-void printchar(framegenerator * fg,bmaptype * font,int xpos,int ypos,unsigned long fg_color,unsigned long bg_color,unsigned char c)
+void printchar(framegenerator * fg,bmaptype * font,int xpos,int ypos,uint32_t fg_color,uint32_t bg_color,unsigned char c)
 {
 	int i,j,cxpos,cypos;
-	unsigned long * fontbuf;
+	uint32_t * fontbuf;
 
-	fontbuf = (unsigned long *)font->data;
+	fontbuf = (uint32_t *)font->data;
 
-	cxpos = (c%(font->Xsize / 8))*8;
-	cypos = (c / (font->Xsize / 8)) * 8;
+	cxpos = ( c % (font->Xsize / 8) ) * 8;
+	cypos = ( c / (font->Xsize / 8) ) * 8;
 
 	for(i=0;i<8;i++)
 	{
 		for(j=0;j<8;j++)
 		{
-			if(fontbuf[(cypos+i)*font->Xsize + cxpos + j])
-				fg->textbuffer[((ypos+i)*fg->xres)+ xpos + j] = fg_color;
+			if(fontbuf[ ( (cypos + i ) * font->Xsize ) + cxpos + j])
+				fg->textbuffer[ ( ( ypos + i ) * fg->xres ) + xpos + j] = fg_color;
 			else
 			{
 				if(!bg_color&0xFF000000)
-					fg->textbuffer[((ypos+i)*fg->xres)+ xpos + j] = bg_color;
+					fg->textbuffer[ ( ( ypos + i ) * fg->xres ) + xpos + j] = bg_color;
 			}
 		}
 	}
 }
 
-void printstring(framegenerator * fg,char * str,int xpos,int ypos,unsigned long fg_color,unsigned long bg_color)
+void printstring(framegenerator * fg,char * str,int xpos,int ypos,uint32_t fg_color,uint32_t bg_color)
 {
 	int i;
 
@@ -120,7 +121,7 @@ void printstring(framegenerator * fg,char * str,int xpos,int ypos,unsigned long 
 
 }
 
-int graphprintf(framegenerator * fg,int xpos,int ypos,unsigned long fg_color,unsigned long bg_color,char * chaine, ...)
+int graphprintf(framegenerator * fg,int xpos,int ypos,uint32_t fg_color,uint32_t bg_color,char * chaine, ...)
 {
 	char tmpbuf[512];
 
@@ -135,7 +136,7 @@ int graphprintf(framegenerator * fg,int xpos,int ypos,unsigned long fg_color,uns
 	return 0;
 }
 
-void box(framegenerator * fg,int xpos,int ypos,int xsize,int ysize,unsigned long fg_color)
+void box(framegenerator * fg,int xpos,int ypos,int xsize,int ysize,uint32_t fg_color)
 {
 	int i,j;
 
@@ -148,7 +149,7 @@ void box(framegenerator * fg,int xpos,int ypos,int xsize,int ysize,unsigned long
 	}
 }
 
-void trackbox(framegenerator * fg,int xpos,int ypos,int track,int nbtrack,unsigned long fg_color)
+void trackbox(framegenerator * fg,int xpos,int ypos,int track,int nbtrack,uint32_t fg_color)
 {
 	int trk_box_xsize;
 	int trk_box_ysize;
@@ -199,26 +200,26 @@ void trackbox(framegenerator * fg,int xpos,int ypos,int track,int nbtrack,unsign
 
 void convert1b32b(unsigned char * source, unsigned char * dest,unsigned short sx,unsigned short sy)
 {
-	unsigned long i,j;
+	unsigned int i,j;
 
-	for(i=0;i<(unsigned long)((sx*sy)/8);i++)
+	for(i=0;i<(unsigned int)((sx*sy)/8);i++)
 	{
 		for(j=0;j<8;j++)
 		{
 
 			if(source[i]&(0x80>>j))
 			{
-				dest[((i*8+j)*4)+0 ]= 0xFF;
-				dest[((i*8+j)*4)+1 ]= 0xFF;
-				dest[((i*8+j)*4)+2 ]= 0xFF;
-				dest[((i*8+j)*4)+3 ]= 0x00;
+				dest[ ( ( ( i * 8 ) + j ) * 4 ) + 0 ] = 0xFF;
+				dest[ ( ( ( i * 8 ) + j ) * 4 ) + 1 ] = 0xFF;
+				dest[ ( ( ( i * 8 ) + j ) * 4 ) + 2 ] = 0xFF;
+				dest[ ( ( ( i * 8 ) + j ) * 4 ) + 3 ] = 0x00;
 			}
 			else
 			{
-				dest[((i*8+j)*4)+0 ]= 0x00;
-				dest[((i*8+j)*4)+1 ]= 0x00;
-				dest[((i*8+j)*4)+2 ]= 0x00;
-				dest[((i*8+j)*4)+3 ]= 0x00;
+				dest[ ( ( ( i * 8 ) + j ) * 4 ) + 0 ] = 0x00;
+				dest[ ( ( ( i * 8 ) + j ) * 4 ) + 1 ] = 0x00;
+				dest[ ( ( ( i * 8 ) + j ) * 4 ) + 2 ] = 0x00;
+				dest[ ( ( ( i * 8 ) + j ) * 4 ) + 3 ] = 0x00;
 			}
 		}
 
@@ -229,6 +230,7 @@ void convert1b32b(unsigned char * source, unsigned char * dest,unsigned short sx
 void convertimage(bmaptype * bmp)
 {
 	unsigned char * tmpbuffer;
+
 	switch(bmp->type)
 	{
 		case 1:
@@ -257,14 +259,14 @@ framegenerator * init_fg(unsigned int xres,unsigned int yres)
 		fg->xres = xres;
 		fg->yres = yres;
 
-		fg->effectbuffer = (unsigned long*)malloc( xres * yres * sizeof(unsigned long));
-		fg->textbuffer =  (unsigned long*)malloc( xres * yres * sizeof(unsigned long));
-		fg->framebuffer = (unsigned long*)malloc( xres * yres * sizeof(unsigned long));
+		fg->effectbuffer = (uint32_t*)malloc( xres * yres * sizeof(uint32_t));
+		fg->textbuffer = (uint32_t*)malloc( xres * yres * sizeof(uint32_t));
+		fg->framebuffer = (uint32_t*)malloc( xres * yres * sizeof(uint32_t));
 		if(fg->framebuffer)
 		{
-			memset(fg->framebuffer,0,xres * yres * sizeof(unsigned long));
-			memset(fg->effectbuffer,0,xres * yres * sizeof(unsigned long));
-			memset(fg->textbuffer,0,xres * yres * sizeof(unsigned long));
+			memset(fg->framebuffer,0,xres * yres * sizeof(uint32_t));
+			memset(fg->effectbuffer,0,xres * yres * sizeof(uint32_t));
+			memset(fg->textbuffer,0,xres * yres * sizeof(uint32_t));
 
 			// unpack & convert 8->16 bits bmps ....
 			i=0;
@@ -281,7 +283,7 @@ framegenerator * init_fg(unsigned int xres,unsigned int yres)
 
 			for(i=0;i<32;i++)
 			{
-				fg->instrucolortable[(i^0xAA)&0x1F] = (unsigned long)((((float)i/(float)32)*(float)0xC0) + 0x40);
+				fg->instrucolortable[(i^0xAA)&0x1F] = (uint32_t)((((float)i/(float)32)*(float)0xC0) + 0x40);
 				fg->instrucolortable[(i^0xAA)&0x1F] <<= 8;
 				fg->instrucolortable[(i^0xAA)&0x1F] |=  (255-(fg->instrucolortable[(i^0xAA)&0x1F] >> 8)) ;
 				fg->instrucolortable[(i^0xAA)&0x1F] |=  ((fg->instrucolortable[(i^0xAA)&0x1F]+0x80)<<16) & 0xFF0000 ;
@@ -309,10 +311,11 @@ void deinit_fg(framegenerator * fg)
 	}
 }
 
-unsigned long getcodecolor(int volume,int period)
+uint32_t getcodecolor(int volume,int period)
 {
 	unsigned char r,g,b;
-    // 32768    16000   0
+
+	// 32768    16000   0
 	// LF       MF     HF
 	// Blue  - Green - Red
 
@@ -344,12 +347,12 @@ unsigned long getcodecolor(int volume,int period)
 	return r | g<<8 | b << 16 ;
 }
 
-unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,unsigned int currentsampleoffset)
+uint32_t* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,unsigned int currentsampleoffset)
 {
 	int i,j,x,y,s,instnum,effnum;
 	unsigned char effparam;
 	unsigned char r,v,b;
-	unsigned long * buffer;
+	uint32_t * buffer;
 
 	memset(fg->textbuffer,0,FRAME_XRES*FRAME_YRES*4);
 
@@ -505,6 +508,8 @@ unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,uns
 			}
 		}
 	}
+
+	printchar(fg,bmplist[0],0,0,0x00FFFF,0x000000,'A');
 
 	// Text layer over the effect layer.
 	for(i=0;i<(int)(fg->xres*fg->yres);i++)

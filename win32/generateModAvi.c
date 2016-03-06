@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <vfw.h>
+#include <stdint.h>
 
 #include "avi_utils.h"
 

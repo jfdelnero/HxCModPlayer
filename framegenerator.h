@@ -20,13 +20,13 @@
 typedef struct framegenerator_
 {
 	unsigned int xres,yres;
-	unsigned long * framebuffer;
-	unsigned long * textbuffer;
-	unsigned long * effectbuffer;
+	uint32_t * framebuffer;
+	uint32_t * textbuffer;
+	uint32_t * effectbuffer;
 
-	unsigned long  instrucolortable[32];
+	uint32_t  instrucolortable[32];
 }framegenerator;
 
 framegenerator * init_fg(unsigned int xres,unsigned int yres);
-unsigned long* fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,unsigned int currentsampleoffset);
+uint32_t * fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,unsigned int currentsampleoffset);
 void deinit_fg(framegenerator * fg);
