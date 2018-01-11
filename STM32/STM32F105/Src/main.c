@@ -41,6 +41,7 @@
 #include "stm32f1xx_hal.h"
 
 /* USER CODE BEGIN Includes */
+#include "../../../hxcmod.h"
 
 /* USER CODE END Includes */
 
@@ -53,7 +54,10 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+modcontext mcontext;
+extern const unsigned char mod_data[39424];
 
+unsigned short dmasoundbuffer[8192];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,7 +106,9 @@ int main(void)
   MX_DAC_Init();
 
   /* USER CODE BEGIN 2 */
-
+  hxcmod_init( &mcontext );
+  hxcmod_setcfg( &mcontext, 44100, 16, 1, 100, 0);
+  hxcmod_load( &mcontext, (void*)&mod_data, sizeof(mod_data) );
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -110,10 +116,11 @@ int main(void)
   while (1)
   {
   /* USER CODE END WHILE */
-
+    hxcmod_fillbuffer( &mcontext, dmasoundbuffer, 4096, NULL );
   /* USER CODE BEGIN 3 */
-
   }
+
+  hxcmod_unload( &mcontext );
   /* USER CODE END 3 */
 
 }
