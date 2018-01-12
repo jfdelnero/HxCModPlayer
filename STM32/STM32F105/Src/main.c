@@ -47,6 +47,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 DAC_HandleTypeDef hdac;
+DMA_HandleTypeDef hdma_dac_ch1;
+DMA_HandleTypeDef hdma_dac_ch2;
 
 TIM_HandleTypeDef htim3;
 
@@ -63,6 +65,7 @@ unsigned short dmasoundbuffer[8192];
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_DAC_Init(void);
@@ -101,6 +104,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   MX_DAC_Init();
@@ -116,7 +120,7 @@ int main(void)
   while (1)
   {
   /* USER CODE END WHILE */
-    hxcmod_fillbuffer( &mcontext, dmasoundbuffer, 4096, NULL );
+
   /* USER CODE BEGIN 3 */
   }
 
@@ -260,6 +264,24 @@ static void MX_USART1_UART_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+
+}
+
+/** 
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA2_Channel3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Channel3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Channel3_IRQn);
+  /* DMA2_Channel4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Channel4_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Channel4_IRQn);
 
 }
 
