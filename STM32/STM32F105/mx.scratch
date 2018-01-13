@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project>
-<ProjectName>F:\github\HxCModPlayer\STM32\STM32F105\\HxCModPlayer_STM32F105</ProjectName>
+<ProjectName>C:\Documents and Settings\Jeff\Bureau\HxCModPlayer\STM32\STM32F105\\HxCModPlayer_STM32F105</ProjectName>
 <CMSIS>Drivers\CMSIS</CMSIS>
 <HAL_Driver>C:\Documents and Settings\Jeff\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\CMSIS</HAL_Driver>
 

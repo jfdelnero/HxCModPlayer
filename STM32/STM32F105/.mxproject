@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=F:/github/HxCModPlayer/STM32/STM32F105/Inc
+HeaderPath=C:/Documents and Settings/Jeff/Bureau/HxCModPlayer/STM32/STM32F105/Inc
 HeaderFiles=stm32f1xx_it.h;stm32f1xx_hal_conf.h;main.h;
-SourcePath=F:/github/HxCModPlayer/STM32/STM32F105/Src
+SourcePath=C:/Documents and Settings/Jeff/Bureau/HxCModPlayer/STM32/STM32F105/Src
 SourceFiles=stm32f1xx_it.c;stm32f1xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]
