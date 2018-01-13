@@ -52,6 +52,7 @@ Src/main.c \
 ../../hxcmod.c \
 Src/mod_data.c \
 Src/print.c \
+Src/gotek_display.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dac.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c \

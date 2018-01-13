@@ -1,7 +1,8 @@
+// Minimal print functions
+// (c) Jean-François DEL NERO
+// (c) HxC2001
+
 #include "stm32f1xx_hal.h"
-
-#include <stdio.h>
-
 #include "print.h"
 
 extern UART_HandleTypeDef huart1;

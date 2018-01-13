@@ -1,3 +1,7 @@
+// Minimal print functions
+// (c) Jean-François DEL NERO
+// (c) HxC2001
+
 void printchar(char c);
 void print(const char *pucBuffer);
 void printdec(unsigned char c);

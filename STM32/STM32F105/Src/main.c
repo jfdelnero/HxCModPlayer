@@ -49,6 +49,7 @@
 
 #include "../../../hxcmod.h"
 #include "print.h"
+#include "gotek_display.h"
 
 /* USER CODE END Includes */
 
@@ -134,7 +135,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  int i;
+  int i,oldpatternpos;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -161,6 +162,7 @@ int main(void)
   MX_TIM6_Init();
 
   /* USER CODE BEGIN 2 */
+  init_display();
 
   print("\r\n\r\n");
   print("***************************************\r\n");
@@ -194,16 +196,22 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  i = 0;
+  oldpatternpos = -1;
   while (1)
   {
-  /* USER CODE END WHILE */
-
-  /* USER CODE BEGIN 3 */
+    /* USER CODE END WHILE */
+    //Print the pattern position if needed.
+    if(mcontext.patternpos != oldpatternpos)
+    {
+      oldpatternpos = mcontext.patternpos;
+      printdigit( oldpatternpos / mcontext.number_of_channels );
+    }
+    /* USER CODE BEGIN 3 */
   }
 
   hxcmod_unload( &mcontext );
   /* USER CODE END 3 */
-
 }
 
 /** System Clock Configuration
