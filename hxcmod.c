@@ -1016,15 +1016,17 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 	return 0;
 }
 
-void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigned long nbsample, tracker_buffer_state * trkbuf )
+void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long nbsample, tracker_buffer_state * trkbuf )
 {
 	unsigned long i, j;
 	unsigned long k;
 	unsigned char c;
 	unsigned int state_remaining_steps;
-	int l,r;
-	int ll,lr;
-	int tl,tr;
+#ifndef HXCMOD_MONO_OUTPUT
+	int l,ll,tl;
+#endif
+	int r,lr,tr;
+
 	short finalperiod;
 	note	*nptr;
 	channel *cptr;
@@ -1047,7 +1049,9 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 				}
 			}
 
+#ifndef HXCMOD_MONO_OUTPUT
 			ll = modctx->last_l_sample;
+#endif
 			lr = modctx->last_r_sample;
 
 			for (i = 0; i < nbsample; i++)
@@ -1115,7 +1119,9 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 					}
 				}
 
+#ifndef HXCMOD_MONO_OUTPUT
 				l=0;
+#endif
 				r=0;
 
 				for(j =0, cptr = modctx->channels; j < modctx->number_of_channels ; j++, cptr++)
@@ -1153,6 +1159,12 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 
 						k = cptr->samppos >> 10;
 
+#ifdef HXCMOD_MONO_OUTPUT
+						if( cptr->sampdata!=0 )
+						{
+							r += ( cptr->sampdata[k] *  cptr->volume );
+						}
+#else
 						if( cptr->sampdata!=0 && ( ((j&3)==1) || ((j&3)==2) ) )
 						{
 							r += ( cptr->sampdata[k] *  cptr->volume );
@@ -1162,6 +1174,7 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 						{
 							l += ( cptr->sampdata[k] *  cptr->volume );
 						}
+#endif
 
 						if( trkbuf && !state_remaining_steps )
 						{
@@ -1196,6 +1209,40 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 					state_remaining_steps--;
 				}
 
+#ifdef HXCMOD_MONO_OUTPUT
+				tr = (short)r;
+
+				if ( modctx->filter )
+				{
+					// Filter
+					r = (r+lr)>>1;
+				}
+
+				// Level limitation
+				if( r > 32767 ) r = 32767;
+				if( r < -32768 ) r = -32768;
+
+				// Store the final sample.
+	#ifdef HXCMOD_8BITS_OUTPUT
+
+		#ifdef HXCMOD_UNSIGNED_OUTPUT
+				outbuffer[i] = (r >> 8) + 127;
+		#else
+				outbuffer[i] = r >> 8;
+		#endif
+
+	#else
+
+		#ifdef HXCMOD_UNSIGNED_OUTPUT
+				outbuffer[i] = r + 32767;
+		#else
+				outbuffer[i] = r;
+		#endif
+
+	#endif
+
+				lr = tr;
+#else
 				tl = (short)l;
 				tr = (short)r;
 
@@ -1220,15 +1267,38 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 				if( r < -32768 ) r = -32768;
 
 				// Store the final sample.
-				outbuffer[(i*2)]   = l;
-				outbuffer[(i*2)+1] = r;
 
+
+	#ifdef HXCMOD_8BITS_OUTPUT
+
+		#ifdef HXCMOD_UNSIGNED_OUTPUT
+				outbuffer[(i*2)]   = ( l >> 8 ) + 127;
+				outbuffer[(i*2)+1] = ( r >> 8 ) + 127;
+		#else
+				outbuffer[(i*2)]   = l >> 8;
+				outbuffer[(i*2)+1] = r >> 8;
+		#endif
+
+	#else
+
+		#ifdef HXCMOD_UNSIGNED_OUTPUT
+				outbuffer[(i*2)]   = l + 32767;
+				outbuffer[(i*2)+1] = r + 32767;
+		#else
+				outbuffer[(i*2)]   = l;
+				outbuffer[(i*2)+1] = r;	
+		#endif
+
+	#endif
 				ll = tl;
 				lr = tr;
+#endif // HXCMOD_MONO_OUTPUT
 
 			}
 
+#ifndef HXCMOD_MONO_OUTPUT
 			modctx->last_l_sample = ll;
+#endif
 			modctx->last_r_sample = lr;
 
 			modctx->samplenb = modctx->samplenb+nbsample;
@@ -1238,8 +1308,12 @@ void hxcmod_fillbuffer( modcontext * modctx, unsigned short * outbuffer, unsigne
 			for (i = 0; i < nbsample; i++)
 			{
 				// Mod not loaded. Return blank buffer.
+#ifdef HXCMOD_MONO_OUTPUT
+				outbuffer[i] = 0;
+#else
 				outbuffer[(i*2)]   = 0;
-				outbuffer[(i*2)+1] = 0;
+				outbuffer[(i*2)+1] = 0;	
+#endif
 			}
 
 			if(trkbuf)
