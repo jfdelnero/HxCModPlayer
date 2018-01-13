@@ -51,7 +51,6 @@ C_SOURCES =  \
 Src/main.c \
 ../../hxcmod.c \
 Src/mod_data.c \
-Src/hardfault_vector.c \
 Src/print.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dac.c \
