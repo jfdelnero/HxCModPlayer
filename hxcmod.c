@@ -868,25 +868,15 @@ int hxcmod_init(modcontext * modctx)
 	return 0;
 }
 
-int hxcmod_setcfg(modcontext * modctx, int samplerate, int bits, int stereo, int stereo_separation, int filter)
+int hxcmod_setcfg(modcontext * modctx, int samplerate, int stereo_separation, int filter)
 {
 	if( modctx )
 	{
 		modctx->playrate = samplerate;
 
-		if( stereo )
-			modctx->stereo = 1;
-		else
-			modctx->stereo = 0;
-			
 		if(stereo_separation < 4)
 		{
 			modctx->stereo_separation = stereo_separation;
-		}
-
-		if( bits == 8 || bits == 16 )
-		{
-			modctx->bits = bits;
 		}
 
 		if( filter )
@@ -1286,7 +1276,7 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 				outbuffer[(i*2)+1] = r + 32767;
 		#else
 				outbuffer[(i*2)]   = l;
-				outbuffer[(i*2)+1] = r;	
+				outbuffer[(i*2)+1] = r;
 		#endif
 
 	#endif
@@ -1312,7 +1302,7 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 				outbuffer[i] = 0;
 #else
 				outbuffer[(i*2)]   = 0;
-				outbuffer[(i*2)+1] = 0;	
+				outbuffer[(i*2)+1] = 0;
 #endif
 			}
 

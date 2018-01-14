@@ -38,7 +38,7 @@ static void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float 
 
 			hxcmod_init( modctx );
 
-			hxcmod_setcfg( modctx, (int)samplerate, 16, 1, 1, 1);
+			hxcmod_setcfg( modctx, (int)samplerate, 1, 1);
 
 			hxcmod_load( modctx, inBuffer, inBufSize );
 		}

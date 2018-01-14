@@ -174,7 +174,7 @@ int main(void)
   hxcmod_init( &mcontext );
 
   print("HxCMod Set config...\r\n");
-  hxcmod_setcfg( &mcontext, PLAYER_SAMPLE_RATE, 16, 0, 0, 0);
+  hxcmod_setcfg( &mcontext, PLAYER_SAMPLE_RATE, 0, 0);
 
   print("Load module...\r\n");
   hxcmod_load( &mcontext, (void*)&mod_data, sizeof(mod_data) );
