@@ -657,19 +657,19 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			widest usage.
 			*/
 
-			if( (effect&0xFF) < 0x21 )
+			if( ( effect & 0xFF ) < 0x20 )
 			{
-				if( effect&0xFF )
+				if( effect & 0xFF )
 				{
-					mod->song.speed = effect&0xFF;
+					mod->song.speed = effect & 0xFF;
 					mod->patternticksaim = (long)mod->song.speed * ((mod->playrate * 5 ) / (((long)2 * (long)mod->bpm)));
 				}
 			}
 
-			if( (effect&0xFF) >= 0x21 )
+			if( ( effect & 0xFF ) >= 0x20 )
 			{
 				///	 HZ = 2 * BPM / 5
-				mod->bpm = effect&0xFF;
+				mod->bpm = effect & 0xFF;
 				mod->patternticksaim = (long)mod->song.speed * ((mod->playrate * 5 ) / (((long)2 * (long)mod->bpm)));
 			}
 
@@ -760,7 +760,7 @@ static void workeffect( note * nptr, channel * cptr )
 
 			if( cptr->effect == EFFECT_VOLSLIDE_TONEPORTA )
 			{
-				if( cptr->volumeslide > 0x0F )
+				if( cptr->volumeslide & 0xF0 )
 				{
 					cptr->volume = cptr->volume + (cptr->volumeslide>>4);
 
@@ -769,10 +769,10 @@ static void workeffect( note * nptr, channel * cptr )
 				}
 				else
 				{
-					cptr->volume = cptr->volume - (cptr->volumeslide);
+					cptr->volume -= ( cptr->volumeslide & 0x0F );
 
-					if(cptr->volume>63)
-						cptr->volume=0;
+					if( cptr->volume > 63)
+						cptr->volume = 0;
 				}
 			}
 		break;
