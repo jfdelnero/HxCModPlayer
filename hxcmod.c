@@ -213,7 +213,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 	muint curnote, arpnote;
 	muchar effect_op;
 	muchar effect_param,effect_param_l,effect_param_h;
-
+	muint enable_nxt_smp;
 	sample = (nptr->sampperiod & 0xF0) | (nptr->sampeffect >> 4);
 	period = ((nptr->sampperiod & 0xF) << 8) | nptr->period;
 	effect = ((nptr->sampeffect & 0xF) << 8) | nptr->effect;
@@ -222,29 +222,60 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 	effect_param_l = effect_param & 0x0F;
 	effect_param_h = effect_param >> 4;
 
+	enable_nxt_smp = 0;
 
 	operiod = cptr->period;
 
 	if ( period || sample )
 	{
-		if( sample && sample<32 )
+		if( sample && ( sample < 32 ) )
 		{
 			cptr->sampnum = sample - 1;
 		}
 
 		if( period || sample )
 		{
-			cptr->sampdata = mod->sampledata[cptr->sampnum];
-			cptr->length = mod->song.samples[cptr->sampnum].length;
-			cptr->reppnt = mod->song.samples[cptr->sampnum].reppnt;
-			cptr->replen = mod->song.samples[cptr->sampnum].replen;
+			if( period )
+			{
+				if( ( effect_op != EFFECT_TONE_PORTAMENTO ) || ( ( effect_op == EFFECT_TONE_PORTAMENTO ) && !cptr->sampdata ) )
+				{
+					// Not a Tone Partamento effect or no sound currently played :
+					// Immediately (re)trigger the new note
+					cptr->sampdata = mod->sampledata[cptr->sampnum];
+					cptr->length = mod->song.samples[cptr->sampnum].length;
+					cptr->reppnt = mod->song.samples[cptr->sampnum].reppnt;
+					cptr->replen = mod->song.samples[cptr->sampnum].replen;
+				}
+				else
+				{
+					// Partamento effect - Play the new note after the current sample.
+					if( effect_op == EFFECT_TONE_PORTAMENTO )
+						enable_nxt_smp = 1;
+				}
+			}
+			else // Note without period : Trigger it after the current sample.
+				enable_nxt_smp = 1;
+
+			if ( enable_nxt_smp )
+			{
+				// Prepare the next sample retrigger after the current one
+				cptr->nxt_sampdata = mod->sampledata[cptr->sampnum];
+				cptr->nxt_length = mod->song.samples[cptr->sampnum].length;
+				cptr->nxt_reppnt = mod->song.samples[cptr->sampnum].reppnt;
+				cptr->nxt_replen = mod->song.samples[cptr->sampnum].replen;
+
+				if(cptr->nxt_replen<=2)   // Protracker : don't play the sample if not looped...
+					cptr->nxt_sampdata = 0;
+
+				cptr->update_nxt_repeat = 1;
+			}
 
 			cptr->finetune = (mod->song.samples[cptr->sampnum].finetune) & 0xF;
 
 			if( effect_op != EFFECT_VIBRATO && effect_op != EFFECT_VOLSLIDE_VIBRATO )
 			{
-				cptr->vibraperiod=0;
-				cptr->vibrapointeur=0;
+				cptr->vibraperiod = 0;
+				cptr->vibrapointeur = 0;
 			}
 		}
 
@@ -1134,10 +1165,20 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 
 						if( cptr->replen<=2 )
 						{
-							if( (cptr->samppos>>10) >= (cptr->length) )
+							if( ( cptr->samppos >> 10) >= cptr->length )
 							{
 								cptr->length = 0;
 								cptr->reppnt = 0;
+
+								if(cptr->update_nxt_repeat)
+								{
+									cptr->replen = cptr->nxt_replen;
+									cptr->reppnt = cptr->nxt_reppnt;
+									cptr->sampdata = cptr->nxt_sampdata;
+									cptr->length = cptr->nxt_length;
+
+									cptr->update_nxt_repeat = 0;
+								}
 
 								if( cptr->length )
 									cptr->samppos = cptr->samppos % (((unsigned long)cptr->length)<<10);
@@ -1147,9 +1188,22 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 						}
 						else
 						{
-							if( (cptr->samppos>>10) >= (unsigned long)(cptr->replen+cptr->reppnt) )
+							if( ( cptr->samppos >> 10 ) >= (unsigned long)(cptr->replen+cptr->reppnt) )
 							{
-								cptr->samppos = ((unsigned long)(cptr->reppnt)<<10) + (cptr->samppos % ((unsigned long)(cptr->replen+cptr->reppnt)<<10));
+								if( cptr->update_nxt_repeat )
+								{
+									cptr->replen = cptr->nxt_replen;
+									cptr->reppnt = cptr->nxt_reppnt;
+									cptr->sampdata = cptr->nxt_sampdata;
+									cptr->length = cptr->nxt_length;
+
+									cptr->update_nxt_repeat = 0;
+								}
+
+								if( cptr->sampdata )
+								{
+									cptr->samppos = ((unsigned long)(cptr->reppnt)<<10) + (cptr->samppos % ((unsigned long)(cptr->replen+cptr->reppnt)<<10));
+								}
 							}
 						}
 

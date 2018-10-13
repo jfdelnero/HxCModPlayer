@@ -21,11 +21,11 @@
 #define MODPLAY_DEF
 
 // Basic type
-typedef unsigned char	muchar;
+typedef unsigned char   muchar;
 typedef signed   char   mchar;
-typedef unsigned short	muint;
-typedef          short	mint;
-typedef unsigned long	mulong;
+typedef unsigned short  muint;
+typedef          short  mint;
+typedef unsigned long   mulong;
 
 #ifdef HXCMOD_8BITS_OUTPUT
 	#ifdef HXCMOD_UNSIGNED_OUTPUT
@@ -83,10 +83,16 @@ typedef struct {
 //
 typedef struct {
 	mchar * sampdata;
+	mchar * nxt_sampdata;
 	muint   sampnum;
 	muint   length;
+	muint   nxt_length;
+	muint   update_nxt_repeat;
 	muint   reppnt;
 	muint   replen;
+	muint   nxt_reppnt;
+	muint   nxt_replen;
+
 	mulong  samppos;
 	muint   period;
 	muchar  volume;
@@ -94,7 +100,6 @@ typedef struct {
 	muchar  effect;
 	muchar  parameffect;
 	muint   effect_code;
-
 
 	mint    decalperiod;
 	mint    portaspeed;
@@ -216,6 +221,7 @@ typedef struct tracker_buffer_state_
 //   The optional trkbuf parameter can be used to get detailed status of the player. Put NULL/0 is unused.
 // -------------------------------------------
 // void hxcmod_unload( modcontext * modctx )
+//
 // - "Unload" / clear the player status.
 // -------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////////
