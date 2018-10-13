@@ -277,7 +277,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 	cptr->parameffect = 0;
 	cptr->effect_code = effect;
 
-	switch (effect >> 8)
+	switch ( effect >> 8 )
 	{
 		case EFFECT_ARPEGGIO:
 			/*
@@ -290,7 +290,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			A minor chord is when x=3, y=7.
 			*/
 
-			if(effect&0xff)
+			if( effect & 0xFF )
 			{
 				cptr->effect = EFFECT_ARPEGGIO;
 				cptr->parameffect = effect&0xff;
@@ -328,7 +328,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_PORTAMENTO_UP;
-			cptr->parameffect = effect&0xff;
+			cptr->parameffect = effect & 0xFF;
 		break;
 
 		case EFFECT_PORTAMENTO_DOWN:
@@ -341,7 +341,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_PORTAMENTO_DOWN;
-			cptr->parameffect = effect&0xff;
+			cptr->parameffect = effect & 0xFF;
 		break;
 
 		case EFFECT_TONE_PORTAMENTO:
@@ -357,9 +357,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_TONE_PORTAMENTO;
-			if( (effect&0xff) != 0 )
+			if( ( effect & 0xFF) != 0 )
 			{
-				cptr->portaspeed = (short)(effect&0xff);
+				cptr->portaspeed = (short)( effect & 0xFF);
 			}
 
 			if(period!=0)
@@ -382,9 +382,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 
 			cptr->effect = EFFECT_VIBRATO;
 			if( ( effect & 0x0F ) != 0 ) // Depth continue or change ?
-				cptr->vibraparam = (cptr->vibraparam & 0xF0) | ( effect & 0x0F );
+				cptr->vibraparam = ( cptr->vibraparam & 0xF0 ) | ( effect & 0x0F );
 			if( ( effect & 0xF0 ) != 0 ) // Speed continue or change ?
-				cptr->vibraparam = (cptr->vibraparam & 0x0F) | ( effect & 0xF0 );
+				cptr->vibraparam = ( cptr->vibraparam & 0x0F ) | ( effect & 0xF0 );
 
 		break;
 
@@ -434,7 +434,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			offset using the current volume.
 			*/
 
-			cptr->samppos = ((effect>>4) * 4096) + ((effect&0xF)*256);
+			cptr->samppos = ( ( effect >> 4 ) * 4096) + ( ( effect & 0x0F ) * 256 );
 
 		break;
 
@@ -448,7 +448,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_VOLUME_SLIDE;
-			cptr->volumeslide = (effect & 0xFF);
+			cptr->volumeslide = ( effect & 0xFF );
 		break;
 
 		case EFFECT_JUMP_POSITION:
@@ -460,7 +460,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			x*16+y are from 0 to 127.
 			*/
 
-			mod->tablepos = (effect & 0xFF);
+			mod->tablepos = ( effect & 0xFF );
 			if(mod->tablepos >= mod->song.length)
 				mod->tablepos = 0;
 			mod->patternpos = 0;
@@ -475,7 +475,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			Legal volumes are 0..64.
 			*/
 
-			cptr->volume = (effect & 0xFF);
+			cptr->volume = ( effect & 0xFF );
 		break;
 
 		case EFFECT_PATTERN_BREAK:
@@ -487,7 +487,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			exception above).
 			*/
 
-			mod->patternpos = ( ((effect>>4)&0xF)*10 + (effect&0xF) ) * mod->number_of_channels;
+			mod->patternpos = ( ( ( effect>>4 ) & 0xF ) * 10 + ( effect & 0x0F ) ) * mod->number_of_channels;
 			mod->jump_loop_effect = 1;
 			mod->tablepos++;
 			if(mod->tablepos >= mod->song.length)
@@ -496,7 +496,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 		break;
 
 		case EFFECT_EXTENDED:
-			switch( (effect>>4) & 0xF )
+			switch( ( effect >> 4 ) & 0xF )
 			{
 				case EFFECT_E_FINE_PORTA_UP:
 					/*
@@ -507,7 +507,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					beyond the note B3 (period 113).
 					*/
 
-					cptr->period -= (effect & 0xF);
+					cptr->period -= ( effect & 0x0F );
 					if( cptr->period < 113 )
 						cptr->period = 113;
 				break;
@@ -520,7 +520,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					slide beyond the note C1 (period 856).
 					*/
 
-					cptr->period += (effect & 0xF);
+					cptr->period += ( effect & 0x0F );
 					if( cptr->period > 856 )
 						cptr->period = 856;
 				break;
@@ -534,8 +534,8 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					volume 64.
 					*/
 
-					cptr->volume += (effect & 0xF);
-					if( cptr->volume>64 )
+					cptr->volume += ( effect & 0x0F );
+					if( cptr->volume > 64 )
 						cptr->volume = 64;
 				break;
 
@@ -547,7 +547,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					beyond volume 0.
 					*/
 
-					cptr->volume -= (effect & 0xF);
+					cptr->volume -= ( effect & 0x0F );
 					if( cptr->volume > 200 )
 						cptr->volume = 0;
 				break;
@@ -581,7 +581,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 						}
 						else
 						{
-							cptr->patternloopcnt = (effect & 0xF);
+							cptr->patternloopcnt = ( effect & 0x0F );
 							mod->patternpos = cptr->patternloopstartpoint;
 							mod->jump_loop_effect = 1;
 						}
@@ -603,7 +603,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					continue during delay.
 					*/
 
-					mod->patterndelay = (effect & 0xF);
+					mod->patterndelay = ( effect & 0x0F );
 				break;
 
 				case EFFECT_E_NOTE_CUT:
@@ -617,8 +617,8 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					this effect.
 					*/
 					cptr->effect = EFFECT_E_NOTE_CUT;
-					cptr->cut_param = (effect & 0xF);
-					if(!cptr->cut_param)
+					cptr->cut_param = ( effect & 0x0F );
+					if( !cptr->cut_param )
 						cptr->volume = 0;
 				break;
 
@@ -701,7 +701,7 @@ static void workeffect( note * nptr, channel * cptr )
 
 		case EFFECT_PORTAMENTO_UP:
 
-			if(cptr->period)
+			if( cptr->period )
 			{
 				cptr->period -= cptr->parameffect;
 
@@ -713,7 +713,7 @@ static void workeffect( note * nptr, channel * cptr )
 
 		case EFFECT_PORTAMENTO_DOWN:
 
-			if(cptr->period)
+			if( cptr->period )
 			{
 				cptr->period += cptr->parameffect;
 
@@ -762,16 +762,16 @@ static void workeffect( note * nptr, channel * cptr )
 			{
 				if( cptr->volumeslide & 0xF0 )
 				{
-					cptr->volume = cptr->volume + (cptr->volumeslide>>4);
+					cptr->volume += ( cptr->volumeslide >> 4 );
 
-					if(cptr->volume>63)
+					if( cptr->volume > 63 )
 						cptr->volume = 63;
 				}
 				else
 				{
 					cptr->volume -= ( cptr->volumeslide & 0x0F );
 
-					if( cptr->volume > 63)
+					if( cptr->volume > 63 )
 						cptr->volume = 0;
 				}
 			}
@@ -785,20 +785,20 @@ static void workeffect( note * nptr, channel * cptr )
 			if( cptr->vibrapointeur > 31 )
 				cptr->vibraperiod = -cptr->vibraperiod;
 
-			cptr->vibrapointeur = (cptr->vibrapointeur+(((cptr->vibraparam>>4))&0xf)) & 0x3F;
+			cptr->vibrapointeur = ( cptr->vibrapointeur + ( ( cptr->vibraparam>>4 ) & 0x0F) ) & 0x3F;
 
 			if( cptr->effect == EFFECT_VOLSLIDE_VIBRATO )
 			{
-				if( cptr->volumeslide > 0xF )
+				if( cptr->volumeslide & 0xF0 )
 				{
-					cptr->volume = cptr->volume+(cptr->volumeslide>>4);
+					cptr->volume += ( cptr->volumeslide >> 4 );
 
 					if( cptr->volume > 64 )
 						cptr->volume = 64;
 				}
 				else
 				{
-					cptr->volume = cptr->volume - cptr->volumeslide;
+					cptr->volume -= cptr->volumeslide;
 
 					if( cptr->volume > 64 )
 						cptr->volume = 0;
@@ -809,16 +809,16 @@ static void workeffect( note * nptr, channel * cptr )
 
 		case EFFECT_VOLUME_SLIDE:
 
-			if( cptr->volumeslide > 0xF )
+			if( cptr->volumeslide & 0xF0 )
 			{
-				cptr->volume += (cptr->volumeslide>>4);
+				cptr->volume += ( cptr->volumeslide >> 4 );
 
 				if( cptr->volume > 64 )
 					cptr->volume = 64;
 			}
 			else
 			{
-				cptr->volume -= (cptr->volumeslide&0xf);
+				cptr->volume -= cptr->volumeslide;
 
 				if( cptr->volume > 64 )
 					cptr->volume = 0;
@@ -826,10 +826,10 @@ static void workeffect( note * nptr, channel * cptr )
 		break;
 
 		case EFFECT_E_NOTE_CUT:
-			if(cptr->cut_param)
+			if( cptr->cut_param )
 				cptr->cut_param--;
 
-			if(!cptr->cut_param)
+			if( !cptr->cut_param )
 				cptr->volume = 0;
 		break;
 
