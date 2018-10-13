@@ -211,10 +211,17 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 {
 	muint sample, period, effect, operiod;
 	muint curnote, arpnote;
+	muchar effect_op;
+	muchar effect_param,effect_param_l,effect_param_h;
 
 	sample = (nptr->sampperiod & 0xF0) | (nptr->sampeffect >> 4);
 	period = ((nptr->sampperiod & 0xF) << 8) | nptr->period;
 	effect = ((nptr->sampeffect & 0xF) << 8) | nptr->effect;
+	effect_op = nptr->sampeffect & 0xF;
+	effect_param = nptr->effect;
+	effect_param_l = effect_param & 0x0F;
+	effect_param_h = effect_param >> 4;
+
 
 	operiod = cptr->period;
 
@@ -232,31 +239,31 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			cptr->reppnt = mod->song.samples[cptr->sampnum].reppnt;
 			cptr->replen = mod->song.samples[cptr->sampnum].replen;
 
-			cptr->finetune = (mod->song.samples[cptr->sampnum].finetune)&0xF;
+			cptr->finetune = (mod->song.samples[cptr->sampnum].finetune) & 0xF;
 
-			if(effect>>8!=4 && effect>>8!=6)
+			if( effect_op != EFFECT_VIBRATO && effect_op != EFFECT_VOLSLIDE_VIBRATO )
 			{
 				cptr->vibraperiod=0;
 				cptr->vibrapointeur=0;
 			}
 		}
 
-		if( (sample != 0) && ( (effect>>8) != EFFECT_VOLSLIDE_TONEPORTA ) )
+		if( (sample != 0) && ( effect_op != EFFECT_VOLSLIDE_TONEPORTA ) )
 		{
 			cptr->volume = mod->song.samples[cptr->sampnum].volume;
 			cptr->volumeslide = 0;
 		}
 
-		if( ( (effect>>8) != EFFECT_TONE_PORTAMENTO && (effect>>8)!=EFFECT_VOLSLIDE_TONEPORTA) )
+		if( ( effect_op != EFFECT_TONE_PORTAMENTO ) && ( effect_op != EFFECT_VOLSLIDE_TONEPORTA ) )
 		{
-			if (period!=0)
+			if ( period != 0 )
 				cptr->samppos = 0;
 		}
 
-		cptr->decalperiod=0;
+		cptr->decalperiod = 0;
 		if( period )
 		{
-			if(cptr->finetune)
+			if( cptr->finetune )
 			{
 				if( cptr->finetune <= 7 )
 				{
@@ -270,14 +277,13 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 
 			cptr->period = period;
 		}
-
 	}
 
 	cptr->effect = 0;
 	cptr->parameffect = 0;
 	cptr->effect_code = effect;
 
-	switch ( effect >> 8 )
+	switch ( effect_op )
 	{
 		case EFFECT_ARPEGGIO:
 			/*
@@ -290,10 +296,10 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			A minor chord is when x=3, y=7.
 			*/
 
-			if( effect & 0xFF )
+			if( effect_param )
 			{
 				cptr->effect = EFFECT_ARPEGGIO;
-				cptr->parameffect = effect&0xff;
+				cptr->parameffect = effect_param;
 
 				cptr->ArpIndex = 0;
 
@@ -328,7 +334,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_PORTAMENTO_UP;
-			cptr->parameffect = effect & 0xFF;
+			cptr->parameffect = effect_param;
 		break;
 
 		case EFFECT_PORTAMENTO_DOWN:
@@ -341,7 +347,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_PORTAMENTO_DOWN;
-			cptr->parameffect = effect & 0xFF;
+			cptr->parameffect = effect_param;
 		break;
 
 		case EFFECT_TONE_PORTAMENTO:
@@ -357,9 +363,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_TONE_PORTAMENTO;
-			if( ( effect & 0xFF) != 0 )
+			if( effect_param != 0 )
 			{
-				cptr->portaspeed = (short)( effect & 0xFF);
+				cptr->portaspeed = (short)( effect_param );
 			}
 
 			if(period!=0)
@@ -381,10 +387,10 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_VIBRATO;
-			if( ( effect & 0x0F ) != 0 ) // Depth continue or change ?
-				cptr->vibraparam = ( cptr->vibraparam & 0xF0 ) | ( effect & 0x0F );
-			if( ( effect & 0xF0 ) != 0 ) // Speed continue or change ?
-				cptr->vibraparam = ( cptr->vibraparam & 0x0F ) | ( effect & 0xF0 );
+			if( effect_param_l != 0 ) // Depth continue or change ?
+				cptr->vibraparam = ( cptr->vibraparam & 0xF0 ) | effect_param_l;
+			if( effect_param_h != 0 ) // Speed continue or change ?
+				cptr->vibraparam = ( cptr->vibraparam & 0x0F ) | ( effect_param_h << 4 );
 
 		break;
 
@@ -406,8 +412,8 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			}
 
 			cptr->effect = EFFECT_VOLSLIDE_TONEPORTA;
-			if( ( effect & 0xFF ) != 0 )
-				cptr->volumeslide = ( effect & 0xFF );
+			if( effect_param != 0 )
+				cptr->volumeslide = effect_param;
 
 		break;
 
@@ -421,8 +427,8 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_VOLSLIDE_VIBRATO;
-			if( (effect & 0xFF) != 0 )
-				cptr->volumeslide = (effect & 0xFF);
+			if( effect_param != 0 )
+				cptr->volumeslide = effect_param;
 		break;
 
 		case EFFECT_SET_OFFSET:
@@ -434,7 +440,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			offset using the current volume.
 			*/
 
-			cptr->samppos = ( ( effect >> 4 ) * 4096) + ( ( effect & 0x0F ) * 256 );
+			cptr->samppos = ( (muint)(effect_param_h) << 12) + ( (muint)(effect_param_l << 8) );
 
 		break;
 
@@ -448,7 +454,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->effect = EFFECT_VOLUME_SLIDE;
-			cptr->volumeslide = ( effect & 0xFF );
+			cptr->volumeslide = effect_param;
 		break;
 
 		case EFFECT_JUMP_POSITION:
@@ -460,7 +466,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			x*16+y are from 0 to 127.
 			*/
 
-			mod->tablepos = ( effect & 0xFF );
+			mod->tablepos = effect_param;
 			if(mod->tablepos >= mod->song.length)
 				mod->tablepos = 0;
 			mod->patternpos = 0;
@@ -475,7 +481,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			Legal volumes are 0..64.
 			*/
 
-			cptr->volume = ( effect & 0xFF );
+			cptr->volume = effect_param;
 		break;
 
 		case EFFECT_PATTERN_BREAK:
@@ -487,7 +493,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			exception above).
 			*/
 
-			mod->patternpos = ( ( ( effect>>4 ) & 0xF ) * 10 + ( effect & 0x0F ) ) * mod->number_of_channels;
+			mod->patternpos = ( (muint)(effect_param_h) * 10 + effect_param_l ) * mod->number_of_channels;
 			mod->jump_loop_effect = 1;
 			mod->tablepos++;
 			if(mod->tablepos >= mod->song.length)
@@ -496,7 +502,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 		break;
 
 		case EFFECT_EXTENDED:
-			switch( ( effect >> 4 ) & 0xF )
+			switch( effect_param_h )
 			{
 				case EFFECT_E_FINE_PORTA_UP:
 					/*
@@ -507,7 +513,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					beyond the note B3 (period 113).
 					*/
 
-					cptr->period -= ( effect & 0x0F );
+					cptr->period -= effect_param_l;
 					if( cptr->period < 113 )
 						cptr->period = 113;
 				break;
@@ -520,7 +526,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					slide beyond the note C1 (period 856).
 					*/
 
-					cptr->period += ( effect & 0x0F );
+					cptr->period += effect_param_l;
 					if( cptr->period > 856 )
 						cptr->period = 856;
 				break;
@@ -534,7 +540,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					volume 64.
 					*/
 
-					cptr->volume += ( effect & 0x0F );
+					cptr->volume += effect_param_l;
 					if( cptr->volume > 64 )
 						cptr->volume = 64;
 				break;
@@ -547,7 +553,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					beyond volume 0.
 					*/
 
-					cptr->volume -= ( effect & 0x0F );
+					cptr->volume -= effect_param_l;
 					if( cptr->volume > 200 )
 						cptr->volume = 0;
 				break;
@@ -564,7 +570,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					may generate an infinite loop if you try to nest 'loop pattern's.
 					*/
 
-					if( effect & 0xF )
+					if( effect_param_l )
 					{
 						if( cptr->patternloopcnt )
 						{
@@ -581,7 +587,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 						}
 						else
 						{
-							cptr->patternloopcnt = ( effect & 0x0F );
+							cptr->patternloopcnt = effect_param_l;
 							mod->patternpos = cptr->patternloopstartpoint;
 							mod->jump_loop_effect = 1;
 						}
@@ -603,7 +609,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					continue during delay.
 					*/
 
-					mod->patterndelay = ( effect & 0x0F );
+					mod->patterndelay = effect_param_l;
 				break;
 
 				case EFFECT_E_NOTE_CUT:
@@ -617,7 +623,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					this effect.
 					*/
 					cptr->effect = EFFECT_E_NOTE_CUT;
-					cptr->cut_param = ( effect & 0x0F );
+					cptr->cut_param = effect_param_l;
 					if( !cptr->cut_param )
 						cptr->volume = 0;
 				break;
@@ -657,19 +663,19 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			widest usage.
 			*/
 
-			if( ( effect & 0xFF ) < 0x20 )
+			if( effect_param < 0x20 )
 			{
-				if( effect & 0xFF )
+				if( effect_param )
 				{
-					mod->song.speed = effect & 0xFF;
+					mod->song.speed = effect_param;
 					mod->patternticksaim = (long)mod->song.speed * ((mod->playrate * 5 ) / (((long)2 * (long)mod->bpm)));
 				}
 			}
 
-			if( ( effect & 0xFF ) >= 0x20 )
+			if( effect_param >= 0x20 )
 			{
 				///	 HZ = 2 * BPM / 5
-				mod->bpm = effect & 0xFF;
+				mod->bpm = effect_param;
 				mod->patternticksaim = (long)mod->song.speed * ((mod->playrate * 5 ) / (((long)2 * (long)mod->bpm)));
 			}
 
