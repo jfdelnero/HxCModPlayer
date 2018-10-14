@@ -245,6 +245,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					cptr->length = mod->song.samples[cptr->sampnum].length;
 					cptr->reppnt = mod->song.samples[cptr->sampnum].reppnt;
 					cptr->replen = mod->song.samples[cptr->sampnum].replen;
+
+					// Cancel any delayed note...
+					cptr->update_nxt_repeat = 0;
 				}
 				else
 				{
