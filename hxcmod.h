@@ -93,6 +93,11 @@ typedef struct {
 	muint   nxt_reppnt;
 	muint   nxt_replen;
 
+	muint   funkoffset;
+	mint    funkspeed;
+
+	mint    glissando;
+
 	mulong  samppos;
 	muint   period;
 	muchar  volume;

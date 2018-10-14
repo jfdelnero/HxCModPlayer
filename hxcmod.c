@@ -77,7 +77,7 @@
 #define EFFECT_E_FINE_PORTA_DOWN     0x2 // Supported
 #define EFFECT_E_GLISSANDO_CTRL      0x3 // - TO BE DONE -
 #define EFFECT_E_VIBRATO_WAVEFORM    0x4 // - TO BE DONE -
-#define EFFECT_E_SET_FINETUNE        0x5 // - TO BE DONE -
+#define EFFECT_E_SET_FINETUNE        0x5 // Supported
 #define EFFECT_E_PATTERN_LOOP        0x6 // Supported
 #define EFFECT_E_TREMOLO_WAVEFORM    0x7 // - TO BE DONE -
 #define EFFECT_E_SET_PANNING_2       0x8 // - TO BE DONE -
@@ -87,7 +87,7 @@
 #define EFFECT_E_NOTE_CUT            0xC // Supported
 #define EFFECT_E_NOTE_DELAY          0xD // - TO BE DONE -
 #define EFFECT_E_PATTERN_DELAY       0xE // Supported
-#define EFFECT_E_INVERT_LOOP         0xF // - TO BE DONE -
+#define EFFECT_E_INVERT_LOOP         0xF // Supported (W.I.P)
 #define EFFECT_SET_SPEED             0xF0 // Supported
 #define EFFECT_SET_TEMPO             0xF2 // Supported
 
@@ -111,10 +111,15 @@ static const short periodtable[]=
 };
 
 static const short sintable[]={
-	  0,  24,  49,  74,  97, 120, 141,161,
-	180, 197, 212, 224, 235, 244, 250,253,
-	255, 253, 250, 244, 235, 224, 212,197,
-	180, 161, 141, 120,  97,  74,  49, 24
+	  0,  24,  49,  74,  97, 120, 141, 161,
+	180, 197, 212, 224, 235, 244, 250, 253,
+	255, 253, 250, 244, 235, 224, 212, 197,
+	180, 161, 141, 120,  97,  74,  49,  24
+};
+
+static const muchar InvertLoopTable[]={
+	  0,   5,   6,   7,   8,  10,  11, 13,
+	 16,  19,  22,  26,  32,  43,  64, 128
 };
 
 typedef struct modtype_
@@ -205,6 +210,29 @@ static int getnote( modcontext * mod, unsigned short period, int finetune )
 	}
 
 	return MAXNOTES;
+}
+
+static void doFunk(channel * cptr)
+{
+	if(cptr->funkspeed)
+	{
+		cptr->funkoffset += InvertLoopTable[cptr->funkspeed];
+		if( cptr->funkoffset > 128 )
+		{
+			cptr->funkoffset = 0;
+			if( cptr->sampdata && cptr->length && (cptr->replen > 2) )
+			{
+				if( ( (cptr->samppos) >> 10 ) >= (unsigned long)(cptr->replen+cptr->reppnt) )
+				{
+					cptr->samppos = ((unsigned long)(cptr->reppnt)<<10) + (cptr->samppos % ((unsigned long)(cptr->replen+cptr->reppnt)<<10));
+				}
+
+				// Note : Directly modify the sample in the mod buffer...
+				// The current Invert Loop effect implementation can't be played from ROM.
+				cptr->sampdata[cptr->samppos >> 10] = -1 - cptr->sampdata[cptr->samppos >> 10];
+			}
+		}
+	}
 }
 
 static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
@@ -565,6 +593,18 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 						cptr->period = 856;
 				break;
 
+				case EFFECT_E_GLISSANDO_CTRL:
+					/*
+					[14][3]: Set glissando on/off
+					Where [14][3][x] means "set glissando ON if x is 1, OFF if x is 0".
+					Used in conjunction with [3] ('Slide to note'). If glissando is on,
+					then 'Slide to note' will slide in semitones, otherwise will
+					perform the default smooth slide.
+					*/
+
+					cptr->glissando = effect_param_l;
+				break;
+
 				case EFFECT_E_FINE_VOLSLIDE_UP:
 					/*
 					[14][10]: Fine volume slide up
@@ -590,6 +630,36 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					cptr->volume -= effect_param_l;
 					if( cptr->volume > 200 )
 						cptr->volume = 0;
+				break;
+
+				case EFFECT_E_SET_FINETUNE:
+					/*
+					[14][5]: Set finetune value
+					Where [14][5][x] means "sets the finetune value of the current
+					sample to the signed nibble x". x has legal values of 0..15,
+					corresponding to signed nibbles 0..7,-8..-1 (see start of text for
+					more info on finetune values).
+					*/
+
+					cptr->finetune = effect_param_l;
+
+					if( period )
+					{
+						if( cptr->finetune )
+						{
+							if( cptr->finetune <= 7 )
+							{
+								period = mod->fullperiod[getnote(mod,period,0) + cptr->finetune];
+							}
+							else
+							{
+								period = mod->fullperiod[getnote(mod,period,0) - (16 - (cptr->finetune)) ];
+							}
+						}
+
+						cptr->period = period;
+					}
+
 				break;
 
 				case EFFECT_E_PATTERN_LOOP:
@@ -662,6 +732,21 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 						cptr->volume = 0;
 				break;
 
+				case EFFECT_E_INVERT_LOOP:
+					/*
+					Where [14][15][x] means "if x is greater than 0, then play the
+					current sample's loop upside down at speed x". Each byte in the
+					sample's loop will have its sign changed (negated). It will only
+					work if the sample's loop (defined previously) is not too big. The
+					speed is based on an internal table.
+					*/
+
+					cptr->funkspeed = effect_param_l;
+
+					doFunk(cptr);
+
+				break;
+
 				default:
 
 				break;
@@ -725,6 +810,8 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 
 static void workeffect( note * nptr, channel * cptr )
 {
+	doFunk(cptr);
+
 	switch(cptr->effect)
 	{
 		case EFFECT_ARPEGGIO:
@@ -796,6 +883,11 @@ static void workeffect( note * nptr, channel * cptr )
 					// If the slide is over, don't let it to be retriggered.
 					cptr->portaperiod = 0;
 				}
+			}
+
+			if( cptr->glissando )
+			{
+				// TODO : Glissando effect.
 			}
 
 			if( cptr->effect == EFFECT_VOLSLIDE_TONEPORTA )
