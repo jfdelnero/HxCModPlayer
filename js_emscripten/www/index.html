@@ -1,18 +1,26 @@
 <!DOCTYPE html>
-<html class="no-js">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<title>Emscriptened HxC MOD player</title>
-		<meta name="description" content="Javascript HxCMOD">
+<html lang="fr">
 
-		<meta name="viewport" content="width=device-width">
+	<head>
+		<link rel="stylesheet" type="text/css" href="../style.css">
+		<title>HxC2001 HeadQuarters : Emscriptened HxC MOD player test page</title>
+		<link rel="shortcut icon" href="../pofasm.ico" type="image/x-icon">
+		<link rel="icon" href="../pofasm.ico" type="image/x-icon">
+		<meta name="description" content="Tout sur l`assembleur et le hardware, sur toutes sortes de plates formes (X86, 68000, Z80, etc)">
+		<meta name="keywords" content="Tibench, Asm, X86, 68000 , Z80 , Z80Sys, TI89, Tutorial, numerique,  Squale Apollo 7, 6809, Squale">
+		<meta http-equiv="content-Type" content="text/html; charset=utf-8">
+		<meta name="Author" content="HxC2001 Tech">
+		<meta name="Owner" content="HxC2001 Tech">
+		<meta name="Language" content="FR">
+		<meta name="Identifier-url" content="http://hxc2001.free.fr">
+		<meta name="dc.language" content="fr">
+		<meta name="robots" content="index, follow">
+		<meta name="viewport" content="width=device-width, initial-scale=0.6">
 
 		<script async type="text/javascript" src="js_hxcmod_player.js"></script>
 		<script type="text/javascript" src="webaudio_layer.js"></script>
 
 		<script type="text/javascript">
-
 			var modplayer;
 
 			function init_player()
@@ -49,77 +57,403 @@
 			draganddropfile.ondragenter = function(e){e.preventDefault();}
 
 			draganddropfile.ondragover = function(e){e.preventDefault();}
-
 		</script>
 	</head>
 
 	<body>
-		<h1>Emscriptened HxCMOD player test page</h1>
+		<table class="topmenu">
+			<tbody>
+				<tr>
+					<td>
+						<table class="topmenu_logo">
+							<tbody>
+								<tr>
+									<td>
+										<a href="/"><img alt="HxC2001" src="../img/ban1.jpg"></a>
+									</td>
+									<td class="rightalign">
+										<a href="/"><img alt="HxC2001" src="../img/ban3.jpg"></a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table class="topmenu_menu">
+							<tbody>
+								<tr>
+									<td><img alt="" src="../img/separat.gif"></td>
+									<td><a href="../index.html">Pr&eacute;sentation</a></td>
+									<td><img alt="" src="../img/separat.gif"></td>
+									<td><a href="../hard.htm">Hardware</a></td>
+									<td><img alt="" src="../img/separat.gif"></td>
+									<td><a href="../prog.htm"><i>Programmation</i></a></td>
+									<td><img alt="" src="../img/separat.gif"></td>
+									<td><a href="../liens.htm">Links</a></td>
+									<td><img alt="" src="../img/separat.gif"></td>
+									<td><a href="../divers.htm">Divers</a></td>
+									<td><img alt="" src="../img/separat.gif"></td>
+									<td><a href="../imiel.htm" target="_blank">Contact</a></td>
+									<td><img alt="" src="../img/separat.gif"></td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 
-		<p>Tested on Firefox 40.0.3, Chrome 45.0, Safari 7.0.6, Edge/Spartan, Android 5.0<br>
-		Works on any web browser with the Web Audio API support and a decent JavaScript engine. :)<br>
-		No plugin required. Very low CPU usage, similar to the native version (Thanks to the asm.js support).<br>
-		The sources are available on <a href="https://github.com/jfdelnero/HxCModPlayer" target="blank"><b>GitHub</b></a>.<br>
-		<a href="http://kripken.github.io/emscripten-site/" target="blank">Emscripten</a> was used to generate the JavaScript code from the HxCMOD C sources code.
-		</p>
+		<div class="hxc2001">
+
+			<h1>Emscriptened HxCMOD player test page</h1>
+
+			<p>Tested on Firefox 40.0.3, Chrome 45.0, Safari 7.0.6, Edge/Spartan, Android 5.0<br>
+			Works on any web browser with the Web Audio API support and a decent JavaScript engine. :)<br>
+			No plugin required. Very low CPU usage, similar to the native version (Thanks to the asm.js support).<br>
+			The sources are available on <a href="https://github.com/jfdelnero/HxCModPlayer" target="blank"><b>GitHub</b></a>.<br>
+			<a href="http://kripken.github.io/emscripten-site/" target="blank">Emscripten</a> was used to generate the JavaScript code from the HxCMOD C sources code.
+			</p>
 		
-		<p>Drap and drop any MOD music file on this page to play it or click on one of the above MOD files.</p>
+			<p>Drap and drop any MOD music file on this page to play it or click on one of the above MOD files.</p>
 
-		<h2>MOD files (Select the MOD to listen it):</h2>
-		<span class="marge">
-		<a onclick="loadMOD('mods/DOPE.MOD')" href="#"> - DOPE.MOD (957334 bytes)</a><br>
-		<a onclick="loadMOD('mods/meo-sleeping_waste.mod')" href="#"> - meo-sleeping_waste.mod (39424 bytes)</a><br>
-		<a onclick="loadMOD('mods/juice-the_rising_sun.mod')" href="#"> - juice-the_rising_sun.mod (71238 bytes)</a><br>
-		<a onclick="loadMOD('mods/lunatic.mod')" href="#"> - lunatic.mod (321924 bytes)</a><br>
-		<a onclick="loadMOD('mods/SUPERLM.MOD')" href="#"> - SUPERLM.MOD (15410 bytes)</a><br>
-		<a onclick="loadMOD('mods/CITRON.MOD')" href="#"> - CITRON.MOD (301146 bytes)</a><br>
-		<a onclick="loadMOD('mods/BUD.MOD')" href="#"> - BUD.MOD (263232 bytes)</a><br>
-		<a onclick="loadMOD('mods/dr_awesome-intro_music3.mod')" href="#"> - dr_awesome-intro_music3.mod (18486 bytes)</a><br>
-		<a onclick="loadMOD('mods/rez-monday.mod')" href="#"> - rez-monday.mod (37000 bytes)</a><br>
-		<a onclick="loadMOD('mods/clawz-fastAndfriendly.mod')" href="#"> - clawz-fastAndfriendly.mod (5184 bytes)</a><br>
-		<a onclick="loadMOD('mods/emax-delicate_oooz.mod')" href="#"> - emax-delicate_oooz.mod (17968 bytes)</a><br>
-		<a onclick="loadMOD('mods/jason-shortness.mod')" href="#"> - jason-shortness.mod (17898 bytes)</a><br>
-		<a onclick="loadMOD('mods/melodee-laxity.mod')" href="#"> - melodee-laxity.mod (51090 bytes)</a><br>
-		<a onclick="loadMOD('mods/ASM94.MOD')" href="#"> - ASM94.MOD (139878 bytes)</a><br>
-		<a onclick="loadMOD('mods/stargazer-chip2.mod')" href="#"> - stargazer-chip2.mod (15372 bytes)</a><br>
-		<a onclick="loadMOD('mods/man_s_mi.mod')" href="#"> - man_s_mi.mod (169708 bytes)</a><br>
-		<a onclick="loadMOD('mods/rez-delta.mod')" href="#"> - rez-delta.mod (23900 bytes)</a><br>
-		<a onclick="loadMOD('mods/nao-deceased_by_disease.mod')" href="#"> - nao-deceased_by_disease.mod (7600 bytes)</a><br>
-		<a onclick="loadMOD('mods/reflex-spotlights.mod')" href="#"> - reflex-spotlights.mod (8250 bytes)</a><br>
-		<a onclick="loadMOD('mods/jazz-nuseup42.mod')" href="#"> - jazz-nuseup42.mod (51024 bytes)</a><br>
-		<a onclick="loadMOD('mods/Pro_BMX_Simulator.mod')" href="#"> - Pro_BMX_Simulator.mod (30480 bytes)</a><br>
-		<a onclick="loadMOD('mods/rez-bubble_toast_score.mod')" href="#"> - rez-bubble_toast_score.mod (3600 bytes)</a><br>
-		<a onclick="loadMOD('mods/maktone-class_cracktro15.mod')" href="#"> - maktone-class_cracktro15.mod (13766 bytes)</a><br>
-		<a onclick="loadMOD('mods/maktone-the_crazy_dentist.mod')" href="#"> - maktone-the_crazy_dentist.mod (13696 bytes)</a><br>
-		<a onclick="loadMOD('mods/reflex-tiny_diny.mod')" href="#"> - reflex-tiny_diny.mod (13104 bytes)</a><br>
-		<a onclick="loadMOD('mods/estrayk-horizon.mod')" href="#"> - estrayk-horizon.mod (66276 bytes)</a><br>
-		<a onclick="loadMOD('mods/nao-glamour4u.mod')" href="#"> - nao-glamour4u.mod (31996 bytes)</a><br>
-		<a onclick="loadMOD('mods/nao-gabber_astro.mod')" href="#"> - nao-gabber_astro.mod (22874 bytes)</a><br>
-		<a onclick="loadMOD('mods/rez-the_no_named.mod')" href="#"> - rez-the_no_named.mod (28000 bytes)</a><br>
-		<a onclick="loadMOD('mods/estrayk-her6.mod')" href="#"> - estrayk-her6.mod (55338 bytes)</a><br>
-		<a onclick="loadMOD('mods/maktone-class6.mod')" href="#"> - maktone-class6.mod (17076 bytes)</a><br>
-		<a onclick="loadMOD('mods/mr_death-red_velvet.mod')" href="#"> - mr_death-red_velvet.mod (29496 bytes)</a><br>
-		<a onclick="loadMOD('mods/estrayk-hybris-ingame.mod')" href="#"> - estrayk-hybris-ingame.mod (45240 bytes)</a><br>
-		<a onclick="loadMOD('mods/rez-gigi.mod')" href="#"> - rez-gigi.mod (14000 bytes)</a><br>
-		<a onclick="loadMOD('mods/mattis-lowsi_jeti_maah.mod')" href="#"> - mattis-lowsi_jeti_maah.mod (5882 bytes)</a><br>
-		<a onclick="loadMOD('mods/rez-r0t0f3ul.mod')" href="#"> - rez-r0t0f3ul.mod (30000 bytes)</a><br>
-		<a onclick="loadMOD('mods/PINILL-PRESENT.MOD')" href="#"> - PINILL-PRESENT.MOD (281704 bytes)</a><br>
-		<a onclick="loadMOD('mods/overload.mod')" href="#"> - overload.mod (199870 bytes)</a><br>
-		<a onclick="loadMOD('mods/mattis-gonnas_kill_you.mod')" href="#"> - mattis-gonnas_kill_you.mod (22052 bytes)</a><br>
-		<a onclick="loadMOD('mods/rez-kenzalol.mod')" href="#"> - rez-kenzalol.mod (17000 bytes)</a><br>
-		<a onclick="loadMOD('mods/menumus3.mod')" href="#"> - menumus3.mod (30528 bytes)</a><br>
-		<a onclick="loadMOD('mods/nugget-highspeed.mod')" href="#"> - nugget-highspeed.mod (15960 bytes)</a><br>
-		</span>
-		<br><br>
+			<h2>Test MOD files :</h2>
+ 
+			<p><b>Last update: 2018-10-22 07:50:28</b></p>
 
-		Details about the MOD music file can be found there:<br>
-		<a href="https://en.wikipedia.org/wiki/MOD_%28file_format%29" target="blank">https://en.wikipedia.org/wiki/MOD_file_format</a><br>
-		<a href="https://en.wikipedia.org/wiki/Music_tracker" target="blank">https://en.wikipedia.org/wiki/Music_tracker</a><br>
-		
+			<div class="hxcthumbnailcont">
+				<div class="hxcthumbnail_mods">
+					<div>
+						<a onclick="loadMOD('mods/whatislv.mod')" href="#"><img src="play.png" alt="Play whatislv.mod !"><br>whatislv.mod<br>723886 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  VOL, BREAK, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/strobo-bored.mod')" href="#"><img src="play.png" alt="Play strobo-bored.mod !"><br>strobo-bored.mod<br>34060 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_VIBRA, OFFSET, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO, FVOLSLIDE_DWN</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-kenzalol.mod')" href="#"><img src="play.png" alt="Play rez-kenzalol.mod !"><br>rez-kenzalol.mod<br>17000 bytes - 8 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOLSLIDE, JUMP, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/reflex-spotlights.mod')" href="#"><img src="play.png" alt="Play reflex-spotlights.mod !"><br>reflex-spotlights.mod<br>8250 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, SPEED/TEMPO, INVERT_LOOP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/nugget-highspeed.mod')" href="#"><img src="play.png" alt="Play nugget-highspeed.mod !"><br>nugget-highspeed.mod<br>15960 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, TONE_PORTA, VIBRATO, VOLSLIDE, JUMP, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-bubble_toast_score.mod')" href="#"><img src="play.png" alt="Play rez-bubble_toast_score.mod !"><br>rez-bubble_toast_score.mod<br>3600 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/4mat-heli.mod')" href="#"><img src="play.png" alt="Play 4mat-heli.mod !"><br>4mat-heli.mod<br>30432 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, VIBRATO, VOLSLIDE, VOL, BREAK, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-the_no_named.mod')" href="#"><img src="play.png" alt="Play rez-the_no_named.mod !"><br>rez-the_no_named.mod<br>28000 bytes - 8 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, TONE_PORTA, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/mattis-gonnas_kill_you.mod')" href="#"><img src="play.png" alt="Play mattis-gonnas_kill_you.mod !"><br>mattis-gonnas_kill_you.mod<br>22052 bytes - 8 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, BREAK, FVOLSLIDE_DWN</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/BUD.MOD')" href="#"><img src="play.png" alt="Play BUD.MOD !"><br>BUD.MOD<br>263232 bytes - 6 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_VIBRA, VOL_TREMO, OFFSET, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, RETRIG, NOTE_DELAY, PATTERN_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/4mat-chip7.mod')" href="#"><img src="play.png" alt="Play 4mat-chip7.mod !"><br>4mat-chip7.mod<br>7414 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, BREAK, FVOLSLIDE_UP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/slow_div.mod')" href="#"><img src="play.png" alt="Play slow_div.mod !"><br>slow_div.mod<br>355460 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_DWN, OFFSET, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO, , FPORTA_UP, FVOLSLIDE_UP, FVOLSLIDE_DWN, NOTE_DELAY, PATTERN_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/joint_venture.mod')" href="#"><img src="play.png" alt="Play joint_venture.mod !"><br>joint_venture.mod<br>478166 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  OFFSET, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/fractured.tint.mod')" href="#"><img src="play.png" alt="Play fractured.tint.mod !"><br>fractured.tint.mod<br>545548 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_DWN, TONE_PORTA, OFFSET, VOLSLIDE, VOL, SPEED/TEMPO, , NOTE_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/lunatic.mod')" href="#"><img src="play.png" alt="Play lunatic.mod !"><br>lunatic.mod<br>321924 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, RETRIG, FVOLSLIDE_UP, NOTE_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/SlamTilt-Title.MOD')" href="#"><img src="play.png" alt="Play SlamTilt-Title.MOD !"><br>SlamTilt-Title.MOD<br>270226 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  TONE_PORTA, VIBRATO, VOL_VIBRA, OFFSET, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO, RETRIG, FVOLSLIDE_UP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/technix-bubble_bobble.mod')" href="#"><img src="play.png" alt="Play technix-bubble_bobble.mod !"><br>technix-bubble_bobble.mod<br>51082 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_VIBRA, OFFSET, VOLSLIDE, JUMP, VOL, SPEED/TEMPO, PATTERN_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/juice-the_rising_sun.mod')" href="#"><img src="play.png" alt="Play juice-the_rising_sun.mod !"><br>juice-the_rising_sun.mod<br>71238 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_VIBRA, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO, NOTE_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/hollywood-night_in_cairo.mod')" href="#"><img src="play.png" alt="Play hollywood-night_in_cairo.mod !"><br>hollywood-night_in_cairo.mod<br>15200 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/SUPERLM.MOD')" href="#"><img src="play.png" alt="Play SUPERLM.MOD !"><br>SUPERLM.MOD<br>15410 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, BREAK, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/adt-scotty.mod')" href="#"><img src="play.png" alt="Play adt-scotty.mod !"><br>adt-scotty.mod<br>21156 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/pandemonium_demo.mod')" href="#"><img src="play.png" alt="Play pandemonium_demo.mod !"><br>pandemonium_demo.mod<br>324256 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, PANNING, OFFSET, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, FVOLSLIDE_UP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/maktone-class6.mod')" href="#"><img src="play.png" alt="Play maktone-class6.mod !"><br>maktone-class6.mod<br>17076 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, JUMP, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/emax-delicate_oooz.mod')" href="#"><img src="play.png" alt="Play emax-delicate_oooz.mod !"><br>emax-delicate_oooz.mod<br>17968 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO, INVERT_LOOP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/stargazer-chip2.mod')" href="#"><img src="play.png" alt="Play stargazer-chip2.mod !"><br>stargazer-chip2.mod<br>15372 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_VIBRA, VOLSLIDE, JUMP, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/Pro_BMX_Simulator.mod')" href="#"><img src="play.png" alt="Play Pro_BMX_Simulator.mod !"><br>Pro_BMX_Simulator.mod<br>30480 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, NOTE_CUT, NOTE_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/cerror-dintro 4.mod')" href="#"><img src="play.png" alt="Play cerror-dintro 4.mod !"><br>cerror-dintro 4.mod<br>16866 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/lotus_t3.mod')" href="#"><img src="play.png" alt="Play lotus_t3.mod !"><br>lotus_t3.mod<br>33442 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/PINILL-PRESENT.MOD')" href="#"><img src="play.png" alt="Play PINILL-PRESENT.MOD !"><br>PINILL-PRESENT.MOD<br>281704 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, OFFSET, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, PATTERN_LOOP, FVOLSLIDE_UP, FVOLSLIDE_DWN, PATTERN_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/sundance.mod')" href="#"><img src="play.png" alt="Play sundance.mod !"><br>sundance.mod<br>309020 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, OFFSET, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, NOTE_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/maktone-the_crazy_dentist.mod')" href="#"><img src="play.png" alt="Play maktone-the_crazy_dentist.mod !"><br>maktone-the_crazy_dentist.mod<br>13696 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, SPEED/TEMPO, RETRIG</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/fairlit3.mod')" href="#"><img src="play.png" alt="Play fairlit3.mod !"><br>fairlit3.mod<br>86650 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, OFFSET, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO, RETRIG, FVOLSLIDE_DWN, PATTERN_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/mr_death-red_velvet.mod')" href="#"><img src="play.png" alt="Play mr_death-red_velvet.mod !"><br>mr_death-red_velvet.mod<br>29496 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, VIBRATO, VOL_VIBRA, OFFSET, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-under_my_bed.mod')" href="#"><img src="play.png" alt="Play rez-under_my_bed.mod !"><br>rez-under_my_bed.mod<br>15800 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, BREAK, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/overload.mod')" href="#"><img src="play.png" alt="Play overload.mod !"><br>overload.mod<br>199870 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO, , RETRIG</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/DOPE.MOD')" href="#"><img src="play.png" alt="Play DOPE.MOD !"><br>DOPE.MOD<br>957334 bytes - 28 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, TONE_PORTA, VIBRATO, PANNING, OFFSET, VOLSLIDE, VOL, SPEED/TEMPO, , FVOLSLIDE_DWN</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-binary_sound_short.mod')" href="#"><img src="play.png" alt="Play rez-binary_sound_short.mod !"><br>rez-binary_sound_short.mod<br>40000 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO, FVOLSLIDE_UP, FVOLSLIDE_DWN</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/nemesis.mod')" href="#"><img src="play.png" alt="Play nemesis.mod !"><br>nemesis.mod<br>355512 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_VIBRA, VOL_TREMO, OFFSET, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, , RETRIG, FVOLSLIDE_UP, FVOLSLIDE_DWN</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/cartoon&jelace-coopy02.mod')" href="#"><img src="play.png" alt="Play cartoon&jelace-coopy02.mod !"><br>cartoon&jelace-coopy02.mod<br>22222 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, PATTERN_LOOP, RETRIG, INVERT_LOOP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/cerror-genesis 1.mod')" href="#"><img src="play.png" alt="Play cerror-genesis 1.mod !"><br>cerror-genesis 1.mod<br>20914 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-gigi.mod')" href="#"><img src="play.png" alt="Play rez-gigi.mod !"><br>rez-gigi.mod<br>14000 bytes - 6 Channels<br>
+						<div style=" font-size: 55%;">Effects:  TONE_PORTA, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, FVOLSLIDE_DWN</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/CITRON.MOD')" href="#"><img src="play.png" alt="Play CITRON.MOD !"><br>CITRON.MOD<br>301146 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, OFFSET, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, , RETRIG, FVOLSLIDE_UP, FVOLSLIDE_DWN, NOTE_CUT, NOTE_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/maktone-razor1911_chipdisk1.mod')" href="#"><img src="play.png" alt="Play maktone-razor1911_chipdisk1.mod !"><br>maktone-razor1911_chipdisk1.mod<br>15816 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO, PATTERN_LOOP, RETRIG, NOTE_CUT</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/maktone-class_cracktro15.mod')" href="#"><img src="play.png" alt="Play maktone-class_cracktro15.mod !"><br>maktone-class_cracktro15.mod<br>13766 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, SPEED/TEMPO, NOTE_CUT</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/technix-raining3.mod')" href="#"><img src="play.png" alt="Play technix-raining3.mod !"><br>technix-raining3.mod<br>21954 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/nao-gabber_astro.mod')" href="#"><img src="play.png" alt="Play nao-gabber_astro.mod !"><br>nao-gabber_astro.mod<br>22874 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  VOLSLIDE, JUMP, VOL, SPEED/TEMPO, RETRIG, INVERT_LOOP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/meo-sleeping_waste.mod')" href="#"><img src="play.png" alt="Play meo-sleeping_waste.mod !"><br>meo-sleeping_waste.mod<br>39424 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOLSLIDE, JUMP, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-kenzalol_vibratest.mod')" href="#"><img src="play.png" alt="Play rez-kenzalol_vibratest.mod !"><br>rez-kenzalol_vibratest.mod<br>6760 bytes - 8 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/ANNOYANC.MOD')" href="#"><img src="play.png" alt="Play ANNOYANC.MOD !"><br>ANNOYANC.MOD<br>22190 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, VIBRATO, VOL_VIBRA, VOL, BREAK, SPEED/TEMPO, PATTERN_LOOP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/nao-glamour4u.mod')" href="#"><img src="play.png" alt="Play nao-glamour4u.mod !"><br>nao-glamour4u.mod<br>31996 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_VIBRA, OFFSET, VOLSLIDE, VOL, SPEED/TEMPO, FVOLSLIDE_DWN, NOTE_CUT</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/reflex-tiny_diny.mod')" href="#"><img src="play.png" alt="Play reflex-tiny_diny.mod !"><br>reflex-tiny_diny.mod<br>13104 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, BREAK, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/ELECHURC.MOD')" href="#"><img src="play.png" alt="Play ELECHURC.MOD !"><br>ELECHURC.MOD<br>205936 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/dr_awesome-intro_music3.mod')" href="#"><img src="play.png" alt="Play dr_awesome-intro_music3.mod !"><br>dr_awesome-intro_music3.mod<br>18486 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/menumus3.mod')" href="#"><img src="play.png" alt="Play menumus3.mod !"><br>menumus3.mod<br>30528 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/4mat-intro_music.mod')" href="#"><img src="play.png" alt="Play 4mat-intro_music.mod !"><br>4mat-intro_music.mod<br>17504 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/unknown-stolen_data.mod')" href="#"><img src="play.png" alt="Play unknown-stolen_data.mod !"><br>unknown-stolen_data.mod<br>20400 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, TONE_PORTA, VIBRATO, VOLSLIDE, JUMP, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/gods.mod')" href="#"><img src="play.png" alt="Play gods.mod !"><br>gods.mod<br>320044 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/estrayk-her6.mod')" href="#"><img src="play.png" alt="Play estrayk-her6.mod !"><br>estrayk-her6.mod<br>55338 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/melodee-laxity.mod')" href="#"><img src="play.png" alt="Play melodee-laxity.mod !"><br>melodee-laxity.mod<br>51090 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/jason-shortness.mod')" href="#"><img src="play.png" alt="Play jason-shortness.mod !"><br>jason-shortness.mod<br>17898 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, TONE_PORTA, VIBRATO, VOLSLIDE, JUMP, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/PINDR-PRESENT.MOD')" href="#"><img src="play.png" alt="Play PINDR-PRESENT.MOD !"><br>PINDR-PRESENT.MOD<br>222304 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, , RETRIG</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/spoon-arkanoid.mod')" href="#"><img src="play.png" alt="Play spoon-arkanoid.mod !"><br>spoon-arkanoid.mod<br>5448 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  VIBRATO, VOL_VIBRA, VOLSLIDE, VOL</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/ITR-SourceOfMusic.mod')" href="#"><img src="play.png" alt="Play ITR-SourceOfMusic.mod !"><br>ITR-SourceOfMusic.mod<br>351320 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VOLSLIDE, VOL, BREAK, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/ASM94.MOD')" href="#"><img src="play.png" alt="Play ASM94.MOD !"><br>ASM94.MOD<br>139878 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_VIBRA, OFFSET, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO, RETRIG, NOTE_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/estrayk-horizon.mod')" href="#"><img src="play.png" alt="Play estrayk-horizon.mod !"><br>estrayk-horizon.mod<br>66276 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/clawz-fastAndfriendly.mod')" href="#"><img src="play.png" alt="Play clawz-fastAndfriendly.mod !"><br>clawz-fastAndfriendly.mod<br>5184 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/ANCIENTS.MOD')" href="#"><img src="play.png" alt="Play ANCIENTS.MOD !"><br>ANCIENTS.MOD<br>23758 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, NOTE_CUT</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/jazz-nuseup42.mod')" href="#"><img src="play.png" alt="Play jazz-nuseup42.mod !"><br>jazz-nuseup42.mod<br>51024 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, RETRIG</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-monday.mod')" href="#"><img src="play.png" alt="Play rez-monday.mod !"><br>rez-monday.mod<br>37000 bytes - 14 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/nao-deceased_by_disease.mod')" href="#"><img src="play.png" alt="Play nao-deceased_by_disease.mod !"><br>nao-deceased_by_disease.mod<br>7600 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, TONE_PORTA, VIBRATO, VOL_VIBRA, JUMP, VOL, BREAK, SPEED/TEMPO, RETRIG, NOTE_DELAY, INVERT_LOOP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/ramosa-intro3.mod')" href="#"><img src="play.png" alt="Play ramosa-intro3.mod !"><br>ramosa-intro3.mod<br>14020 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO, PATTERN_LOOP, FVOLSLIDE_DWN</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/estrayk-hybris-ingame.mod')" href="#"><img src="play.png" alt="Play estrayk-hybris-ingame.mod !"><br>estrayk-hybris-ingame.mod<br>45240 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO, FVOLSLIDE_DWN</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/man_s_mi.mod')" href="#"><img src="play.png" alt="Play man_s_mi.mod !"><br>man_s_mi.mod<br>169708 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, VOL_TREMO, OFFSET, VOLSLIDE, JUMP, VOL, SPEED/TEMPO, FPORTA_UP, FVOLSLIDE_DWN</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-delta.mod')" href="#"><img src="play.png" alt="Play rez-delta.mod !"><br>rez-delta.mod<br>23900 bytes - 10 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/4mat-in_the_kitchen2.mod')" href="#"><img src="play.png" alt="Play 4mat-in_the_kitchen2.mod !"><br>4mat-in_the_kitchen2.mod<br>18022 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO, NOTE_DELAY, INVERT_LOOP</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/SALCON.MOD')" href="#"><img src="play.png" alt="Play SALCON.MOD !"><br>SALCON.MOD<br>471706 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  TONE_PORTA, VIBRATO, VOL_VIBRA, OFFSET, VOLSLIDE, VOL, SPEED/TEMPO, , RETRIG, NOTE_DELAY</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/rez-r0t0f3ul.mod')" href="#"><img src="play.png" alt="Play rez-r0t0f3ul.mod !"><br>rez-r0t0f3ul.mod<br>30000 bytes - 10 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, TONE_PORTA, VOLSLIDE, JUMP, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/inco-byggsats13.mod')" href="#"><img src="play.png" alt="Play inco-byggsats13.mod !"><br>inco-byggsats13.mod<br>14388 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, TONE_PORTA, VOL_TONEPORTA, VOLSLIDE, VOL, SPEED/TEMPO</div></a>
+					</div>
+					<div>
+						<a onclick="loadMOD('mods/mattis-lowsi_jeti_maah.mod')" href="#"><img src="play.png" alt="Play mattis-lowsi_jeti_maah.mod !"><br>mattis-lowsi_jeti_maah.mod<br>5882 bytes - 4 Channels<br>
+						<div style=" font-size: 55%;">Effects:  ARPEGGIO, VOL, SPEED/TEMPO</div></a>
+					</div>
+				</div>
+			</div>
+
+
+		<p style="text-align: center;font-size: 140%;"><a href="https://github.com/jfdelnero/HxCModPlayer" target="_blank"><b><i>&gt; HxC MOD github project page &lt;</i></b></a></p>
+
+		</div>
+
 		<br>
 
-		(c)HxC2001 / Jean-Fran&ccedil;ois DEL NERO<br>
-		<a href="http://hxc2001.free.fr/" target="blank">http://hxc2001.free.fr</a><br>
-		<a href="https://github.com/jfdelnero/HxCModPlayer" target="blank">https://github.com/jfdelnero/HxCModPlayer</a><br>
+		<hr>
+		<p class="rightalign">(C) HxC2001 / Jean-Fran&ccedil;ois DEL NERO</p>
+
 	</body>
+
 </html>
+
