@@ -16,12 +16,12 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////
 
+#include <emscripten.h>
+
 #include <stdlib.h>
 #include <string.h>
 
 #include "../hxcmod.h"
-
-#define EMSCRIPTEN_KEEPALIVE __attribute__((used))
 
 static void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float samplerate)
 {
@@ -96,3 +96,8 @@ static void EMSCRIPTEN_KEEPALIVE unloadMod(void * mod)
 	}
 	return;
 }
+
+
+int main() {
+}
+
