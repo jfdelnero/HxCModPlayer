@@ -161,6 +161,10 @@ typedef struct {
 	mint    bits;
 	mint    filter;
 
+#ifdef EFFECTS_USAGE_STATE
+	int effects_event_counts[32];
+#endif
+
 } modcontext;
 
 //

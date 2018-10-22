@@ -345,6 +345,16 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 	cptr->parameffect = 0;
 	cptr->effect_code = effect;
 
+#ifdef EFFECTS_USAGE_STATE
+	if(effect_op || ((effect_op==EFFECT_ARPEGGIO) && effect_param))
+	{
+		mod->effects_event_counts[ effect_op ]++;
+	}
+
+	if(effect_op == 0xE)
+		mod->effects_event_counts[ 0x10 + effect_param_h ]++;
+#endif
+
 	switch ( effect_op )
 	{
 		case EFFECT_ARPEGGIO:
@@ -1036,6 +1046,9 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 	{
 		if( modctx )
 		{
+#ifdef FULL_STATE
+			memclear(&(modctx->effects_event_counts),0,sizeof(modctx->effects_event_counts));
+#endif			
 			memcopy(&(modctx->song.title),modmemory,1084);
 
 			i = 0;
