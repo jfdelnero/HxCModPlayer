@@ -36,7 +36,7 @@ function HxCMOD_emscript_js()
 
 HxCMOD_emscript_js.prototype.createHxCMODNode = function(buffer)
 {
-	var ModNode = this.context.createScriptProcessor(8192, 0, 2);
+	var ModNode = this.context.createScriptProcessor(16384, 0, 2);
 
 	ModNode.player = this;
 
@@ -47,8 +47,8 @@ HxCMOD_emscript_js.prototype.createHxCMODNode = function(buffer)
 	Module.HEAPU8.set(byteFileArray, pointerToMod);
 
 	ModNode.moduleCtx = Module._loadMod(pointerToMod, byteFileArray.byteLength, this.context.sampleRate);
-	ModNode.leftFloatChannelPtr  = Module._malloc(4 * 8192);
-	ModNode.rightFloatChannelPtr = Module._malloc(4 * 8192);
+	ModNode.leftFloatChannelPtr  = Module._malloc(4 * 16384);
+	ModNode.rightFloatChannelPtr = Module._malloc(4 * 16384);
 
 	ModNode.cleanup = function()
 	{

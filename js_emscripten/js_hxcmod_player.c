@@ -50,7 +50,7 @@ static void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float 
 static int EMSCRIPTEN_KEEPALIVE getNextSoundData(void * mod,float * leftchannel,float * rightchannel, int nbsamples)
 {
 	modcontext * modctx;
-	short outputbuffer[4096];
+	short outputbuffer[8192];
 	int samplesdone,chunksize;
 	int i,j;
 
@@ -64,13 +64,13 @@ static int EMSCRIPTEN_KEEPALIVE getNextSoundData(void * mod,float * leftchannel,
 			if(nbsamples - samplesdone >= (sizeof(outputbuffer) / sizeof(short)) )
 			{
 				chunksize = sizeof(outputbuffer) / sizeof(short);
-				hxcmod_fillbuffer( modctx, (unsigned short *)outputbuffer, chunksize, 0 );
+				hxcmod_fillbuffer( modctx, outputbuffer, chunksize, 0 );
 				samplesdone += chunksize;
 			}
 			else
 			{
 				chunksize = ( ( sizeof(outputbuffer) / sizeof(short) ) - (nbsamples - samplesdone) );
-				hxcmod_fillbuffer( modctx, (unsigned short *)outputbuffer, chunksize, 0 );
+				hxcmod_fillbuffer( modctx, outputbuffer, chunksize, 0 );
 				samplesdone += chunksize;
 			}
 
