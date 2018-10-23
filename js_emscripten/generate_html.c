@@ -171,9 +171,24 @@ const char * exteffectlist[]=
 	0
 };
 
+static int entryCompare (const void * a, const void * b) 
+{
+	filefoundinfo * entry1;
+	filefoundinfo * entry2;
+
+	entry1 = (filefoundinfo *)a;
+	entry2 = (filefoundinfo *)b;
+
+	return strcasecmp (entry1->filename, entry2->filename); 
+}
+
+void sort(filefoundinfo * entries[], int n) 
+{
+	qsort (entries, n, sizeof(filefoundinfo), entryCompare); 
+}
+
 int main(int argc, char *argv[])
 {
-	char tmp_string[1024*4];
 	FILE * flayout;
 	int layout_size,i,j;
 	char * layout_buffer;
@@ -181,7 +196,6 @@ int main(int argc, char *argv[])
 	char * header;
 	char * end;
 	char * marker;
-	int curcol;
 	msample outbuffer[44100*2];
 
 	time_t t = time(NULL);
@@ -195,138 +209,189 @@ int main(int argc, char *argv[])
 	modcontext modctx;
 	char fullpath[512];
 	int first_effect;
-	
+	int entry_in_dir,entry_index;
+
+	filefoundinfo* fileinfo_list;
+
+	fileinfo_list = 0;
+
+	entry_in_dir = 0;
 	handle = find_first_file("./www/mods/", "*.mod", &fileinfo);
 	if(handle)
 	{
-
-		flayout = fopen("page_layout.html","r");
-		if(!flayout)
-		{
-			printf("html layout not found!\n");
-			exit(-1);
-		}
-
-		fseek(flayout,0, SEEK_END);
-		layout_size = ftell(flayout);
-		
-		layout_buffer = (char*)malloc(layout_size+1);
-		if(!layout_buffer)
-		{
-			fclose(flayout);
-			printf("html layout alloc error!\n");
-			exit(-1);
-		}
-		memset(layout_buffer,0,layout_size+1);
-		fseek(flayout,0, SEEK_SET);
-
-		fread(layout_buffer,1,layout_size,flayout);
-
-		fclose(flayout);
-
-		header = layout_buffer;
-
-		marker = strstr(header,"<INSERTIONMARKER>");
-		if(marker)
-		{
-			*marker = 0;
-			marker += strlen("<INSERTIONMARKER>");
-			end = marker;
-		}
-
-		printf("%s",header);
-		curcol = 0;
-
-		printf("\t\t\t<p><b>Last update: %.4d-%.2d-%.2d %.2d:%.2d:%.2d</b></p>\n\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-
-		printf("\t\t\t<div class=\x22hxcthumbnailcont\x22>\n");
-		printf("\t\t\t\t<div class=\x22hxcthumbnail_mods\x22>\n");
-
 		do
 		{
+			entry_in_dir++;
+			ret = find_next_file(handle, "./www/mods/", "*.mod", &fileinfo);
+		}while(ret);
+		find_close(handle);
+	}
 
-			if(!fileinfo.isdirectory)
-			{
-				sprintf(fullpath,"./www/mods/%s",(char*)&fileinfo.filename);
-				modbuffer = malloc( fileinfo.size );
-				if(modbuffer)
-				{	
-					f = fopen(fullpath,"rb");
-					if(f)
+	if( entry_in_dir )
+	{
+		fileinfo_list = malloc(sizeof(filefoundinfo) * (entry_in_dir+1));
+		if(fileinfo_list) 
+			memset(fileinfo_list,0,sizeof(filefoundinfo) * (entry_in_dir+1));
+	}
+
+	if(!fileinfo_list)
+		exit(-2);
+
+	entry_index = 0;
+	handle = find_first_file("./www/mods/", "*.mod", &fileinfo_list[entry_index]);
+	if(handle)
+	{
+		do
+		{
+			entry_index++;
+			ret = find_next_file(handle, "./www/mods/", "*.mod", &fileinfo_list[entry_index]);
+		}while(ret);
+		find_close(handle);
+	}
+
+	sort((filefoundinfo **)fileinfo_list, entry_in_dir);
+
+	flayout = fopen("page_layout.html","r");
+	if(!flayout)
+	{
+		printf("html layout not found!\n");
+		exit(-1);
+	}
+
+	fseek(flayout,0, SEEK_END);
+	layout_size = ftell(flayout);
+	
+	layout_buffer = (char*)malloc(layout_size+1);
+	if(!layout_buffer)
+	{
+		fclose(flayout);
+		printf("html layout alloc error!\n");
+		exit(-1);
+	}
+	memset(layout_buffer,0,layout_size+1);
+	fseek(flayout,0, SEEK_SET);
+
+	if( fread(layout_buffer,layout_size,1,flayout) != 1 )
+	{
+		free(layout_buffer);
+		printf("Can't read the layout file !\n");
+		fclose(flayout);
+		exit(-2);
+	}
+	fclose(flayout);
+
+	header = layout_buffer;
+
+	marker = strstr(header,"<INSERTIONMARKER>");
+	if(marker)
+	{
+		*marker = 0;
+		marker += strlen("<INSERTIONMARKER>");
+		end = marker;
+	}
+
+	printf("%s",header);
+
+	printf("\t\t\t<p><b>Last update: %.4d-%.2d-%.2d %.2d:%.2d:%.2d</b></p>\n\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+
+	entry_index = 0;
+	printf("\t\t\t<div class=\x22hxcthumbnailcont\x22>\n");
+	printf("\t\t\t\t<div class=\x22hxcthumbnail_mods\x22>\n");
+
+	do
+	{
+
+		if(!fileinfo_list[entry_index].isdirectory)
+		{
+			sprintf(fullpath,"./www/mods/%s",(char*)&fileinfo_list[entry_index].filename);
+			modbuffer = malloc( fileinfo_list[entry_index].size );
+			if(modbuffer)
+			{	
+				f = fopen(fullpath,"rb");
+				if(f)
+				{
+
+					if( fread(modbuffer,fileinfo_list[entry_index].size,1,f) != 1 )
 					{
-						fread(modbuffer,fileinfo.size,1,f);
+						free(modbuffer);
+						free(layout_buffer);
+						printf("Can't read the mod file !\n");
+						fclose(f);
+						exit(-3);
+					}						
 
-						if(hxcmod_init(&modctx))
+					if(hxcmod_init(&modctx))
+					{
+						hxcmod_setcfg( &modctx, 4000, 100, 0);
+
+						if( hxcmod_load( &modctx, modbuffer, fileinfo_list[entry_index].size ) )
 						{
-							hxcmod_setcfg( &modctx, 44100, 100, 0);
-
-							if( hxcmod_load( &modctx, modbuffer, fileinfo.size ) )
+							for(i=0;i<4*60;i++)
 							{
-								for(i=0;i<4*60;i++)
-								{
-									hxcmod_fillbuffer(  &modctx, &outbuffer, 44100, 0 );
-								}
+								hxcmod_fillbuffer(  &modctx, (msample*)&outbuffer, 2000, 0 );
+							}
 
-								printf("\t\t\t\t\t<div>\n");
+							printf("\t\t\t\t\t<div>\n");
 
-								printf("\t\t\t\t\t\t<a onclick=\x22loadMOD(\x27mods/%s\x27)\x22 href=\x22#\x22><img src=\x22play.png\x22 alt=\x22Play %s !\x22><br>%s<br>%d bytes - %d Channels<br>\n",
-									(char*)&fileinfo.filename,
-									(char*)&fileinfo.filename,
-									(char*)&fileinfo.filename,
-									fileinfo.size,
-									modctx.number_of_channels);
-								first_effect = 1;
-								printf("\t\t\t\t\t\t<div style=\x22 font-size: 55\x25\x3B\x22>Effects: ");
-								for(j=0;j<32;j++)
+							printf("\t\t\t\t\t\t<a onclick=\x22loadMOD(\x27mods/%s\x27)\x22 href=\x22#\x22><img src=\x22play.png\x22 alt=\x22Play %s !\x22><br>%s<br>%d bytes - %d Channels<br>\n",
+								(char*)&fileinfo_list[entry_index].filename,
+								(char*)&fileinfo_list[entry_index].filename,
+								(char*)&fileinfo_list[entry_index].filename,
+								fileinfo_list[entry_index].size,
+								modctx.number_of_channels);
+							first_effect = 1;
+							printf("\t\t\t\t\t\t<div style=\x22 font-size: 55%%\x3B\x22>Effects: ");
+							for(j=0;j<32;j++)
+							{
+								if(modctx.effects_event_counts[j])
 								{
-									if(modctx.effects_event_counts[j])
+									if(j < 0x10 )
 									{
-										if(j < 0x10 )
-										{
-											if(j!=0xE)
-											{
-												if(!first_effect)
-												{
-													printf(",");
-												}
-												printf(" %s",effectlist[j]);
-												first_effect = 0;
-											}	
-										}
-										else
+										if(j!=0xE)
 										{
 											if(!first_effect)
 											{
 												printf(",");
 											}
-											printf(" %s", exteffectlist[j - 0x10] );
+											printf(" %s",effectlist[j]);
 											first_effect = 0;
+										}	
+									}
+									else
+									{
+										if(!first_effect)
+										{
+											printf(",");
 										}
+										printf(" %s", exteffectlist[j - 0x10] );
+										first_effect = 0;
 									}
 								}
-								printf("</div></a>\n");
-
-								printf("\t\t\t\t\t</div>\n");
-
 							}
+							printf("</div></a>\n");
 
-							hxcmod_unload( &modctx );
+							printf("\t\t\t\t\t</div>\n");
+
 						}
-						fclose(f);
+
+						hxcmod_unload( &modctx );
 					}
-					free(modbuffer);
+					fclose(f);
 				}
+				free(modbuffer);
 			}
-			ret = find_next_file(handle, "./www/mods/", "*.mod", &fileinfo);
-		}while(ret);
+		}
+		entry_index++;
+		
+	}while(strlen(fileinfo_list[entry_index].filename));
 
-		printf("\t\t\t\t</div>\n");
-		printf("\t\t\t</div>\n");
+	printf("\t\t\t\t</div>\n");
+	printf("\t\t\t</div>\n");
 
-		find_close(handle);
+	printf("%s",end);
 
-		printf("%s",end);
-	}
+	free(fileinfo_list);
+	free(layout_buffer);
 
 	return 0;
 }
