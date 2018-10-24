@@ -85,7 +85,7 @@
 #define EFFECT_E_FINE_VOLSLIDE_UP    0xA // Supported
 #define EFFECT_E_FINE_VOLSLIDE_DOWN  0xB // Supported
 #define EFFECT_E_NOTE_CUT            0xC // Supported
-#define EFFECT_E_NOTE_DELAY          0xD // - TO BE DONE -
+#define EFFECT_E_NOTE_DELAY          0xD // Supported
 #define EFFECT_E_PATTERN_DELAY       0xE // Supported
 #define EFFECT_E_INVERT_LOOP         0xF // Supported (W.I.P)
 #define EFFECT_SET_SPEED             0xF0 // Supported
@@ -268,12 +268,22 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 				if( ( effect_op != EFFECT_TONE_PORTAMENTO ) || ( ( effect_op == EFFECT_TONE_PORTAMENTO ) && !cptr->sampdata ) )
 				{
 					// Not a Tone Partamento effect or no sound currently played :
-					// Immediately (re)trigger the new note
-					cptr->sampdata = mod->sampledata[cptr->sampnum];
-					cptr->length = mod->song.samples[cptr->sampnum].length;
-					cptr->reppnt = mod->song.samples[cptr->sampnum].reppnt;
-					cptr->replen = mod->song.samples[cptr->sampnum].replen;
-
+					if ( ( effect_op != EFFECT_EXTENDED || effect_param_h != EFFECT_E_NOTE_DELAY ) || ( ( effect_op == EFFECT_EXTENDED && effect_param_h == EFFECT_E_NOTE_DELAY ) && !effect_param_l ) )
+					{
+						// Immediately (re)trigger the new note
+						cptr->sampdata = mod->sampledata[cptr->sampnum];
+						cptr->length = mod->song.samples[cptr->sampnum].length;
+						cptr->reppnt = mod->song.samples[cptr->sampnum].reppnt;
+						cptr->replen = mod->song.samples[cptr->sampnum].replen;
+					}
+					else
+					{
+						cptr->dly_sampdata = mod->sampledata[cptr->sampnum];
+						cptr->dly_length = mod->song.samples[cptr->sampnum].length;
+						cptr->dly_reppnt = mod->song.samples[cptr->sampnum].reppnt;
+						cptr->dly_replen = mod->song.samples[cptr->sampnum].replen;
+						cptr->note_delay = effect_param_l;
+					}
 					// Cancel any delayed note...
 					cptr->update_nxt_repeat = 0;
 				}
@@ -512,8 +522,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			offset using the current volume.
 			*/
 
-			cptr->samppos = ( (muint)(effect_param_h) << 12) + ( (muint)(effect_param_l << 8) );
-
+			cptr->samppos = ( ( ((muint)effect_param_h) << 12) + ( (((muint)effect_param_l) << 8) ) ) << 10;
 		break;
 
 		case EFFECT_VOLUME_SLIDE:
@@ -757,6 +766,11 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 
 				break;
 
+				case EFFECT_E_NOTE_DELAY:
+					cptr->effect = EFFECT_EXTENDED;
+					cptr->parameffect = (EFFECT_E_NOTE_DELAY<<4);
+				break;
+
 				default:
 
 				break;
@@ -818,7 +832,7 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 
 }
 
-static void workeffect( note * nptr, channel * cptr )
+static void workeffect( modcontext * modctx, note * nptr, channel * cptr )
 {
 	doFunk(cptr);
 
@@ -967,12 +981,34 @@ static void workeffect( note * nptr, channel * cptr )
 			}
 		break;
 
-		case EFFECT_E_NOTE_CUT:
-			if( cptr->cut_param )
-				cptr->cut_param--;
+		case EFFECT_EXTENDED:
+			switch( cptr->parameffect >> 4 )
+			{
 
-			if( !cptr->cut_param )
-				cptr->volume = 0;
+				case EFFECT_E_NOTE_CUT:
+					if( cptr->cut_param )
+						cptr->cut_param--;
+
+					if( !cptr->cut_param )
+						cptr->volume = 0;
+				break;
+
+				case EFFECT_E_NOTE_DELAY:
+					if( cptr->note_delay )
+					{
+						if( ( cptr->note_delay - 1 ) == modctx->tick_cnt )
+						{
+							cptr->sampdata = cptr->dly_sampdata;
+							cptr->length = cptr->dly_length;
+							cptr->reppnt = cptr->dly_reppnt;
+							cptr->replen = cptr->dly_replen;
+							cptr->note_delay = 0;
+						}
+					}
+				break;
+				default:
+				break;
+			}
 		break;
 
 		default:
@@ -1048,7 +1084,7 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 		{
 #ifdef FULL_STATE
 			memclear(&(modctx->effects_event_counts),0,sizeof(modctx->effects_event_counts));
-#endif			
+#endif
 			memcopy(&(modctx->song.title),modmemory,1084);
 
 			i = 0;
@@ -1200,6 +1236,8 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 						nptr = nptr + modctx->patternpos;
 						cptr = modctx->channels;
 
+						modctx->tick_cnt = 0;
+
 						modctx->patternticks = 0;
 						modctx->patterntickse = 0;
 
@@ -1226,6 +1264,7 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 						modctx->patterndelay--;
 						modctx->patternticks = 0;
 						modctx->patterntickse = 0;
+						modctx->tick_cnt = 0;
 					}
 
 				}
@@ -1238,9 +1277,10 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 
 					for(c=0;c<modctx->number_of_channels;c++)
 					{
-						workeffect(nptr+c, cptr+c);
+						workeffect( modctx, nptr+c, cptr+c );
 					}
 
+					modctx->tick_cnt++;
 					modctx->patterntickse = 0;
 				}
 

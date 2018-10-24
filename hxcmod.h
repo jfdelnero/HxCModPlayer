@@ -16,7 +16,6 @@
 //
 // Change History (most recent first):
 ///////////////////////////////////////////////////////////////////////////////////
-
 #ifndef MODPLAY_DEF
 #define MODPLAY_DEF
 
@@ -83,15 +82,22 @@ typedef struct {
 //
 typedef struct {
 	mchar * sampdata;
-	mchar * nxt_sampdata;
-	muint   sampnum;
 	muint   length;
-	muint   nxt_length;
-	muint   update_nxt_repeat;
 	muint   reppnt;
 	muint   replen;
+	muint   sampnum;
+
+	mchar * nxt_sampdata;
+	muint   nxt_length;
 	muint   nxt_reppnt;
 	muint   nxt_replen;
+	muint   update_nxt_repeat;
+
+	mchar * dly_sampdata;
+	muint   dly_length;
+	muint   dly_reppnt;
+	muint   dly_replen;
+	muint   note_delay;
 
 	muint   funkoffset;
 	mint    funkspeed;
@@ -141,6 +147,7 @@ typedef struct {
 	mulong  patternticks;
 	mulong  patterntickse;
 	mulong  patternticksaim;
+	muint   tick_cnt;
 	mulong  sampleticksconst;
 
 	mulong  samplenb;
@@ -242,4 +249,3 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 void hxcmod_unload( modcontext * modctx );
 
 #endif
-
