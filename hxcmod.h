@@ -99,6 +99,13 @@ typedef struct {
 	muint   dly_replen;
 	muint   note_delay;
 
+	mchar * lst_sampdata;
+	muint   lst_length;
+	muint   lst_reppnt;
+	muint   lst_replen;
+	muint   retrig_cnt;
+	muint   retrig_param;
+
 	muint   funkoffset;
 	mint    funkspeed;
 

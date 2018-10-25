@@ -81,7 +81,7 @@
 #define EFFECT_E_PATTERN_LOOP        0x6 // Supported
 #define EFFECT_E_TREMOLO_WAVEFORM    0x7 // - TO BE DONE -
 #define EFFECT_E_SET_PANNING_2       0x8 // - TO BE DONE -
-#define EFFECT_E_RETRIGGER_NOTE      0x9 // - TO BE DONE -
+#define EFFECT_E_RETRIGGER_NOTE      0x9 // Supported
 #define EFFECT_E_FINE_VOLSLIDE_UP    0xA // Supported
 #define EFFECT_E_FINE_VOLSLIDE_DOWN  0xB // Supported
 #define EFFECT_E_NOTE_CUT            0xC // Supported
@@ -275,6 +275,11 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 						cptr->length = mod->song.samples[cptr->sampnum].length;
 						cptr->reppnt = mod->song.samples[cptr->sampnum].reppnt;
 						cptr->replen = mod->song.samples[cptr->sampnum].replen;
+
+						cptr->lst_sampdata = cptr->sampdata;
+						cptr->lst_length = cptr->length;
+						cptr->lst_reppnt = cptr->reppnt;
+						cptr->lst_replen = cptr->replen;
 					}
 					else
 					{
@@ -735,6 +740,24 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					mod->patterndelay = effect_param_l;
 				break;
 
+				case EFFECT_E_RETRIGGER_NOTE:
+					/*
+					[14][9]: Retrigger sample
+					 Where [14][9][x] means "trigger current sample every x ticks in
+					 this division". If x is 0, then no retriggering is done (acts as if
+					 no effect was chosen), otherwise the retriggering begins on the
+					 first tick and then x ticks after that, etc.
+					*/
+
+					if( effect_param_l )
+					{
+						cptr->effect = EFFECT_EXTENDED;
+						cptr->parameffect = (EFFECT_E_RETRIGGER_NOTE<<4);
+						cptr->retrig_param = effect_param_l;
+						cptr->retrig_cnt = 0;
+					}
+				break;
+
 				case EFFECT_E_NOTE_CUT:
 					/*
 					[14][12]: Cut sample
@@ -745,10 +768,24 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					"silence"-sample (see above) due to the lack of proper support for
 					this effect.
 					*/
+
 					cptr->effect = EFFECT_E_NOTE_CUT;
 					cptr->cut_param = effect_param_l;
 					if( !cptr->cut_param )
 						cptr->volume = 0;
+				break;
+
+				case EFFECT_E_NOTE_DELAY:
+					/*
+					 Where [14][13][x] means "do not start this division's sample for
+					 the first x ticks in this division, play the sample after this".
+					 This implies that if x is 0, then you will hear no delay, but
+					 actually there will be a VERY small delay. Note that this effect
+					 only influences a sample if it was started in this division.
+					*/
+
+					cptr->effect = EFFECT_EXTENDED;
+					cptr->parameffect = (EFFECT_E_NOTE_DELAY<<4);
 				break;
 
 				case EFFECT_E_INVERT_LOOP:
@@ -764,11 +801,6 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 
 					doFunk(cptr);
 
-				break;
-
-				case EFFECT_E_NOTE_DELAY:
-					cptr->effect = EFFECT_EXTENDED;
-					cptr->parameffect = (EFFECT_E_NOTE_DELAY<<4);
 				break;
 
 				default:
@@ -993,6 +1025,20 @@ static void workeffect( modcontext * modctx, note * nptr, channel * cptr )
 						cptr->volume = 0;
 				break;
 
+				case EFFECT_E_RETRIGGER_NOTE:
+					cptr->retrig_cnt++;
+					if( cptr->retrig_cnt >= cptr->retrig_param )
+					{
+						cptr->retrig_cnt = 0;
+
+						cptr->sampdata = cptr->lst_sampdata;
+						cptr->length = cptr->lst_length;
+						cptr->reppnt = cptr->lst_reppnt;
+						cptr->replen = cptr->lst_replen;
+						cptr->samppos = 0;
+					}
+				break;
+
 				case EFFECT_E_NOTE_DELAY:
 					if( cptr->note_delay )
 					{
@@ -1002,6 +1048,11 @@ static void workeffect( modcontext * modctx, note * nptr, channel * cptr )
 							cptr->length = cptr->dly_length;
 							cptr->reppnt = cptr->dly_reppnt;
 							cptr->replen = cptr->dly_replen;
+
+							cptr->lst_sampdata = cptr->sampdata;
+							cptr->lst_length = cptr->length;
+							cptr->lst_reppnt = cptr->reppnt;
+							cptr->lst_replen = cptr->replen;
 							cptr->note_delay = 0;
 						}
 					}
@@ -1325,6 +1376,11 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 									cptr->sampdata = cptr->nxt_sampdata;
 									cptr->length = cptr->nxt_length;
 
+									cptr->lst_sampdata = cptr->sampdata;
+									cptr->lst_length = cptr->length;
+									cptr->lst_reppnt = cptr->reppnt;
+									cptr->lst_replen = cptr->replen;
+
 									cptr->update_nxt_repeat = 0;
 								}
 
@@ -1344,6 +1400,11 @@ void hxcmod_fillbuffer( modcontext * modctx, msample * outbuffer, unsigned long 
 									cptr->reppnt = cptr->nxt_reppnt;
 									cptr->sampdata = cptr->nxt_sampdata;
 									cptr->length = cptr->nxt_length;
+
+									cptr->lst_sampdata = cptr->sampdata;
+									cptr->lst_length = cptr->length;
+									cptr->lst_reppnt = cptr->reppnt;
+									cptr->lst_replen = cptr->replen;
 
 									cptr->update_nxt_repeat = 0;
 								}
