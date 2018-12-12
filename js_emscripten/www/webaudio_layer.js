@@ -49,6 +49,8 @@ HxCMOD_emscript_js.prototype.createHxCMODNode = function(buffer)
 	ModNode.moduleCtx = Module._loadMod(pointerToMod, byteFileArray.byteLength, this.context.sampleRate);
 	ModNode.leftFloatChannelPtr  = Module._malloc(4 * 16384);
 	ModNode.rightFloatChannelPtr = Module._malloc(4 * 16384);
+	ModNode.leftChannel = new Float32Array(Module.HEAPF32.buffer, ModNode.leftFloatChannelPtr, 16384);
+	ModNode.rightChannel = new Float32Array(Module.HEAPF32.buffer, ModNode.rightFloatChannelPtr, 16384);
 
 	ModNode.cleanup = function()
 	{
@@ -73,21 +75,10 @@ HxCMOD_emscript_js.prototype.createHxCMODNode = function(buffer)
 
 	ModNode.onaudioprocess = function(e)
 	{
-		var outputLeftChannel  = e.outputBuffer.getChannelData(0);
-		var outputRightChannel = e.outputBuffer.getChannelData(1);
+		Module._getNextSoundData(this.moduleCtx,this.leftFloatChannelPtr, this.rightFloatChannelPtr, 16384);
 
-		var sampleToRender = outputLeftChannel.length;
-
-		Module._getNextSoundData(this.moduleCtx,this.leftFloatChannelPtr, this.rightFloatChannelPtr, sampleToRender);
-
-		var processedLeftData =  Module.HEAPF32.subarray( this.leftFloatChannelPtr  / 4, this.leftFloatChannelPtr  / 4 + sampleToRender );
-		var processedRightData = Module.HEAPF32.subarray( this.rightFloatChannelPtr / 4, this.rightFloatChannelPtr / 4 + sampleToRender );
-
-		for (var i = 0; i < sampleToRender; ++i)
-		{
-			outputLeftChannel[i]  = processedLeftData[i];
-			outputRightChannel[i] = processedRightData[i];
-		}
+		e.outputBuffer.copyToChannel(ModNode.leftChannel, 0);
+		e.outputBuffer.copyToChannel(ModNode.rightChannel, 1);
 	}
 
 	return ModNode;

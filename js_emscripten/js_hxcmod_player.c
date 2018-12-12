@@ -23,6 +23,9 @@
 
 #include "../hxcmod.h"
 
+#define NBSAMPS_OUTBUF 16384
+#define NBAUDIO_CHANNELS 2
+
 static void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float samplerate)
 {
 	modcontext * modctx;
@@ -50,27 +53,33 @@ static void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float 
 static int EMSCRIPTEN_KEEPALIVE getNextSoundData(void * mod,float * leftchannel,float * rightchannel, int nbsamples)
 {
 	modcontext * modctx;
-	short outputbuffer[8192];
+	short outputbuffer[NBSAMPS_OUTBUF * NBAUDIO_CHANNELS];
 	int samplesdone,chunksize;
 	int i,j;
 
 	modctx = (modcontext *)mod;
-	if(mod && leftchannel && rightchannel)
+	if(mod && leftchannel && rightchannel && nbsamples > 0)
 	{
 		samplesdone = 0;
 		j=0;
 		do
 		{
-			if(nbsamples - samplesdone >= (sizeof(outputbuffer) / sizeof(short)) )
+			if(nbsamples - samplesdone >= NBSAMPS_OUTBUF )
 			{
-				chunksize = sizeof(outputbuffer) / sizeof(short);
+				chunksize = NBSAMPS_OUTBUF;
 				hxcmod_fillbuffer( modctx, outputbuffer, chunksize, 0 );
 				samplesdone += chunksize;
 			}
 			else
 			{
-				chunksize = ( ( sizeof(outputbuffer) / sizeof(short) ) - (nbsamples - samplesdone) );
-				hxcmod_fillbuffer( modctx, outputbuffer, chunksize, 0 );
+				chunksize = ( NBSAMPS_OUTBUF - (nbsamples - samplesdone) );
+				if( chunksize > 0 )
+				{
+					hxcmod_fillbuffer( modctx, outputbuffer, chunksize, 0 );
+				}
+				else
+					chunksize = 0;
+
 				samplesdone += chunksize;
 			}
 
