@@ -17,10 +17,50 @@
 		<meta name="robots" content="index, follow">
 		<meta name="viewport" content="width=device-width, initial-scale=0.6">
 
-		<script async type="text/javascript" src="js_hxcmod_player.js"></script>
+		<script type="text/javascript">
+			function isWebAssemblyAvailable() {
+				try
+				{
+					if (typeof WebAssembly === "object" && typeof WebAssembly.instantiate === "function")
+					{
+						const module = new WebAssembly.Module(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
+
+						if (module instanceof WebAssembly.Module)
+						    return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
+					}
+				}
+				catch (e)
+				{
+
+				}
+
+				return false;
+			}
+
+			var wasm_supported = 0;
+			var head = document.getElementsByTagName('head')[0];
+			var js = document.createElement("script");
+
+			wasm_supported = isWebAssemblyAvailable();
+
+			js.type = "text/javascript";
+
+			if (wasm_supported!=0)
+			{
+				js.src = "js_hxcmod_player_wasm.js";
+			}
+			else
+			{
+				js.src = "js_hxcmod_player_asmjs.js";
+			}
+
+			head.appendChild(js);
+		</script>
+
 		<script type="text/javascript" src="webaudio_layer.js"></script>
 
 		<script type="text/javascript">
+
 			var modplayer;
 
 			function init_player()
@@ -115,14 +155,27 @@
 			The sources are available on <a href="https://github.com/jfdelnero/HxCModPlayer" target="blank"><b>GitHub</b></a>.<br>
 			<a href="http://kripken.github.io/emscripten-site/" target="blank">Emscripten</a> was used to generate the JavaScript code from the HxCMOD C sources code.
 			</p>
-		
+
 			<p>Drap and drop any MOD music file on this page to play it or click on one of the above MOD files.</p>
 
+			<p id="Mode" name="Mode">Current Mode : Unknown</p>
+
 			<h2>Test MOD files :</h2>
- 
+
 <INSERTIONMARKER>
 
 		<p style="text-align: center;font-size: 140%;"><a href="https://github.com/jfdelnero/HxCModPlayer" target="_blank"><b><i>&gt; HxC MOD github project page &lt;</i></b></a></p>
+
+		<script type="text/javascript">
+			if (wasm_supported!=0)
+			{
+				document.getElementById("Mode").innerHTML = "<b>Current Mode :</b> WebAssembly";
+			}
+			else
+			{
+				document.getElementById("Mode").innerHTML = "<b>Current Mode :</b> Asm.js";
+			}
+		</script>
 
 		</div>
 
