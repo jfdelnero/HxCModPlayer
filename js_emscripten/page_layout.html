@@ -61,13 +61,17 @@
 
 		<script type="text/javascript">
 
-			var modplayer;
+			var modplayer=null;
 
 			function init_player()
 			{
 				if (modplayer == undefined)
 				{
 					modplayer = new HxCMOD_emscript_js();
+					if( modplayer == null )
+					{
+						document.getElementById("Mode").innerHTML = "<b>Current Mode :</b> Error - No audio support ?";
+					}
 				}
 				else
 				{

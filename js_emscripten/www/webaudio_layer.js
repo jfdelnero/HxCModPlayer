@@ -16,38 +16,55 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////
 
-if('webkitAudioContext' in window)
+function AUDIO_BUFFER_SIZE()
 {
-	HxCMODAudioContext = webkitAudioContext;
-}
-else
-{
-	if('AudioContext' in window)
-	{
-		HxCMODAudioContext = AudioContext;
-	}
-}
-
-function AUDIO_BUFFER_SIZE() {
 	return 16384;
 }
 
 function HxCMOD_emscript_js()
 {
-	this.context = new HxCMODAudioContext;
+	HxCMODAudioContext = null;
+
+	if (window.webkitAudioContext)
+	{
+		HxCMODAudioContext = webkitAudioContext;
+	} 
+	else
+	{ 
+		if (window.AudioContext)
+		{
+			HxCMODAudioContext = AudioContext;
+		}
+		else
+		{
+			console.log("Error No webkitAudioContext or AudioContext support ?");
+		}
+	}
+
+	if ( HxCMODAudioContext != null )
+	{
+		this.context = new HxCMODAudioContext;
+	}
+	else
+	{
+		this.context = null;
+	}
+
 	this.currentModNode = null;
 }
 
 HxCMOD_emscript_js.prototype.createHxCMODNode = function(buffer)
 {
 	var audiobufsize = AUDIO_BUFFER_SIZE();
-	var ModNode = this.context.createScriptProcessor(audiobufsize, 0, 2);
-
-	ModNode.player = this;
-
+	var ModNode = null;
 	var byteFileArray = new Int8Array(buffer);
-
 	var pointerToMod = Module._malloc(byteFileArray.byteLength);
+
+	if(	this.context == null )
+		return ModNode;
+
+	ModNode = this.context.createScriptProcessor(audiobufsize, 0, 2);
+	ModNode.player = this;
 
 	Module.HEAPU8.set(byteFileArray, pointerToMod);
 
