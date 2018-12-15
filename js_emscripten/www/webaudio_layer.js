@@ -28,6 +28,10 @@ else
 	}
 }
 
+function AUDIO_BUFFER_SIZE() {
+	return 16384;
+}
+
 function HxCMOD_emscript_js()
 {
 	this.context = new HxCMODAudioContext;
@@ -36,7 +40,8 @@ function HxCMOD_emscript_js()
 
 HxCMOD_emscript_js.prototype.createHxCMODNode = function(buffer)
 {
-	var ModNode = this.context.createScriptProcessor(16384, 0, 2);
+	var audiobufsize = AUDIO_BUFFER_SIZE();
+	var ModNode = this.context.createScriptProcessor(audiobufsize, 0, 2);
 
 	ModNode.player = this;
 
@@ -47,10 +52,10 @@ HxCMOD_emscript_js.prototype.createHxCMODNode = function(buffer)
 	Module.HEAPU8.set(byteFileArray, pointerToMod);
 
 	ModNode.moduleCtx = Module._loadMod(pointerToMod, byteFileArray.byteLength, this.context.sampleRate);
-	ModNode.leftFloatChannelPtr  = Module._malloc(4 * 16384);
-	ModNode.rightFloatChannelPtr = Module._malloc(4 * 16384);
-	ModNode.leftChannel = new Float32Array(Module.HEAPF32.buffer, ModNode.leftFloatChannelPtr, 16384);
-	ModNode.rightChannel = new Float32Array(Module.HEAPF32.buffer, ModNode.rightFloatChannelPtr, 16384);
+	ModNode.leftFloatChannelPtr  = Module._malloc(4 * audiobufsize);
+	ModNode.rightFloatChannelPtr = Module._malloc(4 * audiobufsize);
+	ModNode.leftChannel = new Float32Array(Module.HEAPF32.buffer, ModNode.leftFloatChannelPtr, audiobufsize);
+	ModNode.rightChannel = new Float32Array(Module.HEAPF32.buffer, ModNode.rightFloatChannelPtr, audiobufsize);
 
 	ModNode.cleanup = function()
 	{
@@ -75,10 +80,26 @@ HxCMOD_emscript_js.prototype.createHxCMODNode = function(buffer)
 
 	ModNode.onaudioprocess = function(e)
 	{
+		var outputLeftChannel  = e.outputBuffer.getChannelData(0);
+		var outputRightChannel = e.outputBuffer.getChannelData(1);
+
+		var sampleToRender = AUDIO_BUFFER_SIZE();
+
+		Module._getNextSoundData(this.moduleCtx,this.leftFloatChannelPtr, this.rightFloatChannelPtr, sampleToRender);
+
+		for (var i = 0; i < sampleToRender; ++i)
+		{
+			outputLeftChannel[i]  = ModNode.leftChannel[i];
+			outputRightChannel[i] = ModNode.rightChannel[i];
+		}
+
+		/*
+		// copyToChannel unsupported by chromium...
 		Module._getNextSoundData(this.moduleCtx,this.leftFloatChannelPtr, this.rightFloatChannelPtr, 16384);
 
 		e.outputBuffer.copyToChannel(ModNode.leftChannel, 0);
 		e.outputBuffer.copyToChannel(ModNode.rightChannel, 1);
+		*/
 	}
 
 	return ModNode;
