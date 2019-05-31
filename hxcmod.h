@@ -12,7 +12,7 @@
 // File : hxcmod.h
 // Contains: a tiny mod player
 //
-// Written by: Jean François DEL NERO
+// Written by: Jean FranÃ§ois DEL NERO
 //
 // Change History (most recent first):
 ///////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ typedef unsigned long   mulong;
 	#endif
 #endif
 
-#define NUMMAXCHANNELS 32
+#define NUMMAXCHANNELS 999
 #define MAXNOTES 12*12
 #define SAMPLE_RATE 44100
 //
