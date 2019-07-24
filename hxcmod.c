@@ -153,6 +153,17 @@ modtype modlist[]=
 	{ "",0}
 };
 
+#ifdef HXCMOD_BIGENDIAN_MACHINE
+
+#define GET_BGI_W( big_endian_word ) ( big_endian_word )
+
+#else
+
+#define GET_BGI_W( big_endian_word ) ( (big_endian_word >> 8) | ((big_endian_word&0xFF) << 8) )
+
+#endif
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 
 static void memcopy( void * dest, void *source, unsigned long size )
@@ -255,9 +266,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					{
 						// Immediately (re)trigger the new note
 						cptr->sampdata = mod->sampledata[cptr->sampnum];
-						cptr->length = mod->song.samples[cptr->sampnum].length;
-						cptr->reppnt = mod->song.samples[cptr->sampnum].reppnt;
-						cptr->replen = mod->song.samples[cptr->sampnum].replen;
+						cptr->length = GET_BGI_W( mod->song.samples[cptr->sampnum].length ) * 2;
+						cptr->reppnt = GET_BGI_W( mod->song.samples[cptr->sampnum].reppnt ) * 2;
+						cptr->replen = GET_BGI_W( mod->song.samples[cptr->sampnum].replen ) * 2;
 
 						cptr->lst_sampdata = cptr->sampdata;
 						cptr->lst_length = cptr->length;
@@ -267,9 +278,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					else
 					{
 						cptr->dly_sampdata = mod->sampledata[cptr->sampnum];
-						cptr->dly_length = mod->song.samples[cptr->sampnum].length;
-						cptr->dly_reppnt = mod->song.samples[cptr->sampnum].reppnt;
-						cptr->dly_replen = mod->song.samples[cptr->sampnum].replen;
+						cptr->dly_length = GET_BGI_W( mod->song.samples[cptr->sampnum].length ) * 2;
+						cptr->dly_reppnt = GET_BGI_W( mod->song.samples[cptr->sampnum].reppnt ) * 2;
+						cptr->dly_replen = GET_BGI_W( mod->song.samples[cptr->sampnum].replen ) * 2;
 						cptr->note_delay = effect_param_l;
 					}
 					// Cancel any delayed note...
@@ -289,9 +300,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			{
 				// Prepare the next sample retrigger after the current one
 				cptr->nxt_sampdata = mod->sampledata[cptr->sampnum];
-				cptr->nxt_length = mod->song.samples[cptr->sampnum].length;
-				cptr->nxt_reppnt = mod->song.samples[cptr->sampnum].reppnt;
-				cptr->nxt_replen = mod->song.samples[cptr->sampnum].replen;
+				cptr->nxt_length = GET_BGI_W( mod->song.samples[cptr->sampnum].length ) * 2;
+				cptr->nxt_reppnt = GET_BGI_W( mod->song.samples[cptr->sampnum].reppnt ) * 2;
+				cptr->nxt_replen = GET_BGI_W( mod->song.samples[cptr->sampnum].replen ) * 2;
 
 				if(cptr->nxt_replen<=2)   // Protracker : don't play the sample if not looped...
 					cptr->nxt_sampdata = 0;
@@ -1105,7 +1116,6 @@ int hxcmod_setcfg(modcontext * modctx, int samplerate, int stereo_separation, in
 int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 {
 	muint i, j, max, digitfactor;
-	unsigned short t;
 	sample *sptr;
 	unsigned char * modmemory,* endmodmemory;
 
@@ -1219,23 +1229,13 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 			// Samples loading
 			for (i = 0, sptr = modctx->song.samples; i <31; i++, sptr++)
 			{
-				t= (sptr->length &0xFF00)>>8 | (sptr->length &0xFF)<<8;
-				sptr->length = t*2;
-
-				t= (sptr->reppnt &0xFF00)>>8 | (sptr->reppnt &0xFF)<<8;
-				sptr->reppnt = t*2;
-
-				t= (sptr->replen &0xFF00)>>8 | (sptr->replen &0xFF)<<8;
-				sptr->replen = t*2;
-
-
 				if (sptr->length == 0) continue;
 
 				modctx->sampledata[i] = (mchar*)modmemory;
-				modmemory += sptr->length;
+				modmemory += (GET_BGI_W(sptr->length)*2);
 
-				if (sptr->replen + sptr->reppnt > sptr->length)
-					sptr->replen = sptr->length - sptr->reppnt;
+				if (GET_BGI_W(sptr->replen) + GET_BGI_W(sptr->reppnt) > GET_BGI_W(sptr->length))
+					sptr->replen = GET_BGI_W((GET_BGI_W(sptr->length) - GET_BGI_W(sptr->reppnt)));
 
 				if( modmemory > endmodmemory )
 					return 0; // End passed ? - Probably a bad file !

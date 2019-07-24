@@ -87,27 +87,27 @@ typedef struct {
 //
 typedef struct {
 	mchar * sampdata;
-	muint   length;
-	muint   reppnt;
-	muint   replen;
+	mulong  length;
+	mulong  reppnt;
+	mulong  replen;
 	muint   sampnum;
 
 	mchar * nxt_sampdata;
-	muint   nxt_length;
-	muint   nxt_reppnt;
-	muint   nxt_replen;
+	mulong  nxt_length;
+	mulong  nxt_reppnt;
+	mulong  nxt_replen;
 	muint   update_nxt_repeat;
 
 	mchar * dly_sampdata;
-	muint   dly_length;
-	muint   dly_reppnt;
-	muint   dly_replen;
+	mulong  dly_length;
+	mulong  dly_reppnt;
+	mulong  dly_replen;
 	muint   note_delay;
 
 	mchar * lst_sampdata;
-	muint   lst_length;
-	muint   lst_reppnt;
-	muint   lst_replen;
+	mulong  lst_length;
+	mulong  lst_reppnt;
+	mulong  lst_replen;
 	muint   retrig_cnt;
 	muint   retrig_param;
 

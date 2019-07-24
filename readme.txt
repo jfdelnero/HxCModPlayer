@@ -82,6 +82,7 @@ HXCMOD_UNSIGNED_OUTPUT : Set the output wave format unsigned.
 HXCMOD_MAXCHANNELS : Set the maximum supported channels (default : 32).
                      Reduce it to gain some RAM space.
                      Increase it if you want to support some specials mods (up to 999).
+HXCMOD_BIGENDIAN_MACHINE : The target machine is big endian.
 
 --------------------------------------------------------------------------------------
  Files on the repository
