@@ -13,14 +13,14 @@ F:\github\HxCModPlayer\PC_8086\hxcmod.obj : F:\github\HxCModPlayer\hxcmod.c &
 NSIGNED_OUTPUT -dHXCMOD_MONO_OUTPUT -dHXCMOD_16BITS_TARGET -dHXCMOD_SLOW_TAR&
 GET -zq -otexan -s -ob -ol -ol+ -oc -oi -oa -or -oh -bt=dos -fo=.obj -ms
 
-F:\github\HxCModPlayer\PC_8086\mod_emax_delicate_oooz.obj : F:\github\HxCMod&
-Player\PC_8086\mod_emax_delicate_oooz.c .AUTODEPEND
+F:\github\HxCModPlayer\PC_8086\mod_inco-byggsats13.obj : F:\github\HxCModPla&
+yer\PC_8086\mod_inco-byggsats13.c .AUTODEPEND
  @F:
  cd F:\github\HxCModPlayer\PC_8086
- *wcc mod_emax_delicate_oooz.c -i="C:\WATCOM/h" -w4 -e25 -dHXCMOD_8BITS_OUTP&
-UT -dHXCMOD_UNSIGNED_OUTPUT -dHXCMOD_MONO_OUTPUT -dHXCMOD_16BITS_TARGET -dHX&
-CMOD_SLOW_TARGET -zq -otexan -s -ob -ol -ol+ -oc -oi -oa -or -oh -bt=dos -fo&
-=.obj -ms
+ *wcc mod_inco-byggsats13.c -i="C:\WATCOM/h" -w4 -e25 -dHXCMOD_8BITS_OUTPUT &
+-dHXCMOD_UNSIGNED_OUTPUT -dHXCMOD_MONO_OUTPUT -dHXCMOD_16BITS_TARGET -dHXCMO&
+D_SLOW_TARGET -zq -otexan -s -ob -ol -ol+ -oc -oi -oa -or -oh -bt=dos -fo=.o&
+bj -ms
 
 F:\github\HxCModPlayer\PC_8086\modplay_i8086.obj : F:\github\HxCModPlayer\PC&
 _8086\modplay_i8086.c .AUTODEPEND
@@ -32,12 +32,12 @@ _TARGET -zq -otexan -s -ob -ol -ol+ -oc -oi -oa -or -oh -bt=dos -fo=.obj -ms
 
 F:\github\HxCModPlayer\PC_8086\hxcmod.com : F:\github\HxCModPlayer\PC_8086\s&
 b_io.obj F:\github\HxCModPlayer\PC_8086\hxcmod.obj F:\github\HxCModPlayer\PC&
-_8086\mod_emax_delicate_oooz.obj F:\github\HxCModPlayer\PC_8086\modplay_i808&
-6.obj F:\github\HxCModPlayer\PC_8086\sb_io.h .AUTODEPEND
+_8086\mod_inco-byggsats13.obj F:\github\HxCModPlayer\PC_8086\modplay_i8086.o&
+bj F:\github\HxCModPlayer\PC_8086\sb_io.h .AUTODEPEND
  @F:
  cd F:\github\HxCModPlayer\PC_8086
- @%write hxcmod.lk1 FIL sb_io.obj,hxcmod.obj,mod_emax_delicate_oooz.obj,modp&
-lay_i8086.obj
+ @%write hxcmod.lk1 FIL sb_io.obj,hxcmod.obj,mod_inco-byggsats13.obj,modplay&
+_i8086.obj
  @%append hxcmod.lk1 
  *wlink name hxcmod sys dos com op m libf cstart_t op maxe=25 op q op symf @&
 hxcmod.lk1

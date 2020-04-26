@@ -28,9 +28,9 @@
 
 #include "../hxcmod.h"
 
-extern unsigned char rawModData[17968];
+extern unsigned char rawModData[14388];
 
-#define DMA_PAGESIZE 8192
+#define DMA_PAGESIZE 4096
 #define SB_SAMPLE_RATE 11025
 
 //
@@ -44,6 +44,7 @@ unsigned char DMAAddress[]  = {0x00,0x02,0x04,0x06,0xC0,0xC4,0xC8,0xCC};
 unsigned char DMAPage[]     = {0x87,0x83,0x81,0x82,0x8F,0x8B,0x89,0x8A};
 
 volatile unsigned char * dma_buffer;
+volatile unsigned char * fixed_dma_buffer;
 
 int init_sb(int port,int irq,int dma)
 {
@@ -98,6 +99,7 @@ int init_sb(int port,int irq,int dma)
 			// Segment/Offset to DMA 20 bits Page/offset physical address
 			segment = get_cur_ds();
 			offset  = (unsigned int)dma_buffer;
+			fixed_dma_buffer = dma_buffer;
 
 			dma_page = ((segment & 0xF000) >> 12);
 			temp = (segment & 0x0FFF) << 4;
@@ -113,7 +115,10 @@ int init_sb(int port,int irq,int dma)
 
 			if(dma_offset > (0xFFFF - DMA_PAGESIZE))
 			{
-				printf("Crossing dma page !!!\n");
+				printf("Crossing dma page !!!\nFixing buffer position to the next dma page.\n");
+				dma_page++;
+				fixed_dma_buffer += ((0xFFFF - dma_offset) + 1);
+				dma_offset = 0;
 			}
 
 			// Set the dma page/offset.
@@ -145,6 +150,7 @@ int main(int argc, char* argv[])
 	int sb_port,sb_irq_int,sb_dma;
 	modcontext * modctx;
 	int i;
+	unsigned char last_toggle;
 
 	printf("PC-8086 Real mode HxCMod Test program\n");
 
@@ -186,23 +192,31 @@ int main(int argc, char* argv[])
 
 			printf("Sound configuration done !\n");
 
+			last_toggle = 0;
+
 			if(hxcmod_load( modctx, rawModData, sizeof(rawModData) ))
 			{
+				printf("Playing...\n");
 				while(1)
 				{
 					if(it_flag)
 					{
 						it_flag = 0x00;
 
-						printf("it toggle %d\n",it_toggle);
+						if( last_toggle == it_toggle )
+						{
+							printf("lost frame ?\n");
+						}
+
+						last_toggle = it_toggle;
 
 						if(it_toggle)
 						{
-							hxcmod_fillbuffer( modctx, (msample *)&dma_buffer[0], DMA_PAGESIZE/2, NULL );
+							hxcmod_fillbuffer( modctx, (msample *)&fixed_dma_buffer[0], DMA_PAGESIZE/2, NULL );
 						}
 						else
 						{
-							hxcmod_fillbuffer( modctx, (msample *)&dma_buffer[DMA_PAGESIZE/2], DMA_PAGESIZE/2, NULL );
+							hxcmod_fillbuffer( modctx, (msample *)&fixed_dma_buffer[DMA_PAGESIZE/2], DMA_PAGESIZE/2, NULL );
 						}
 					}
 				}
