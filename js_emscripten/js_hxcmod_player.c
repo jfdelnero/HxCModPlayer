@@ -26,7 +26,7 @@
 #define NBSAMPS_OUTBUF 16384
 #define NBAUDIO_CHANNELS 2
 
-static void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float samplerate)
+void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float samplerate)
 {
 	modcontext * modctx;
 
@@ -50,7 +50,7 @@ static void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float 
    	return (void*)modctx;
 }
 
-static int EMSCRIPTEN_KEEPALIVE getNextSoundData(void * mod,float * leftchannel,float * rightchannel, int nbsamples)
+int EMSCRIPTEN_KEEPALIVE getNextSoundData(void * mod,float * leftchannel,float * rightchannel, int nbsamples)
 {
 	modcontext * modctx;
 	short outputbuffer[NBSAMPS_OUTBUF * NBAUDIO_CHANNELS];
@@ -97,7 +97,7 @@ static int EMSCRIPTEN_KEEPALIVE getNextSoundData(void * mod,float * leftchannel,
 	return 0;
 }
 
-static void EMSCRIPTEN_KEEPALIVE unloadMod(void * mod)
+void EMSCRIPTEN_KEEPALIVE unloadMod(void * mod)
 {
 	if(mod)
 	{
