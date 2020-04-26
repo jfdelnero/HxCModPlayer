@@ -1556,7 +1556,10 @@ void hxcmod_fillbuffer(modcontext * modctx, msample * outbuffer, mssize nbsample
 								trkbuf->track_state_buf[trkbuf->nb_of_state].speed = modctx->song.speed;
 								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_effect = cptr->effect_code;
 								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_parameffect = cptr->parameffect;
-								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_period = finalperiod;
+								if(cptr->sampinc)
+									trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_period = (modctx->sampleticksconst / cptr->sampinc);
+								else
+									trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_period = 0;
 								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_volume = cptr->volume;
 								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].instrument_number = (unsigned char)cptr->sampnum;
 							}
