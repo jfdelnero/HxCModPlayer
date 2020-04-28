@@ -12,7 +12,7 @@
 // File : sb_io.h
 // Contains: Low level Sound blaster IO function and IRQ vector
 //
-// Written by: Jean François DEL NERO
+// Written by: Jean Franï¿½ois DEL NERO
 ///////////////////////////////////////////////////////////////////////////////////
 
 #define SB_DSP_RESET_REG           0x6
@@ -28,6 +28,7 @@
 #define DSP_CMD_TRANSFER_MODE       0xB6
 #define DSP_CMD_ENABLE_SPEAKER      0xD1
 #define DSP_CMD_STOP                0xD5
+#define DSP_CMD_DMA8_EXITAUTOMODE   0xDA
 #define DSP_CMD_VERSION             0xE1
 
 extern volatile unsigned char it_flag;
@@ -37,5 +38,6 @@ extern volatile unsigned int  it_sbport;
 
 extern unsigned short get_cur_ds( );
 extern void install_irq();
+extern void uninstall_irq();
 extern void SB_DSP_wr(unsigned int baseport, unsigned char value);
 extern unsigned char SB_DSP_rd(unsigned int baseport);

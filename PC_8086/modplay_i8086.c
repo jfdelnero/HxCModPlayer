@@ -46,6 +46,18 @@ unsigned char DMAPage[]     = {0x87,0x83,0x81,0x82,0x8F,0x8B,0x89,0x8A};
 volatile unsigned char * dma_buffer;
 volatile unsigned char * fixed_dma_buffer;
 
+
+void reset_sb(const int port)
+{
+	outp(port + SB_DSP_RESET_REG,0x01); 	/* shall wait for 3µs before writing 0 */
+	inp(port + SB_DSP_RESET_REG);
+	inp(port + SB_DSP_RESET_REG);
+	inp(port + SB_DSP_RESET_REG);
+	inp(port + SB_DSP_RESET_REG);
+	outp(port + SB_DSP_RESET_REG,0x00);
+}
+
+
 int init_sb(int port,int irq,int dma)
 {
 	int cnt;
@@ -58,13 +70,7 @@ int init_sb(int port,int irq,int dma)
 	install_irq();
 	outp(0x21 + (irq & 8), inp(0x21 + (irq & 8) ) & ~(0x01 << (irq&7)) ); // Enable the IRQ
 
-	// Reset SB.
-	outp(port + SB_DSP_RESET_REG,0x01);
-	inp(port + SB_DSP_RESET_REG);
-	inp(port + SB_DSP_RESET_REG);
-	inp(port + SB_DSP_RESET_REG);
-	inp(port + SB_DSP_RESET_REG);
-	outp(port + SB_DSP_RESET_REG,0x00);
+	reset_sb(port);
 
 	cnt = 256;
 	while( !(inp(port + SB_DSP_READ_BUF_IT_STATUS) & 0x80) && cnt)
@@ -74,10 +80,8 @@ int init_sb(int port,int irq,int dma)
 
 	if(cnt)
 	{
-		if(inp(port + SB_DSP_READ_REG) == 0xAA)
+		if(inp(port + SB_DSP_READ_REG) == 0xAA) /* SB reset success ! */
 		{
-			// SB reset success !
-
 			SB_DSP_wr(port,DSP_CMD_VERSION);
 			printf("SB DSP Version %d.%.2d\n",SB_DSP_rd(port),SB_DSP_rd(port));
 
@@ -155,7 +159,7 @@ int main(int argc, char* argv[])
 	printf("PC-8086 Real mode HxCMod Test program\n");
 
 	sb_port = 0x220;
-	sb_irq_int = 7;
+	sb_irq_int = 5;
 	sb_dma = 1;
 
 	it_sbport = sb_port;
@@ -197,7 +201,7 @@ int main(int argc, char* argv[])
 			if(hxcmod_load( modctx, rawModData, sizeof(rawModData) ))
 			{
 				printf("Playing...\n");
-				while(1)
+				while(kbhit() == 0)
 				{
 					if(it_flag)
 					{
@@ -223,6 +227,9 @@ int main(int argc, char* argv[])
 			}
 
 			hxcmod_unload( modctx );
+			outp(sb_port + SB_DSP_WRITE_DATCMD_REG, DSP_CMD_DMA8_EXITAUTOMODE); // stops 8-bit DMA
+			reset_sb(sb_port);
+			uninstall_irq();
 		}
 
 		free(modctx);

@@ -28,6 +28,8 @@ _it_flag   db 0
 _it_toggle db 0
 _it_irq    db 0
 _it_sbport dw 0220h
+it_old_handler_seg dw 0
+it_old_handler_off dw 0
 
 ;-----------------------------------------------
 .code
@@ -73,21 +75,59 @@ get_cur_ds_ endp
 install_irq_ proc near public
 	push ax
 	push dx
+	push es
+	push bx
 
 	cli
 
-	mov ah,25h
+	; save the existing interrupt handler
+	mov ah, 35h
 	mov al, ds:[_it_irq]
 	add al, 8h
-	mov dx,sb_irq_
+	int 21h
+	mov [it_old_handler_seg], es
+	mov [it_old_handler_off], bx
+
+	; set our it handler
+	mov ah, 25h
+	mov al, ds:[_it_irq]
+	add al, 8h
+	mov dx, sb_irq_
 	int 21h
 
 	sti
 
+	pop bx
+	pop es
 	pop dx
 	pop ax
 	retn
 install_irq_ endp
+
+;-----------------------------------------------
+
+uninstall_irq_ proc near public
+	push ax
+	push dx
+	push ds
+
+	cli
+
+	; restore the ol it handler
+	mov ah, 25h
+	mov al, ds:[_it_irq]
+	add al, 8h
+	mov dx, [it_old_handler_off]
+	mov ds, [it_old_handler_seg]
+	int 21h
+
+	sti
+
+	pop ds
+	pop dx
+	pop ax
+	retn
+uninstall_irq_ endp
 
 ;-----------------------------------------------
 
