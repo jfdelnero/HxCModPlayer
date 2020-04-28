@@ -113,7 +113,7 @@ uninstall_irq_ proc near public
 
 	cli
 
-	; restore the ol it handler
+	; restore the old it handler
 	mov ah, 25h
 	mov al, ds:[_it_irq]
 	add al, 8h

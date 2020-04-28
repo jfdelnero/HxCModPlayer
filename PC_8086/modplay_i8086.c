@@ -58,6 +58,37 @@ void reset_sb(const int port)
 }
 
 
+int get_sb_config(int* port,int* irq, int* dma)
+{
+	char * blaster;
+	int i;
+
+	// parsing the BLASTER configuration
+	blaster = getenv("BLASTER");
+	i = 0;
+	while(blaster[i] != 'A' && blaster[i] != 0) {++i;}
+	*port = strtol(&blaster[i+1], NULL, 16);
+	i = 0;
+	while(blaster[i] != 'I' && blaster[i] != 0) {++i;}
+	*irq = strtol(&blaster[i+1], NULL, 10);
+	i = 0;
+	while(blaster[i] != 'D' && blaster[i] != 0) {++i;}
+	*dma = strtol(&blaster[i+1], NULL, 10);
+	// sanitize the BLASTER configuration parsed
+	if(*port < 0x210 ||  *port > 0x280) {
+		return 1;
+	}
+	if(*irq != 2 && *irq != 5 && *irq != 7 && *irq != 10) {
+		return 1;
+	}
+	if(	*dma != 0 && *dma != 1 && *dma != 3 &&
+		*dma != 5 && *dma != 6 && *dma != 7) {
+		return 1;
+	}
+
+	return 0;
+}
+
 int init_sb(int port,int irq,int dma)
 {
 	int cnt;
@@ -158,10 +189,10 @@ int main(int argc, char* argv[])
 
 	printf("PC-8086 Real mode HxCMod Test program\n");
 
-	sb_port = 0x220;
-	sb_irq_int = 5;
-	sb_dma = 1;
-
+	if( get_sb_config(&sb_port, &sb_irq_int, &sb_dma) != 0) {
+		printf("Could not read the Sound Blaster configuration.\nCheck the BLASTER environment variable.\n");
+		exit(-1);
+	}
 	it_sbport = sb_port;
 	it_irq = sb_irq_int;
 
