@@ -96,6 +96,8 @@ int init_sb(int port,int irq,int dma)
 	unsigned long foo;
 	unsigned char dma_page;
 	unsigned int dma_offset;
+	unsigned short dsp_ver_major;
+	unsigned short dsp_ver_minor;
 
 	outp(0x21 + (irq & 8), inp(0x21 + (irq & 8) ) |  (0x01 << (irq&7)) ); // Mask the IRQ
 	install_irq();
@@ -113,8 +115,10 @@ int init_sb(int port,int irq,int dma)
 	{
 		if(inp(port + SB_DSP_READ_REG) == 0xAA) /* SB reset success ! */
 		{
-			SB_DSP_wr(port,DSP_CMD_VERSION);
-			printf("SB DSP Version %d.%.2d\n",SB_DSP_rd(port),SB_DSP_rd(port));
+			SB_DSP_wr(port,DSP_CMD_VERSION);			
+			dsp_ver_major = SB_DSP_rd(port);
+			dsp_ver_minor = SB_DSP_rd(port);
+			printf("SB DSP Version %d.%.2d\n", dsp_ver_major, dsp_ver_minor);
 
 			SB_DSP_wr(port,DSP_CMD_ENABLE_SPEAKER);  // Enable speaker
 
