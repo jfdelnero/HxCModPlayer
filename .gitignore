@@ -36,3 +36,4 @@
 
 # Debug files
 *.dSYM/
+*.MAP
