@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include <bios.h>
 #include <dos.h>
@@ -190,6 +191,8 @@ int main(int argc, char* argv[])
 	modcontext * modctx;
 	int i;
 	unsigned char last_toggle;
+	clock_t time_start, time_stop, time_process_beg, time_process_acc;
+	int cpu_usage;
 
 	printf("PC-8086 Real mode HxCMod Test program\n");
 
@@ -236,6 +239,11 @@ int main(int argc, char* argv[])
 			if(hxcmod_load( modctx, rawModData, sizeof(rawModData) ))
 			{
 				printf("Playing...\n");
+				
+				time_process_acc = 0;
+				time_start = clock();
+
+				// ==== MAIN LOOP ====
 				while(kbhit() == 0)
 				{
 					if(it_flag)
@@ -249,6 +257,7 @@ int main(int argc, char* argv[])
 
 						last_toggle = it_toggle;
 
+						time_process_beg = clock();
 						if(it_toggle)
 						{
 							hxcmod_fillbuffer( modctx, (msample *)&fixed_dma_buffer[0], DMA_PAGESIZE/2, NULL );
@@ -257,8 +266,12 @@ int main(int argc, char* argv[])
 						{
 							hxcmod_fillbuffer( modctx, (msample *)&fixed_dma_buffer[DMA_PAGESIZE/2], DMA_PAGESIZE/2, NULL );
 						}
+						time_process_acc += clock() - time_process_beg;
 					}
 				}
+				// ==== MAIN LOOP ====
+
+				time_stop = clock();
 			}
 
 			hxcmod_unload( modctx );
@@ -274,5 +287,7 @@ int main(int argc, char* argv[])
 		printf("Malloc failed !\n");
 	}
 
+	cpu_usage = 1000 * time_process_acc / (time_stop - time_start);
+	printf("CPU usage: %d.%d%%\n",cpu_usage / 10, cpu_usage % 10);
 	return 0;
 }
