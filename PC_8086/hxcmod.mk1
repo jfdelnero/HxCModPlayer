@@ -1,19 +1,20 @@
 !define BLANK ""
 
-CCFLAGS = -zq -otexan -s -ob -ol -ol+ -oc -oi -oa -or -oh -bt=dos -fo=.obj -ms
+CC = wcc
+CCFLAGS = -zq -otexan -s -0 -ob -ol -ol+ -oc -oi -oa -or -oh -bt=dos -fo=.obj -ms
 DEFINES = -dHXCMOD_8BITS_OUTPUT -dHXCMOD_UNSIGNED_OUTPUT -dHXCMOD_MONO_OUTPUT -dHXCMOD_16BITS_TARGET -dHXCMOD_SLOW_TARGET
 
 sb_io.obj : sb_io.asm .AUTODEPEND
  *wasm sb_io.asm -i="C:\WATCOM/h" -ms -w4 -e25
 
 hxcmod.obj : ..\hxcmod.c .AUTODEPEND
- *wcc ..\hxcmod.c -i="C:\WATCOM/h" $(DEFINES) $(CCFLAGS)
+ * $(CC) ..\hxcmod.c -i="C:\WATCOM/h" $(DEFINES) $(CCFLAGS)
 
 mod_in~1.obj : mod_in~1.c .AUTODEPEND
- *wcc mod_in~1.c -i="C:\WATCOM/h" -w4 -e25 $(DEFINES) $(CCFLAGS)
+ * $(CC) mod_in~1.c -i="C:\WATCOM/h" -w4 -e25 $(DEFINES) $(CCFLAGS)
 
 modpla~1.obj : modpla~1.c .AUTODEPEND
- *wcc modpla~1.c -i="C:\WATCOM/h" -w4 -e25 $(DEFINES) $(CCFLAGS)
+ * $(CC) modpla~1.c -i="C:\WATCOM/h" -w4 -e25 $(DEFINES) $(CCFLAGS)
 
 hxcmod.com : sb_io.obj hxcmod.obj mod_in~1.obj modpla~1.obj sb_io.h .AUTODEPEND
  @%write hxcmod.lk1 FIL sb_io.obj,hxcmod.obj,mod_in~1.obj,modpla~1.obj

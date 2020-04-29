@@ -48,14 +48,23 @@ volatile unsigned char * dma_buffer;
 volatile unsigned char * fixed_dma_buffer;
 
 
-void reset_sb(const int port)
+int reset_sb(const int port)
 {
+	int cnt; 
+
 	outp(port + SB_DSP_RESET_REG,0x01); 	/* shall wait for 3µs before writing 0 */
 	inp(port + SB_DSP_RESET_REG);
 	inp(port + SB_DSP_RESET_REG);
 	inp(port + SB_DSP_RESET_REG);
 	inp(port + SB_DSP_RESET_REG);
 	outp(port + SB_DSP_RESET_REG,0x00);
+	
+	cnt = 256;
+	while( !(inp(port + SB_DSP_READ_BUF_IT_STATUS) & 0x80) && cnt != 0)	{
+		cnt--;
+	}
+
+	return cnt;
 }
 
 
@@ -92,7 +101,6 @@ int get_sb_config(int* port,int* irq, int* dma)
 
 int init_sb(int port,int irq,int dma)
 {
-	int cnt;
 	unsigned int temp, segment, offset;
 	unsigned long foo;
 	unsigned char dma_page;
@@ -104,95 +112,95 @@ int init_sb(int port,int irq,int dma)
 	install_irq();
 	outp(0x21 + (irq & 8), inp(0x21 + (irq & 8) ) & ~(0x01 << (irq&7)) ); // Enable the IRQ
 
-	reset_sb(port);
-
-	cnt = 256;
-	while( !(inp(port + SB_DSP_READ_BUF_IT_STATUS) & 0x80) && cnt)
+	if( reset_sb(port) != 0 && inp(port + SB_DSP_READ_REG) == 0xAA )
 	{
-		cnt--;
-	}
+		/* SB reset success ! */
+		SB_DSP_wr(port,DSP_CMD_VERSION);			
+		dsp_ver_major = SB_DSP_rd(port);
+		dsp_ver_minor = SB_DSP_rd(port);
+		printf("SB DSP Version %d.%.2d\n", dsp_ver_major, dsp_ver_minor);
 
-	if(cnt)
-	{
-		if(inp(port + SB_DSP_READ_REG) == 0xAA) /* SB reset success ! */
+		SB_DSP_wr(port,DSP_CMD_ENABLE_SPEAKER);  // Enable speaker
+
+		#define SAMPLE_PERIOD (unsigned char)((65536 - (256000000/(SB_SAMPLE_RATE)))>>8)
+		SB_DSP_wr(port,DSP_CMD_SAMPLE_RATE);     // Set sample rate
+		SB_DSP_wr(port,SAMPLE_PERIOD);
+
+		//////////////////////////////////////////////////////////////////////
+		// Init the 8237A DMA
+
+		outp(DMAMask[dma], (dma & 0x03) | 0x04);  // Disable channel
+		outp(DMAFlipFlop[dma], 0x00);             // Clear the dma flip flop
+		outp(DMAMode[dma], (dma & 0x03) | 0x58 ); // Select the transfert mode (Auto-initialized playback)
+		outp(DMACount[dma], (DMA_PAGESIZE - 1) & 0xFF );
+		outp(DMACount[dma],((DMA_PAGESIZE - 1)>> 8) & 0xFF );
+
+		// Segment/Offset to DMA 20 bits Page/offset physical address
+		segment = get_cur_ds();
+		offset  = (unsigned int)dma_buffer;
+		fixed_dma_buffer = dma_buffer;
+
+		dma_page = ((segment & 0xF000) >> 12);
+		temp = (segment & 0x0FFF) << 4;
+		foo = (unsigned long)offset + (unsigned long)temp;
+		if (foo > 0xFFFF)
 		{
-			SB_DSP_wr(port,DSP_CMD_VERSION);			
-			dsp_ver_major = SB_DSP_rd(port);
-			dsp_ver_minor = SB_DSP_rd(port);
-			printf("SB DSP Version %d.%.2d\n", dsp_ver_major, dsp_ver_minor);
-
-			SB_DSP_wr(port,DSP_CMD_ENABLE_SPEAKER);  // Enable speaker
-
-			#define SAMPLE_PERIOD (unsigned char)((65536 - (256000000/(SB_SAMPLE_RATE)))>>8)
-			SB_DSP_wr(port,DSP_CMD_SAMPLE_RATE);     // Set sample rate
-			SB_DSP_wr(port,SAMPLE_PERIOD);
-
-			//////////////////////////////////////////////////////////////////////
-			// Init the 8237A DMA
-
-			outp(DMAMask[dma], (dma & 0x03) | 0x04);  // Disable channel
-			outp(DMAFlipFlop[dma], 0x00);             // Clear the dma flip flop
-			outp(DMAMode[dma], (dma & 0x03) | 0x58 ); // Select the transfert mode (Auto-initialized playback)
-			outp(DMACount[dma], (DMA_PAGESIZE - 1) & 0xFF );
-			outp(DMACount[dma],((DMA_PAGESIZE - 1)>> 8) & 0xFF );
-
-			// Segment/Offset to DMA 20 bits Page/offset physical address
-			segment = get_cur_ds();
-			offset  = (unsigned int)dma_buffer;
-			fixed_dma_buffer = dma_buffer;
-
-			dma_page = ((segment & 0xF000) >> 12);
-			temp = (segment & 0x0FFF) << 4;
-			foo = (unsigned long)offset + (unsigned long)temp;
-			if (foo > 0xFFFF)
-			{
-				dma_page++;
-			}
-
-			dma_offset = (unsigned int)(foo & 0xFFFF);
-
-			printf("Buffer : 0x%.4X:0x%.4X\nDMA Page : 0x%.2x\nDMA offset : 0x%.4X\nDMA size : 0x%.4X\n", segment,offset,dma_page,dma_offset,DMA_PAGESIZE);
-
-			if(dma_offset > (0xFFFF - DMA_PAGESIZE))
-			{
-				printf("Crossing dma page !!!\nFixing buffer position to the next dma page.\n");
-				dma_page++;
-				fixed_dma_buffer += ((0xFFFF - dma_offset) + 1);
-				dma_offset = 0;
-			}
-
-			// Set the dma page/offset.
-			outp(DMAAddress[dma],  dma_offset & 0xFF );
-			outp(DMAAddress[dma], (dma_offset >> 8) & 0xFF );
-			outp(DMAPage[dma], dma_page );
-
-			outp(DMAMask[dma], (dma & 0x03)); // Enable the channel
-
-			//////////////////////////////////////////////////////////////////////
-
-			SB_DSP_wr(port,DSP_CMD_BLOCK_TRANSFER_SIZE); // Set block transfer size
-			SB_DSP_wr(port, (( (DMA_PAGESIZE / 2) - 1 ) ) & 0xFF ); // 2 ITs for the whole DMA buffer.
-			SB_DSP_wr(port, (( (DMA_PAGESIZE / 2) - 1 ) ) >> 8 );
-
-			SB_DSP_wr(port, DSP_CMD_8BITS_PCM_OUTPUT);  // Start ! (Mono 8 bits unsigned mode)
-
-			printf("SB Init done !\n");
-
-			return 1;
+			dma_page++;
 		}
+
+		dma_offset = (unsigned int)(foo & 0xFFFF);
+
+		printf("Buffer : 0x%.4X:0x%.4X\nDMA Page : 0x%.2x\nDMA offset : 0x%.4X\nDMA size : 0x%.4X\n", segment,offset,dma_page,dma_offset,DMA_PAGESIZE);
+
+		if(dma_offset > (0xFFFF - DMA_PAGESIZE))
+		{
+			printf("Crossing dma page !!!\nFixing buffer position to the next dma page.\n");
+			dma_page++;
+			fixed_dma_buffer += ((0xFFFF - dma_offset) + 1);
+			dma_offset = 0;
+		}
+
+		// Set the dma page/offset.
+		outp(DMAAddress[dma],  dma_offset & 0xFF );
+		outp(DMAAddress[dma], (dma_offset >> 8) & 0xFF );
+		outp(DMAPage[dma], dma_page );
+
+		outp(DMAMask[dma], (dma & 0x03)); // Enable the channel
+
+		//////////////////////////////////////////////////////////////////////
+
+		SB_DSP_wr(port,DSP_CMD_BLOCK_TRANSFER_SIZE); // Set block transfer size
+		SB_DSP_wr(port, (( (DMA_PAGESIZE / 2) - 1 ) ) & 0xFF ); // 2 ITs for the whole DMA buffer.
+		SB_DSP_wr(port, (( (DMA_PAGESIZE / 2) - 1 ) ) >> 8 );
+
+		SB_DSP_wr(port, DSP_CMD_8BITS_PCM_OUTPUT);  // Start ! (Mono 8 bits unsigned mode)
+
+		printf("SB Init done !\n");
+
+		return 1;
+	}
+	else {
+		printf("Could not reset the Sound Blaster.\n");
 	}
 
 	return 0;
 }
 
+void stop_sb(int port, int dma)
+{
+	outp(DMAMask[dma], (dma & 0x03) | 0x04); // Stop the 8237A DMA		
+	outp(port + SB_DSP_WRITE_DATCMD_REG, DSP_CMD_DMA8_EXITAUTOMODE); // stops 8-bit "auto-initialize DMA"
+	uninstall_irq();
+}
+
 int main(int argc, char* argv[])
 {
 	int sb_port,sb_irq_int,sb_dma;
-	modcontext * modctx;
 	int i;
+	modcontext * modctx;
 	unsigned char last_toggle;
 	clock_t time_start, time_stop, time_process_beg, time_process_acc;
-	int cpu_usage;
+	int cpu_usage, nb_lost_frames;
 
 	printf("PC-8086 Real mode HxCMod Test program\n");
 
@@ -240,6 +248,7 @@ int main(int argc, char* argv[])
 			{
 				printf("Playing...\n");
 				
+				nb_lost_frames = 0;
 				time_process_acc = 0;
 				time_start = clock();
 
@@ -253,6 +262,7 @@ int main(int argc, char* argv[])
 						if( last_toggle == it_toggle )
 						{
 							printf("lost frame ?\n");
+							++nb_lost_frames;
 						}
 
 						last_toggle = it_toggle;
@@ -270,24 +280,28 @@ int main(int argc, char* argv[])
 					}
 				}
 				// ==== MAIN LOOP ====
-
 				time_stop = clock();
+				getch(); // clear key
 			}
+		}		
+		
+		// Stop SB
+		stop_sb(sb_port, sb_dma);
 
-			hxcmod_unload( modctx );
-			outp(sb_port + SB_DSP_WRITE_DATCMD_REG, DSP_CMD_DMA8_EXITAUTOMODE); // stops 8-bit DMA
-			reset_sb(sb_port);
-			uninstall_irq();
-		}
-
+		// Free resources
+		hxcmod_unload( modctx );
 		free(modctx);
+
+		// Display bench
+		cpu_usage = 1000 * time_process_acc / (time_stop - time_start);
+		printf("Nb frames lost: %d\nCPU usage: %d.%d%%\n", nb_lost_frames, cpu_usage / 10, cpu_usage % 10);
+
 	}
 	else
 	{
 		printf("Malloc failed !\n");
 	}
 
-	cpu_usage = 1000 * time_process_acc / (time_stop - time_start);
-	printf("CPU usage: %d.%d%%\n",cpu_usage / 10, cpu_usage % 10);
+
 	return 0;
 }
