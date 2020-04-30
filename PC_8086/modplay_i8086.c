@@ -99,7 +99,7 @@ int get_sb_config(int* port,int* irq, int* dma)
 	return 0;
 }
 
-int init_sb(int port,int irq,int dma)
+int init_sb(int port,int irq,int dma,unsigned int rate)
 {
 	unsigned int temp, segment, offset;
 	unsigned long foo;
@@ -122,9 +122,8 @@ int init_sb(int port,int irq,int dma)
 
 		SB_DSP_wr(port,DSP_CMD_ENABLE_SPEAKER);  // Enable speaker
 
-		#define SAMPLE_PERIOD (unsigned char)((65536 - (256000000/(SB_SAMPLE_RATE)))>>8)
 		SB_DSP_wr(port,DSP_CMD_SAMPLE_RATE);     // Set sample rate
-		SB_DSP_wr(port,SAMPLE_PERIOD);
+		SB_DSP_wr(port,(unsigned char)((65536 - (256000000/(rate)))>>8));
 
 		//////////////////////////////////////////////////////////////////////
 		// Init the 8237A DMA
@@ -173,7 +172,7 @@ int init_sb(int port,int irq,int dma)
 		SB_DSP_wr(port, (( (DMA_PAGESIZE / 2) - 1 ) ) & 0xFF ); // 2 ITs for the whole DMA buffer.
 		SB_DSP_wr(port, (( (DMA_PAGESIZE / 2) - 1 ) ) >> 8 );
 
-		SB_DSP_wr(port, DSP_CMD_8BITS_PCM_OUTPUT);  // Start ! (Mono 8 bits unsigned mode)
+		SB_DSP_wr(port, DSP_CMD_8BITS_PCM_MONO_OUTPUT);  // Start ! (Mono 8 bits unsigned mode)
 
 		printf("SB Init done !\n");
 
@@ -197,6 +196,7 @@ int main(int argc, char* argv[])
 {
 	int sb_port,sb_irq_int,sb_dma;
 	int i;
+	unsigned long sample_rate;
 	modcontext * modctx;
 	unsigned char last_toggle;
 	clock_t time_start, time_stop, time_process_beg, time_process_acc;
@@ -204,14 +204,26 @@ int main(int argc, char* argv[])
 
 	printf("PC-8086 Real mode HxCMod Test program\n");
 
+	sample_rate = SB_SAMPLE_RATE;
+
+	if( argc > 1 )
+	{
+		sample_rate = strtoul(argv[1], NULL, 10);
+		if( !(sample_rate >= 2000 && sample_rate <= 50000) )
+		{
+			sample_rate = SB_SAMPLE_RATE;
+		}
+	}
+
 	if( get_sb_config(&sb_port, &sb_irq_int, &sb_dma) != 0) {
 		printf("Could not read the Sound Blaster configuration.\nCheck the BLASTER environment variable.\n");
 		exit(-1);
 	}
+
 	it_sbport = sb_port;
 	it_irq = sb_irq_int;
 
-	printf("Init Sound Blaster : Port 0x%x, IRQ %d, DMA: %d\n",sb_port,sb_irq_int,sb_dma);
+	printf("Init Sound Blaster : Port 0x%x, IRQ %d, DMA: %d, %uHz\n",sb_port,sb_irq_int,sb_dma,sample_rate);
 
 	dma_buffer = malloc(DMA_PAGESIZE*2);
 	if(!dma_buffer)
@@ -225,7 +237,7 @@ int main(int argc, char* argv[])
 		dma_buffer[i] = 0x00;
 	}
 
-	if(!init_sb(sb_port,sb_irq_int,sb_dma))
+	if(!init_sb(sb_port,sb_irq_int,sb_dma,sample_rate))
 	{
 		printf("Sound Blaster init failed !\n");
 		exit(-1);
@@ -238,7 +250,7 @@ int main(int argc, char* argv[])
 		{
 			printf("HxCMOD init done !\n");
 
-			hxcmod_setcfg( modctx, SB_SAMPLE_RATE, 0, 0);
+			hxcmod_setcfg( modctx, sample_rate, 0, 0);
 
 			printf("Sound configuration done !\n");
 

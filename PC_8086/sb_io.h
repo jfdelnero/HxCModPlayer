@@ -15,21 +15,22 @@
 // Written by: Jean Fran�ois DEL NERO
 ///////////////////////////////////////////////////////////////////////////////////
 
-#define SB_DSP_RESET_REG           0x6
-#define SB_DSP_READ_REG            0xA
-#define SB_DSP_WRITE_DATCMD_REG    0xC
-#define SB_DSP_READ_BUF_IT_STATUS  0xE
-#define SB_DSP_IT16B_STATUS        0xF
+#define SB_DSP_RESET_REG                  0x6
+#define SB_DSP_READ_REG                   0xA
+#define SB_DSP_WRITE_DATCMD_REG           0xC
+#define SB_DSP_READ_BUF_IT_STATUS         0xE
+#define SB_DSP_IT16B_STATUS               0xF
 
-#define DSP_CMD_8BITS_PCM_OUTPUT    0x1C
-#define DSP_CMD_SAMPLE_RATE         0x40
-#define DSP_CMD_OUTPUT_RATE         0x41
-#define DSP_CMD_BLOCK_TRANSFER_SIZE 0x48
-#define DSP_CMD_TRANSFER_MODE       0xB6
-#define DSP_CMD_ENABLE_SPEAKER      0xD1
-#define DSP_CMD_STOP                0xD5
-#define DSP_CMD_DMA8_EXITAUTOMODE   0xDA
-#define DSP_CMD_VERSION             0xE1
+#define DSP_CMD_8BITS_PCM_MONO_OUTPUT    0x1C
+#define DSP_CMD_8BITS_PCM_MONO_HS_OUTPUT 0x90
+#define DSP_CMD_SAMPLE_RATE              0x40
+#define DSP_CMD_OUTPUT_RATE              0x41
+#define DSP_CMD_BLOCK_TRANSFER_SIZE      0x48
+#define DSP_CMD_TRANSFER_MODE            0xB6
+#define DSP_CMD_ENABLE_SPEAKER           0xD1
+#define DSP_CMD_STOP                     0xD5
+#define DSP_CMD_DMA8_EXITAUTOMODE        0xDA
+#define DSP_CMD_VERSION                  0xE1
 
 extern volatile unsigned char it_flag;
 extern volatile unsigned char it_toggle;
