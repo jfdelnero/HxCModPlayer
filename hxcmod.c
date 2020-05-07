@@ -1051,7 +1051,7 @@ static void workeffect( modcontext * modctx, note * nptr, channel * cptr )
 				case EFFECT_E_NOTE_DELAY:
 					if( cptr->note_delay )
 					{
-						if( ( cptr->note_delay - 1 ) == modctx->tick_cnt )
+						if( (unsigned char)( cptr->note_delay - 1 ) == modctx->tick_cnt )
 						{
 							cptr->sampdata = cptr->dly_sampdata;
 							cptr->length = cptr->dly_length;
@@ -1557,7 +1557,7 @@ void hxcmod_fillbuffer(modcontext * modctx, msample * outbuffer, mssize nbsample
 								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_effect = cptr->effect_code;
 								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_parameffect = cptr->parameffect;
 								if(cptr->sampinc)
-									trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_period = (modctx->sampleticksconst / cptr->sampinc);
+									trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_period = (muint)(modctx->sampleticksconst / cptr->sampinc);
 								else
 									trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_period = 0;
 								trkbuf->track_state_buf[trkbuf->nb_of_state].tracks[j].cur_volume = cptr->volume;
