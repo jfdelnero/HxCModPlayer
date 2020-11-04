@@ -520,9 +520,15 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			The offset is measured in words. If no sample is given, yet one is
 			still playing on this channel, it should be retriggered to the new
 			offset using the current volume.
+			If xy is 00, the previous value is used.
 			*/
 
 			cptr->samppos = ( ( ((muint)effect_param_h) << 12) + ( (((muint)effect_param_l) << 8) ) ) << 10;
+
+			if(!cptr->samppos)
+				cptr->samppos = cptr->last_set_offset;
+
+			cptr->last_set_offset = cptr->samppos;
 		break;
 
 		case EFFECT_VOLUME_SLIDE:

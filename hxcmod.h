@@ -137,6 +137,8 @@ typedef struct {
 	muchar  parameffect;
 	muint   effect_code;
 
+	mulong  last_set_offset;
+
 	mint    decalperiod;
 	mint    portaspeed;
 	mint    portaperiod;
