@@ -196,8 +196,6 @@ typedef struct {
 
 	muint   number_of_channels;
 
-	muint   fullperiod[MAXNOTES * 8];
-
 	muint   mod_loaded;
 
 	mint    last_r_sample;
