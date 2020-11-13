@@ -76,14 +76,18 @@ void hxcmod_unload( modcontext * modctx )
 
 Compile-time C defines options :
 
-HXCMOD_MONO_OUTPUT : Turn the output format in mono mode.
-HXCMOD_8BITS_OUTPUT : Set the output wave format in 8bits.
-HXCMOD_UNSIGNED_OUTPUT : Set the output wave format unsigned.
-HXCMOD_MAXCHANNELS : Set the maximum supported channels (default : 32).
-                     Reduce it to gain some RAM space.
-                     Increase it if you want to support some specials mods (up to 999).
+HXCMOD_MONO_OUTPUT       : Turn the output format in mono mode.
+HXCMOD_8BITS_OUTPUT      : Set the output wave format in 8bits.
+HXCMOD_UNSIGNED_OUTPUT   : Set the output wave format unsigned.
+HXCMOD_MAXCHANNELS       : Set the maximum supported channels (default : 32).
+                           Reduce it to gain some RAM space.
+                           Increase it if you want to support some specials mods
+                           (up to 999).
 HXCMOD_BIGENDIAN_MACHINE : The target machine is big endian.
-
+HXCMOD_SLOW_TARGET       : For slow targets : Disable stereo mixing and output filter.
+HXCMOD_USE_PRECALC_VOLUME_TABLE : Use precalculated volume table for the mixing.
+                                  suppress the multiply operations for slow targets.
+                                  The table need 32KB of RAM.
 --------------------------------------------------------------------------------------
  Files on the repository
 --------------------------------------------------------------------------------------
