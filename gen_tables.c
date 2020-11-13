@@ -24,6 +24,42 @@
 #include <stdlib.h>
 #include <math.h>
 
+void print_dec(int val,int index,int maxdigit,int maxindex, int numberperline)
+{
+	if(!(index%numberperline))
+		printf("\t");
+	else
+		printf(" ");
+
+	printf("%*d",maxdigit,val);
+
+	if(index != maxindex)
+	{
+		printf(",");
+	}
+
+	if(index && !((index+1)%numberperline))
+		printf("\n");
+}
+
+void print_str(char * str,int index,int maxindex, int numberperline)
+{
+	if(!(index%numberperline))
+		printf("\t");
+	else
+		printf(" ");
+
+	printf("%s",str);
+
+	if(index != maxindex)
+	{
+		printf(",");
+	}
+
+	if(index && !((index+1)%numberperline))
+		printf("\n");
+}
+
 static const short periodtable[]=
 {
 	27392, 25856, 24384, 23040, 21696, 20480, 19328, 18240, 17216, 16256, 15360, 14496,
@@ -46,37 +82,31 @@ int finetunes[16] = {0,1,2,3,4,5,6,7,-8,-7,-6,-5,-4,-3,-2,-1};
 // Finetuning periods -> Amiga period * 2^(-finetune/12/8)
 //
 
-int main()
+void generate_period_table()
 {
-	int i,j;
+	int i,j,c;
 	float mul;
 
 	printf("static const short periodtable[]=\n{\n");
 
+	c = 0;
 	for(i=0;i<16;i++)
 	{
 		mul = pow(2, ((float)-finetunes[i]/(float)12) / (float)8 );
 
-		printf("\n\t// Finetune %d (* %f), Offset 0x%.4lx\n\t",finetunes[i],mul,i * sizeof(periodtable));
+		if(i)
+			printf("\n");
+
+		printf("\t// Finetune %d (* %f), Offset 0x%.4lx\n",finetunes[i],mul,i * sizeof(periodtable));
 
 		for(j=0;j<sizeof(periodtable)/sizeof(short);j++)
 		{
-			printf(" %*d",5,(int)roundf(mul*periodtable[j]));
-			if(i == 16-1)
-			{
-				if(j<(sizeof(periodtable)/sizeof(short))-1)
-					printf(",");
-			}
-			else
-				printf(",");
-
-
-			if(j && !((j+1)%12))
-				printf("\n\t");
+			print_dec((int)roundf(mul*periodtable[j]),c,5,(16*sizeof(periodtable)/sizeof(short)) - 1, 12);
+			c++;
 		}
 	}
 
-	printf("\n};\n");
+	printf("};\n");
 
 	printf("\n\n");
 
@@ -98,6 +128,13 @@ int main()
 	printf("};\n");
 
 	printf("\n\n");
+
+	return;
+}
+
+int main()
+{
+	generate_period_table();
 
 	exit(0);
 }
