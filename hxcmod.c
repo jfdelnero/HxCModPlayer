@@ -553,6 +553,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 		{
 			cptr->volume = mod->song.samples[cptr->sampnum].volume;
 			cptr->volumeslide = 0;
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+			cptr->volume_table = mod->volume_selection_table[cptr->volume];
+#endif
 		}
 
 		if( ( effect_op != EFFECT_TONE_PORTAMENTO ) && ( effect_op != EFFECT_VOLSLIDE_TONEPORTA ) )
@@ -794,6 +797,13 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			*/
 
 			cptr->volume = effect_param;
+
+			if(cptr->volume > 64)
+				cptr->volume = 64;
+
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+			cptr->volume_table = mod->volume_selection_table[cptr->volume];
+#endif
 		break;
 
 		case EFFECT_PATTERN_BREAK:
@@ -867,6 +877,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					cptr->volume += effect_param_l;
 					if( cptr->volume > 64 )
 						cptr->volume = 64;
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+					cptr->volume_table = mod->volume_selection_table[cptr->volume];
+#endif
 				break;
 
 				case EFFECT_E_FINE_VOLSLIDE_DOWN:
@@ -880,6 +893,9 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					cptr->volume -= effect_param_l;
 					if( cptr->volume > 200 )
 						cptr->volume = 0;
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+					cptr->volume_table = mod->volume_selection_table[cptr->volume];
+#endif
 				break;
 
 				case EFFECT_E_SET_FINETUNE:
@@ -988,7 +1004,12 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					cptr->effect = EFFECT_E_NOTE_CUT;
 					cptr->cut_param = effect_param_l;
 					if( !cptr->cut_param )
+					{
 						cptr->volume = 0;
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+						cptr->volume_table = mod->volume_selection_table[cptr->volume];
+#endif
+					}
 				break;
 
 				case EFFECT_E_NOTE_DELAY:
@@ -1192,6 +1213,9 @@ static void workeffect( modcontext * modctx, note * nptr, channel * cptr )
 					if( cptr->volume > 63 )
 						cptr->volume = 0;
 				}
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+				cptr->volume_table = modctx->volume_selection_table[cptr->volume];
+#endif
 			}
 		break;
 
@@ -1221,6 +1245,9 @@ static void workeffect( modcontext * modctx, note * nptr, channel * cptr )
 					if( cptr->volume > 64 )
 						cptr->volume = 0;
 				}
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+				cptr->volume_table = modctx->volume_selection_table[cptr->volume];
+#endif
 			}
 
 		break;
@@ -1241,6 +1268,9 @@ static void workeffect( modcontext * modctx, note * nptr, channel * cptr )
 				if( cptr->volume > 64 )
 					cptr->volume = 0;
 			}
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+			cptr->volume_table = modctx->volume_selection_table[cptr->volume];
+#endif
 		break;
 
 		case EFFECT_EXTENDED:
@@ -1252,7 +1282,12 @@ static void workeffect( modcontext * modctx, note * nptr, channel * cptr )
 						cptr->cut_param--;
 
 					if( !cptr->cut_param )
+					{
 						cptr->volume = 0;
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+						cptr->volume_table = modctx->volume_selection_table[cptr->volume];
+#endif
+					}
 				break;
 
 				case EFFECT_E_RETRIGGER_NOTE:
@@ -1302,6 +1337,10 @@ static void workeffect( modcontext * modctx, note * nptr, channel * cptr )
 ///////////////////////////////////////////////////////////////////////////////////
 int hxcmod_init(modcontext * modctx)
 {
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+	muint c;
+	mint  i,j;
+#endif
 	if( modctx )
 	{
 		memclear(modctx,0,sizeof(modcontext));
@@ -1310,6 +1349,20 @@ int hxcmod_init(modcontext * modctx)
 		modctx->stereo_separation = 1;
 		modctx->bits = 16;
 		modctx->filter = 1;
+
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+		c = 0;
+		for(i=0;i<65;i++)
+		{
+			for(j=-128;j<128;j++)
+			{
+				modctx->precalc_volume_array[c] = i * j;
+				c++;
+			}
+
+			modctx->volume_selection_table[i] = &modctx->precalc_volume_array[(i*256) + 128];
+		}
+#endif
 
 		return 1;
 	}
@@ -1497,6 +1550,9 @@ int hxcmod_load( modcontext * modctx, void * mod_data, int mod_data_size )
 			{
 				modctx->channels[i].volume = 0;
 				modctx->channels[i].period = 0;
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+				modctx->channels[i].volume_table = modctx->volume_selection_table[0];
+#endif
 			}
 
 			modctx->mod_loaded = 1;
@@ -1737,18 +1793,30 @@ void hxcmod_fillbuffer(modcontext * modctx, msample * outbuffer, mssize nbsample
 #ifdef HXCMOD_MONO_OUTPUT
 						if( cptr->sampdata!=0 )
 						{
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+							r += cptr->volume_table[cptr->sampdata[k]];
+#else
 							r += ( cptr->sampdata[k] *  cptr->volume );
+#endif
 						}
 #else
 						if (cptr->sampdata != 0)
 						{
 							if ( !(j & 3) || ((j & 3) == 3) )
 							{
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+								l += cptr->volume_table[cptr->sampdata[k]];
+#else
 								l += (cptr->sampdata[k] * cptr->volume);
+#endif
 							}
 							else
 							{
+#ifdef HXCMOD_USE_PRECALC_VOLUME_TABLE
+								r += cptr->volume_table[cptr->sampdata[k]];
+#else
 								r += (cptr->sampdata[k] * cptr->volume);
+#endif
 							}
 						}
 #endif
