@@ -813,12 +813,21 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			exception above).
 			*/
 
-			mod->patternpos = ( (muint)(effect_param_h) * 10 + effect_param_l ) * mod->number_of_channels;
-			mod->jump_loop_effect = 1;
-			mod->tablepos++;
-			if(mod->tablepos >= mod->song.length)
-				mod->tablepos = 0;
+			mod->patternpos = ( ((muint)(effect_param_h) * 10) + effect_param_l );
 
+			if(mod->patternpos >= 64)
+				mod->patternpos = 63;
+
+			mod->patternpos *= mod->number_of_channels;
+
+			if(!mod->jump_loop_effect)
+			{
+				mod->tablepos++;
+				if(mod->tablepos >= mod->song.length)
+					mod->tablepos = 0;
+			}
+
+			mod->jump_loop_effect = 1;
 		break;
 
 		case EFFECT_EXTENDED:
