@@ -171,7 +171,27 @@ const char * exteffectlist[]=
 	0
 };
 
-static int entryCompare (const void * a, const void * b) 
+void print_html_path(char* path)
+{
+	int i;
+
+	i=0;
+	while(path[i])
+	{
+		switch(path[i])
+		{
+			case ' ':
+				printf("%c%.2X",'%',path[i]);
+			break;
+			default:
+				printf("%c",path[i]);
+			break;
+		}
+		i++;
+	}
+}
+
+static int entryCompare (const void * a, const void * b)
 {
 	filefoundinfo * entry1;
 	filefoundinfo * entry2;
@@ -179,12 +199,12 @@ static int entryCompare (const void * a, const void * b)
 	entry1 = (filefoundinfo *)a;
 	entry2 = (filefoundinfo *)b;
 
-	return strcasecmp (entry1->filename, entry2->filename); 
+	return strcasecmp (entry1->filename, entry2->filename);
 }
 
-void sort(filefoundinfo * entries[], int n) 
+void sort(filefoundinfo * entries[], int n)
 {
-	qsort (entries, n, sizeof(filefoundinfo), entryCompare); 
+	qsort (entries, n, sizeof(filefoundinfo), entryCompare);
 }
 
 int main(int argc, char *argv[])
@@ -230,7 +250,7 @@ int main(int argc, char *argv[])
 	if( entry_in_dir )
 	{
 		fileinfo_list = malloc(sizeof(filefoundinfo) * (entry_in_dir+1));
-		if(fileinfo_list) 
+		if(fileinfo_list)
 			memset(fileinfo_list,0,sizeof(filefoundinfo) * (entry_in_dir+1));
 	}
 
@@ -260,7 +280,7 @@ int main(int argc, char *argv[])
 
 	fseek(flayout,0, SEEK_END);
 	layout_size = ftell(flayout);
-	
+
 	layout_buffer = (char*)malloc(layout_size+1);
 	if(!layout_buffer)
 	{
@@ -313,7 +333,7 @@ int main(int argc, char *argv[])
 			sprintf(fullpath,"./www/mods/%s",(char*)&fileinfo_list[entry_index].filename);
 			modbuffer = malloc( fileinfo_list[entry_index].size );
 			if(modbuffer)
-			{	
+			{
 				f = fopen(fullpath,"rb");
 				if(f)
 				{
@@ -325,7 +345,7 @@ int main(int argc, char *argv[])
 						printf("Can't read the mod file !\n");
 						fclose(f);
 						exit(-3);
-					}						
+					}
 
 					if(hxcmod_init(modctx))
 					{
@@ -339,15 +359,14 @@ int main(int argc, char *argv[])
 							}
 
 							printf("\t\t\t\t\t<div>\n");
-
-							printf("\t\t\t\t\t\t<a onclick=\x22loadMOD(\x27mods/%s\x27)\x22 href=\x22#\x22><img src=\x22play.png\x22 alt=\x22Play %s !\x22><br>%s<br>%d bytes - %d Channels<br>\n",
-								(char*)&fileinfo_list[entry_index].filename,
+							printf("\t\t\t\t\t\t<div class=\x22playzone\x22 onclick=\x22loadMOD(\x27mods/%s\x27)\x22>\n",(char*)&fileinfo_list[entry_index].filename);
+							printf("\t\t\t\t\t\t\t<img src=\x22play.png\x22 alt=\x22Play %s !\x22><br>%s<br>%d bytes - %d Channels<br>\n",
 								(char*)&fileinfo_list[entry_index].filename,
 								(char*)&fileinfo_list[entry_index].filename,
 								fileinfo_list[entry_index].size,
 								modctx->number_of_channels);
 							first_effect = 1;
-							printf("\t\t\t\t\t\t<div style=\x22 font-size: 55%%\x3B\x22>Effects: ");
+							printf("\t\t\t\t\t\t\t<div style=\"font-size: 55%%\x3B\">Effects: ");
 							for(j=0;j<32;j++)
 							{
 								if(modctx->effects_event_counts[j])
@@ -362,7 +381,7 @@ int main(int argc, char *argv[])
 											}
 											printf(" %s",effectlist[j]);
 											first_effect = 0;
-										}	
+										}
 									}
 									else
 									{
@@ -375,9 +394,13 @@ int main(int argc, char *argv[])
 									}
 								}
 							}
-							printf("</div></a>\n");
+							printf("</div>\n");
 
-							printf("\t\t\t\t\t\t<br><a href=\x22mods/%s\x22>Download</a>\n",(char*)&fileinfo_list[entry_index].filename); 
+							printf("\t\t\t\t\t\t</div>\n");
+
+							printf("\t\t\t\t\t\t<br><a href=\x22mods/");
+							print_html_path((char*)&fileinfo_list[entry_index].filename);
+							printf("\x22>Download</a>\n");
 
 							printf("\t\t\t\t\t</div>\n");
 
@@ -391,7 +414,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		entry_index++;
-		
+
 	}while(strlen(fileinfo_list[entry_index].filename));
 
 	printf("\t\t\t\t</div>\n");
