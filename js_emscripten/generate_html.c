@@ -377,6 +377,8 @@ int main(int argc, char *argv[])
 							}
 							printf("</div></a>\n");
 
+							printf("\t\t\t\t\t\t<br><a href=\x22mods/%s\x22>Download</a>\n",(char*)&fileinfo_list[entry_index].filename); 
+
 							printf("\t\t\t\t\t</div>\n");
 
 						}
