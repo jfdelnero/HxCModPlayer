@@ -461,7 +461,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 				hxcmod_init(&modloaded);
 
-				hxcmod_setcfg(&modloaded, SAMPLERATE, 0, 0);
+				hxcmod_setcfg(&modloaded, SAMPLERATE, 1, 1);
 
 				modfile = unpack(data_cartoon_dreams_n_fantasies_mod->data,data_cartoon_dreams_n_fantasies_mod->csize ,data_cartoon_dreams_n_fantasies_mod->data, data_cartoon_dreams_n_fantasies_mod->size);
 				hxcmod_load(&modloaded,(void*)modfile,data_cartoon_dreams_n_fantasies_mod->size);
