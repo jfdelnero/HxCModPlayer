@@ -1,0 +1,39 @@
+#ifndef CONFIG_FILE_INCLUDED
+#define CONFIG_FILE_INCLUDED 1
+
+#define PAST2(x,y) x ## y
+#define EVAL2(x,y)  PAST2(x,y)
+
+#define PAST3(x,y,z) x ## y ## z
+#define EVAL3(x,y,z)  PAST3(x,y,z)
+
+#define PAST4(a,b,c,d) a ## b ## c ## d
+#define EVAL4(a,b,c,d)  PAST4(a,b,c,d)
+
+#define PAST5(a,b,c,d,e) a ## b ## c ## d ## e
+#define EVAL5(a,b,c,d,e) PAST5(a,b,c,d,e)
+
+#define SYSTICK_IRQ_PRIORITY 12
+
+#define CONFIG_SPI_PORT 2
+
+#if CONFIG_SPI_PORT == 2
+  #define CONFIG_DMA_CHANNEL 5
+  #define CONFIG_DMA_PORT 1
+  #define DMA_
+#else
+  #define CONFIG_DMA_CHANNEL 3
+  #define CONFIG_DMA_PORT 1
+#endif
+
+#define CONFIG_SPI_CTRL         EVAL2(SPI, CONFIG_SPI_PORT)
+#define CONFIG_DMA_CTRL         EVAL2(DMA, CONFIG_DMA_PORT)
+#define CONFIG_DMA_CHN_CTRL     EVAL4(DMA, CONFIG_DMA_PORT, _Channel, CONFIG_DMA_CHANNEL)
+#define CONFIG_DMA_CHN_CTRL_IRQ EVAL5(DMA, CONFIG_DMA_PORT, _Channel, CONFIG_DMA_CHANNEL, _IRQn)
+#define DMA_IRQ_ENTRY_NAME      EVAL5(DMA, CONFIG_DMA_PORT, _Channel, CONFIG_DMA_CHANNEL, _IRQHandler)
+
+#define CONFIG_SAMPLE_RATE (32000000/8) / (256)
+
+#include "custom_buildconf.h"
+
+#endif
