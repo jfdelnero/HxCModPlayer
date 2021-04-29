@@ -9,12 +9,16 @@ BIN = $(CP) -O binary -S
 
 TARGET = HxCModPlayer_STM32F1XX
 BUILD_DIR = build
+MOD_FW_DIR = mods_fw_bin
 
 # debug build?
 DEBUG = 0
 
 # optimization
 OPT = -O3
+
+MOD_FILES := $(wildcard mods/*.mod)
+MOD_FW_BIN := $(MOD_FILES:mods/%.mod=$(MOD_FW_DIR)/STM32_HxCMOD_%.bin)
 
 #####################################
 # source
@@ -63,7 +67,7 @@ LIBDIR =
 LDFLAGS = -mthumb -mcpu=cortex-m3 -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
-all: packed_data $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
+all: packed_data $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin $(MOD_FW_BIN)
 
 packed_data: $(BUILD_DIR)/hw_init_table.o
 	cd tools && $(MAKE)
@@ -99,11 +103,18 @@ $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir -p $@
 
+$(MOD_FW_DIR):
+	mkdir -p $@
+
+$(MOD_FW_BIN): $(MOD_FW_DIR)/STM32_HxCMOD_%.bin: mods/%.mod  | $(MOD_FW_DIR)
+	cp  $(BUILD_DIR)/$(TARGET).bin $@
+	cat $^ >> $@
+
 #######################################
 # clean up
 #######################################
 clean:
-	-rm -fR .dep $(BUILD_DIR)
+	-rm -fR .dep $(BUILD_DIR) $(MOD_FW_DIR)
 	cd tools && $(MAKE) clean
 
 #######################################
