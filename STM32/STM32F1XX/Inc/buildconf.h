@@ -32,7 +32,18 @@
 #define CONFIG_DMA_CHN_CTRL_IRQ EVAL5(DMA, CONFIG_DMA_PORT, _Channel, CONFIG_DMA_CHANNEL, _IRQn)
 #define DMA_IRQ_ENTRY_NAME      EVAL5(DMA, CONFIG_DMA_PORT, _Channel, CONFIG_DMA_CHANNEL, _IRQHandler)
 
-#define CONFIG_SAMPLE_RATE (32000000/8) / (256)
+// SPI Clock Divisor
+// 0 -> /2  (32Mhz / 2 -> 16MHz delta sigma DAC)
+// 1 -> /4  (32Mhz / 4 ->  8MHz delta sigma DAC)
+// 2 -> /8  (32Mhz / 8 ->  4MHz delta sigma DAC)
+// 3 -> /16 (32Mhz / 16 -> 2MHz delta sigma DAC)
+// 4 -> /32 (32Mhz / 32 -> 1MHz delta sigma DAC)
+
+#define CONFIG_SPI_CLK_DIV 1
+
+#define CONFIG_DELTASIGMA_BITS_PER_SAMPLE 256
+
+#define CONFIG_SAMPLE_RATE ((32000000 / (2<<CONFIG_SPI_CLK_DIV) ) / (CONFIG_DELTASIGMA_BITS_PER_SAMPLE))
 
 #include "custom_buildconf.h"
 

@@ -75,7 +75,7 @@ fast_delta_sigma_dac_gen:
 	orr   r10, r10, #0x0700
 	mov   r1, 0
 
-	mov   r3, #128
+	mov   r3,#(4096 / (CONFIG_DELTASIGMA_BITS_PER_SAMPLE / 8) )
 block_loop:
 
 	ldrh  r0, [r4, r8]
@@ -84,7 +84,7 @@ block_loop:
 	and   r8, r8, r10       // #(2048-1)
 	lsl   r0, r0, #16       // left shifted sample.
 
-	mov   r2, #8            // Generate 32 Bytes  (4*8 bytes / 256 bits) 
+	mov   r2, #(CONFIG_DELTASIGMA_BITS_PER_SAMPLE / 32)  // Generate x Bytes
 inner_acc_loop:
 
 	// Generate a 32 bits delta-sigma word

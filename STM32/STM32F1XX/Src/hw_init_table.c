@@ -111,7 +111,7 @@ const unsigned long hw_init[] =
 */
 
 	(unsigned long)&CONFIG_SPI_CTRL->CR2, 0x00000000, /*SPI_CR2_TXDMAEN,*/
-	(unsigned long)&CONFIG_SPI_CTRL->CR1,  (SPI_CR1_SSI | SPI_CR1_SSM) | ((SPI_CR1_BIDIMODE | SPI_CR1_BIDIOE |  ((2&7)<<3) | SPI_CR1_MSTR)),
+	(unsigned long)&CONFIG_SPI_CTRL->CR1,  (SPI_CR1_SSI | SPI_CR1_SSM) | ((SPI_CR1_BIDIMODE | SPI_CR1_BIDIOE |  ((CONFIG_SPI_CLK_DIV&7)<<3) | SPI_CR1_MSTR)),
 
 	(unsigned long)&NVIC->IP[((uint32_t)(int32_t)CONFIG_DMA_CHN_CTRL_IRQ)], (uint8_t)((PRIORITY_CODE(NVIC_PRIORITYGROUP_4,4,0) << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL),
 	(unsigned long)&NVIC->ISER[(((uint32_t)CONFIG_DMA_CHN_CTRL_IRQ) >> 5UL)], (uint32_t)(1UL << (((uint32_t)CONFIG_DMA_CHN_CTRL_IRQ) & 0x1FUL)),
