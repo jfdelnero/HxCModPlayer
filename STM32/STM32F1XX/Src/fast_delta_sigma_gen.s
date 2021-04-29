@@ -66,6 +66,7 @@ fast_delta_sigma_dac_gen:
 
 	ldr   r5, [r7, state_deltasigma_buffer]
 	ldr   r9, [r7, state_encoded_dat_offset]
+	add   r5, r5, r9
 
 	ldrh  r6, [r7, state_accumulator]
 	lsl   r6, r6, #16
@@ -83,7 +84,7 @@ block_loop:
 	and   r8, r8, r10       // #(2048-1)
 	lsl   r0, r0, #16       // left shifted sample.
 
-	mov   r2, #8            // Generate 32 Bytes  (4*8)
+	mov   r2, #8            // Generate 32 Bytes  (4*8 bytes / 256 bits) 
 inner_acc_loop:
 
 	// Generate a 32 bits delta-sigma word
@@ -91,8 +92,7 @@ inner_acc_loop:
 	deltasigma_bitgen
 .endr
 
-	str   r1, [r5, r9]      // store the new delta-sigma word
-	add   r9, r9, #4
+	str   r1, [r5], #4      // store the new delta-sigma word
 
 	subs  r2, r2, #1
 	bne   inner_acc_loop
@@ -104,6 +104,9 @@ inner_acc_loop:
 
 	strh  r6, [r7, state_accumulator]
 	str   r8, [r7, state_wave_offset]
+
+	ldr   r9, [r7, state_deltasigma_buffer]	
+	sub   r9, r5, r9
 	str   r9, [r7, state_encoded_dat_offset]
 
 	// leave function...
