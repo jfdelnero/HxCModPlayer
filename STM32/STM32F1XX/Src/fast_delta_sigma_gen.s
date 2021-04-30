@@ -44,6 +44,8 @@
 #define  state_encoded_dat_offset 0x0C
 #define  state_accumulator        0x10
 
+#define WAVE_BUFFER_SIZE_MASK ( (CONFIG_WAVE_BUFFER_SIZE * 2) - 1)
+
 .macro deltasigma_bitgen
 	adds  r6, r6, r0            // add the wave value to the accumulator.
 	lsr   r1, r1, #1            // delta_sigma_word >>= 1
@@ -71,17 +73,17 @@ fast_delta_sigma_dac_gen:
 	ldrh  r6, [r7, state_accumulator]
 	lsl   r6, r6, #16
 
-	mov   r10, #0xFF
-	orr   r10, r10, #0x0700
+	mov   r10,      #( WAVE_BUFFER_SIZE_MASK & 0x00FF )
+	orr   r10, r10, #( WAVE_BUFFER_SIZE_MASK & 0xFF00)
 	mov   r1, 0
 
-	mov   r3,#(4096 / (CONFIG_DELTASIGMA_BITS_PER_SAMPLE / 8) )
+	mov   r3,#( (CONFIG_DELTASIGMA_BUFFER_SIZE/2) / (CONFIG_DELTASIGMA_BITS_PER_SAMPLE / 8) )
 block_loop:
 
 	ldrh  r0, [r4, r8]
 	add   r8, r8, #2
 
-	and   r8, r8, r10       // #(2048-1)
+	and   r8, r8, r10       // #((CONFIG_WAVE_BUFFER_SIZE*2)-1)
 	lsl   r0, r0, #16       // left shifted sample.
 
 	mov   r2, #(CONFIG_DELTASIGMA_BITS_PER_SAMPLE / 32)  // Generate x Bytes
@@ -105,7 +107,7 @@ inner_acc_loop:
 	strh  r6, [r7, state_accumulator]
 	str   r8, [r7, state_wave_offset]
 
-	ldr   r9, [r7, state_deltasigma_buffer]	
+	ldr   r9, [r7, state_deltasigma_buffer]
 	sub   r9, r5, r9
 	str   r9, [r7, state_encoded_dat_offset]
 

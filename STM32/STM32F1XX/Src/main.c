@@ -29,8 +29,8 @@
 
 #include "hxcmod.h"
 
-msample wave_buffer[1024];
-unsigned char deltasigma_buffer[8192] __attribute__((aligned(4)));
+msample wave_buffer[CONFIG_WAVE_BUFFER_SIZE];
+unsigned char deltasigma_buffer[CONFIG_DELTASIGMA_BUFFER_SIZE] __attribute__((aligned(4)));
 
 delta_sigma_dac_gen_state spigen;
 
