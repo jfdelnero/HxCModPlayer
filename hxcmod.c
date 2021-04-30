@@ -447,9 +447,11 @@ static void doFunk(channel * cptr)
 					cptr->samppos = ((unsigned long)(cptr->reppnt)<<11) + (cptr->samppos % ((unsigned long)(cptr->replen+cptr->reppnt)<<11));
 				}
 
+#ifndef HXCMOD_MOD_FILE_IN_ROM
 				// Note : Directly modify the sample in the mod buffer...
 				// The current Invert Loop effect implementation can't be played from ROM.
 				cptr->sampdata[cptr->samppos >> 10] = -1 - cptr->sampdata[cptr->samppos >> 10];
+#endif
 			}
 		}
 	}
