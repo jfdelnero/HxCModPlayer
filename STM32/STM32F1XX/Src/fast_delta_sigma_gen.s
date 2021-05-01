@@ -115,3 +115,6 @@ inner_acc_loop:
 	pop   {r4, r5, r6, r7, r8, r9, r10, fp, pc}
 
 //////////////////////////////////////////////////////////////////////////////////////////
+
+	.string "SPI Delta Sigma HxCMOD Player for STM32. (c)Jean-Fran\xE7ois DEL NERO / HxC2001";
+
