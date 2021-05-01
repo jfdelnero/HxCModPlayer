@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------//
 //----------H----H--X----X-----CCCCC-----22222----0000-----0000-----11-------//
 //---------H----H----X-X-----C--------------2---0----0---0----0---1-1--------//
@@ -19,7 +19,8 @@ the SPI "MOSI" output. No internal or external DAC controller is needed.
 You just need to connect a RC circuit to filter the MOSI and connect it
 to a an headphone or an amplifier.
 
-The SPI controller to use can be changed in the buildconf.h file.
+The SPI controller to use and the delta sigma / SPI frequency can be changed
+in the buildconf.h file. (CONFIG_SPI_PORT and CONFIG_SPI_CLK_DIV)
 
 At the end of the build process the .bin firmware file and the mod file
 to play are concatened together. You can add mods files into the "mods"
