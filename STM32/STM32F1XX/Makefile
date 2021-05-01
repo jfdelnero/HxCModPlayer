@@ -110,6 +110,36 @@ $(MOD_FW_BIN): $(MOD_FW_DIR)/STM32_HxCMOD_%.bin: mods/%.mod  | $(MOD_FW_DIR)
 	cp  $(BUILD_DIR)/$(TARGET).bin $@
 	cat $^ >> $@
 
+define build_sample
+
+	$(eval SUB_FOLDER := $3)
+	mkdir -p prebuilt_test_fw/$(SUB_FOLDER)
+
+	echo "#undef  CONFIG_SPI_PORT" > Inc/custom_buildconf.h
+	echo "#define CONFIG_SPI_PORT " $1 >> Inc/custom_buildconf.h
+	echo "#undef  CONFIG_SPI_CLK_DIV" >> Inc/custom_buildconf.h
+	echo "#define CONFIG_SPI_CLK_DIV" $2 >> Inc/custom_buildconf.h
+	make clean
+	make all
+
+	cp mods_fw_bin/*              prebuilt_test_fw/$(SUB_FOLDER)
+	cp $(BUILD_DIR)/$(TARGET).bin prebuilt_test_fw/$(SUB_FOLDER)
+
+	tar czf prebuilt_test_fw/$(SUB_FOLDER).tar.gz -C prebuilt_test_fw/$(SUB_FOLDER) .
+
+	rm  -rf prebuilt_test_fw/$(SUB_FOLDER)
+endef
+
+distrib:
+	mkdir -p prebuilt_test_fw
+
+	$(call build_sample, 1, 1, STM32_HxCMOD_DeltaSigma_8MHz_SPI1)
+	$(call build_sample, 2, 1, STM32_HxCMOD_DeltaSigma_8MHz_SPI2)
+	$(call build_sample, 1, 2, STM32_HxCMOD_DeltaSigma_4MHz_SPI1)
+	$(call build_sample, 2, 2, STM32_HxCMOD_DeltaSigma_4MHz_SPI2)
+
+	echo "" > Inc/custom_buildconf.h
+
 #######################################
 # clean up
 #######################################
