@@ -36,6 +36,12 @@ it on many STM32 without modification.
 Pre-built firmwares for SPI1 and SPI2 can be found in the prebuilt_test_fw
 folder.
 
+Demonstration video :
+
+<<Software one-bit delta-sigma DAC converter implemented on STM32 MCU >>
+
+Youtube : https://www.youtube.com/watch?v=wuc1cRMwnds
+
 Jean-François DEL NERO (Jeff) / HxC2001
 
 Email : jeanfrancoisdelnero <> free.fr
