@@ -40,7 +40,7 @@ Demonstration video :
 
 <<Software one-bit delta-sigma DAC converter implemented on STM32 MCU >>
 
-Youtube : https://www.youtube.com/watch?v=wuc1cRMwnds
+Youtube : https://www.youtube.com/watch?v=AQ--IiXPUGA
 
 Jean-François DEL NERO (Jeff) / HxC2001
 
