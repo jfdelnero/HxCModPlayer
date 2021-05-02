@@ -33,11 +33,15 @@ with others browsers supporting the Web Audio API support.
 
 You can test it at this address : http://hxc2001.free.fr/hxcmod/
 
-A video demo of the native Mod player can be seen on youtube :
+The native Mod player demonstration video is available on youtube :
 https://www.youtube.com/watch?v=MEU9FGZzjac
 
 Another video showing the player working on a STM32F105 microcontroller based device :
 https://www.youtube.com/watch?v=kiOT8-zWVkA
+
+Another case, this time with an STM32 microcontroller without DAC hardware. 
+The firmware implements a 1 bit delta sigma / PDM stream generator :
+https://www.youtube.com/watch?v=AQ--IiXPUGA
 
 --------------------------------------------------------------------------------------
  HxCMOD Core API
