@@ -124,10 +124,6 @@ define build_sample
 
 	cp mods_fw_bin/*              prebuilt_test_fw/$(SUB_FOLDER)
 	cp $(BUILD_DIR)/$(TARGET).bin prebuilt_test_fw/$(SUB_FOLDER)
-
-	tar czf prebuilt_test_fw/$(SUB_FOLDER).tar.gz -C prebuilt_test_fw/$(SUB_FOLDER) .
-
-	rm  -rf prebuilt_test_fw/$(SUB_FOLDER)
 endef
 
 distrib:
@@ -137,6 +133,9 @@ distrib:
 	$(call build_sample, 2, 1, STM32_HxCMOD_DeltaSigma_8MHz_SPI2)
 	$(call build_sample, 1, 2, STM32_HxCMOD_DeltaSigma_4MHz_SPI1)
 	$(call build_sample, 2, 2, STM32_HxCMOD_DeltaSigma_4MHz_SPI2)
+
+	cd prebuilt_test_fw ; 7z a STM32_HxCMOD_Prebuilt_Test_Firmwares.7z STM32_HxCMOD_DeltaSigma*
+	cd prebuilt_test_fw ; rm  -rf STM32_HxCMOD_DeltaSigma*
 
 	echo "" > Inc/custom_buildconf.h
 
