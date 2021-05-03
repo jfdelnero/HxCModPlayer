@@ -13,11 +13,10 @@
                         Generic STM32 HxCMOD player
                           With SPI Delta Sigma DAC
 
-This folder contains a HxC Mod player firmware for STM32F1xx MCU series
-(tested on a STM32F103). The firmware implement a delta sigma DAC through
-the SPI "MOSI" output. No internal or external DAC controller is needed.
-You just need to connect a RC circuit to filter the MOSI and connect it
-to a an headphone or an amplifier.
+This folder contains a HxC Mod player firmware for STM32F1xx MCU series. 
+The firmware implement a delta sigma DAC through the SPI "MOSI" output. 
+No internal or external DAC controller is needed. You just need to connecta RC 
+circuit to filter the MOSI and connect it to a an headphone or an amplifier.
 
 The SPI controller to use and the delta sigma / SPI frequency can be changed
 in the buildconf.h file. (CONFIG_SPI_PORT and CONFIG_SPI_CLK_DIV)
@@ -35,6 +34,16 @@ it on many STM32 without modification.
 
 Pre-built firmwares for SPI1 and SPI2 can be found in the prebuilt_test_fw
 folder.
+
+Currently successfully tested MCUs:
+
+- STM32F103CBT6 (20KB of RAM)
+- STM32F105RBT6 (64KB of RAM)
+- ARTERY AT32F415CBT7 (32KB of RAM)
+- ARTERY AT32F415RCT7 (32KB of RAM)
+
+Should work on many others STM32/AT32 MCUs "out the box"/without
+modification as well.
 
 Demonstration video :
 
