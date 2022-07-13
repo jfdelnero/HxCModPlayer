@@ -16,7 +16,7 @@ To use the api you only need kinc_hxcmod.h/c and hxcmode.h/.c.
 ```
 void kinc_mod_init(void); // init the api( inits kinc_a1 and kinc_a2)
 
-/// play mod from file, memoery automatically released on stop
+/// play mod from file, memory of loaded file automatically released on stop-/play-call
 bool kinc_mod_play(const char* filename); 
 /// play mod from memory, user needs to release this data on his own
 void kinc_mod_play_from_memory(void* data,size_t size);
