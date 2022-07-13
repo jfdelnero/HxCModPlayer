@@ -29,7 +29,7 @@ static void mixaudio_callback(kinc_a2_buffer_t *buffer, int samples){
     int write_location = buffer->write_location;
     
     // call a1 to do its mixing
-    kinc_internal_a1_mix(buffer,samples);
+    kinc_a1_mix(buffer,samples);
     // go back to the position and mix the mod into the A1-mix
     buffer->write_location = write_location;
 
@@ -53,7 +53,7 @@ static void mixaudio_callback(kinc_a2_buffer_t *buffer, int samples){
 #endif    
     
     for (int idx=0;idx<samples;idx++){
-        //*((float*)&(buffer->data[buffer->write_location]))=output_samples[idx] / 32767.0f;
+        //float new_mix_value=output_samples[idx] / 32767.0f;
         float new_mix_value = (*((float*)&(buffer->data[buffer->write_location]))*a1_volume + output_samples[idx] / 32767.0f)*mod_volume;
         //*((float*)&(buffer->data[buffer->write_location]))=kinc_clamp(new_mix_value,-1.0f,1.0f);
         *((float*)&(buffer->data[buffer->write_location]))=new_mix_value;
