@@ -16,6 +16,12 @@
 //
 // Change History (most recent first):
 ///////////////////////////////////////////////////////////////////////////////////
+#ifndef FRAMEGENERATOR_H
+#define FRAMEGENERATOR_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct framegenerator_
 {
@@ -27,6 +33,13 @@ typedef struct framegenerator_
 	uint32_t  instrucolortable[32];
 }framegenerator;
 
+
 framegenerator * init_fg(unsigned int xres,unsigned int yres);
 uint32_t * fg_generateFrame(framegenerator * fg,tracker_buffer_state *tb,unsigned int currentsampleoffset);
 void deinit_fg(framegenerator * fg);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* FRAMEGENERATOR_H */
