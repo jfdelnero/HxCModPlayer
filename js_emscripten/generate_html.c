@@ -360,7 +360,7 @@ int main(int argc, char *argv[])
 
 							printf("\t\t\t\t\t<div>\n");
 							printf("\t\t\t\t\t\t<div class=\x22playzone\x22 onclick=\x22loadMOD(\x27mods/%s\x27)\x22>\n",(char*)&fileinfo_list[entry_index].filename);
-							printf("\t\t\t\t\t\t\t<img src=\x22play.png\x22 alt=\x22Play %s !\x22><br>%s<br>%d bytes - %d Channels<br>\n",
+							printf("\t\t\t\t\t\t\t<img src=\x22play.png\x22 alt=\x22Play %s !\x22 width=\"64\" height=\"63\"><br>%s<br>%d bytes - %d Channels<br>\n",
 								(char*)&fileinfo_list[entry_index].filename,
 								(char*)&fileinfo_list[entry_index].filename,
 								fileinfo_list[entry_index].size,
