@@ -564,7 +564,6 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 				cptr->samppos = 0;
 		}
 
-		cptr->decalperiod = 0;
 		if( period )
 		{
 			if( cptr->finetune )
@@ -576,6 +575,8 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 			cptr->period = period;
 		}
 	}
+
+	cptr->decalperiod = 0;
 
 	cptr->effect = 0;
 	cptr->parameffect = 0;
