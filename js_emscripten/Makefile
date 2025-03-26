@@ -7,8 +7,8 @@ CFLAGS=-O3 $(INCLUDES) -Wall -DEFFECTS_USAGE_STATE -DHXCMOD_MAXCHANNELS=999
 LDFLAGS= -lc
 
 EMCC_CFLAGS=-O3 $(INCLUDES) -Wall -DHXCMOD_MAXCHANNELS=999
-EMCC_LDFLAGS_WASM=-s EXPORTED_FUNCTIONS="['_malloc','_free','_loadMod','_getNextSoundData','_unloadMod','_main']" -s BINARYEN=1 -s BINARYEN_METHOD='native-wasm'
-EMCC_LDFLAGS=-s EXPORTED_FUNCTIONS="['_malloc','_free','_loadMod','_getNextSoundData','_unloadMod','_main']" -s WASM=0 -s LEGACY_VM_SUPPORT=1
+EMCC_LDFLAGS_WASM=-s EXPORTED_FUNCTIONS="['_malloc','_free','_loadMod','_getNextSoundData','_unloadMod','_main']" -s BINARYEN=1 -s BINARYEN_METHOD='native-wasm' -s WASM=1 -s TOTAL_STACK=8MB
+EMCC_LDFLAGS=-s EXPORTED_FUNCTIONS="['_malloc','_free','_loadMod','_getNextSoundData','_unloadMod','_main']" -s WASM=0 -s LEGACY_VM_SUPPORT=1 --closure=0 -s TOTAL_STACK=8MB
 
 all: generate_html js_hxcmod_player_asmjs.js js_hxcmod_player_wasm.js
 	cp js_hxcmod_player_asmjs.js ./www
@@ -24,16 +24,16 @@ generate_html.o: generate_html.c
 hxcmod.o: ../hxcmod.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
-hxcmod.bc: ../hxcmod.c
+hxcmod_em.o: ../hxcmod.c
 	$(EMCC) -o $@ -c $< $(EMCC_CFLAGS)
 
-js_hxcmod_player.bc: js_hxcmod_player.c
+js_hxcmod_player.o: js_hxcmod_player.c
 	$(EMCC) -o $@ -c $< $(EMCC_CFLAGS)
 
-js_hxcmod_player_asmjs.js: hxcmod.bc js_hxcmod_player.bc
+js_hxcmod_player_asmjs.js: hxcmod_em.o js_hxcmod_player.o
 	$(EMCC) -o $@    $^ $(EMCC_LDFLAGS)
 
-js_hxcmod_player_wasm.js: hxcmod.bc js_hxcmod_player.bc
+js_hxcmod_player_wasm.js: hxcmod_em.o js_hxcmod_player.o
 	$(EMCC) -o $@    $^ $(EMCC_LDFLAGS_WASM)
 
 clean:
