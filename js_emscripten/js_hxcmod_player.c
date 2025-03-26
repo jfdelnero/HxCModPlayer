@@ -16,10 +16,16 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////
 
+//#define DEBUGMODE 1
+
 #include <emscripten.h>
 
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef DEBUGMODE
+#include <stdio.h>
+#endif
 
 #include "../hxcmod.h"
 
@@ -32,6 +38,10 @@ void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float sampler
 
 	modctx = 0;
 
+	#ifdef DEBUGMODE
+	printf("loadMod : ptr:%p size: %d rate:%f\n",inBuffer,inBufSize,samplerate);
+	#endif
+
 	if(inBuffer && inBufSize)
 	{
 		modctx = malloc(sizeof(modcontext));
@@ -43,11 +53,28 @@ void * EMSCRIPTEN_KEEPALIVE loadMod(void * inBuffer, int inBufSize,float sampler
 
 			hxcmod_setcfg( modctx, (int)samplerate, 1, 1);
 
-			hxcmod_load( modctx, inBuffer, inBufSize );
+			if( hxcmod_load( modctx, inBuffer, inBufSize ) > 0 )
+			{
+				#ifdef DEBUGMODE
+				printf("loadMod : Done\n");
+				#endif
+			}
+			else
+			{
+				#ifdef DEBUGMODE
+				printf("loadMod : Error !\n");
+				#endif
+			}
+		}
+		else
+		{
+			#ifdef DEBUGMODE
+			printf("loadMod : Alloc Error !\n");
+			#endif
 		}
 	}
 
-   	return (void*)modctx;
+	return (void*)modctx;
 }
 
 int EMSCRIPTEN_KEEPALIVE getNextSoundData(void * mod,float * leftchannel,float * rightchannel, int nbsamples)
@@ -67,6 +94,11 @@ int EMSCRIPTEN_KEEPALIVE getNextSoundData(void * mod,float * leftchannel,float *
 			if(nbsamples - samplesdone >= NBSAMPS_OUTBUF )
 			{
 				chunksize = NBSAMPS_OUTBUF;
+
+				#ifdef DEBUGMODE
+				printf("getNextSoundData : call hxcmod_fillbuffer (1) : modctx:%p outputbuffer:%p chunksize:%d\n",modctx,outputbuffer,chunksize);
+				#endif
+
 				hxcmod_fillbuffer( modctx, outputbuffer, chunksize, 0 );
 				samplesdone += chunksize;
 			}
@@ -75,6 +107,11 @@ int EMSCRIPTEN_KEEPALIVE getNextSoundData(void * mod,float * leftchannel,float *
 				chunksize = ( NBSAMPS_OUTBUF - (nbsamples - samplesdone) );
 				if( chunksize > 0 )
 				{
+
+					#ifdef DEBUGMODE
+					printf("getNextSoundData : call hxcmod_fillbuffer (2) : modctx:%p outputbuffer:%p chunksize:%d\n",modctx,outputbuffer,chunksize);
+					#endif
+
 					hxcmod_fillbuffer( modctx, outputbuffer, chunksize, 0 );
 				}
 				else
