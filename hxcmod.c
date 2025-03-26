@@ -419,7 +419,7 @@ static int getnote( modcontext * mod, unsigned short period, unsigned char finet
 	int i;
 	const short * ptr;
 
-	ptr = periodtable_finetune_ptr[finetune&15];
+	ptr = periodtable_finetune_ptr[finetune&0xF];
 
 	for(i = 0; i < MAXNOTES; i++)
 	{
@@ -917,14 +917,14 @@ static void worknote( note * nptr, channel * cptr,char t,modcontext * mod )
 					more info on finetune values).
 					*/
 
-					cptr->finetune = effect_param_l;
-
 					if( period )
 					{
-						period_table_ptr = periodtable_finetune_ptr[cptr->finetune&0xF];
+						period_table_ptr = periodtable_finetune_ptr[effect_param_l&0xF];
 						period = period_table_ptr[getnote(mod,period,cptr->finetune)];
 						cptr->period = period;
 					}
+
+					cptr->finetune = effect_param_l;
 
 				break;
 
