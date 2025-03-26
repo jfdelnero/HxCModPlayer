@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 
+<!-- STRMRK:"PAGEHEAD" -->
 	<head>
 		<link rel="stylesheet" type="text/css" href="../style.css">
 		<link rel="stylesheet" type="text/css" href="hxcmod.css">
@@ -18,7 +19,7 @@
 		<meta name="robots" content="index, follow">
 		<meta name="viewport" content="width=device-width, initial-scale=0.6">
 
-		<script type="text/javascript">
+		<script>
 			function isWebAssemblyAvailable() {
 				try
 				{
@@ -58,9 +59,9 @@
 			head.appendChild(js);
 		</script>
 
-		<script type="text/javascript" src="webaudio_layer.js"></script>
+		<script src="webaudio_layer.js"></script>
 
-		<script type="text/javascript">
+		<script>
 
 			var modplayer=null;
 
@@ -104,8 +105,11 @@
 			draganddropfile.ondragover = function(e){e.preventDefault();}
 		</script>
 	</head>
+<!-- ENDMRK:"PAGEHEAD" -->
 
-	<body>
+	<body data-pagefind-body>
+
+		<!-- STRMRK:"SITEMENU" -->
 		<table class="topmenu">
 			<tbody>
 				<tr>
@@ -140,7 +144,9 @@
 									<td><img alt="|" src="../img/separat.gif" width="9" height="9"></td>
 									<td><a href="../divers.htm">Divers</a></td>
 									<td><img alt="|" src="../img/separat.gif" width="9" height="9"></td>
-									<td><a href="../imiel.htm" target="_blank">Contact</a></td>
+									<td><a href="../imiel.htm">&#x1F4E7;Contact</a></td>
+									<td><img alt="|" src="../img/separat.gif" width="9" height="9"></td>
+									<td><a href="../search.html">&#x1F50D;Search</a></td>
 									<td><img alt="|" src="../img/separat.gif" width="9" height="9"></td>
 								</tr>
 							</tbody>
@@ -149,6 +155,7 @@
 				</tr>
 			</tbody>
 		</table>
+		<!-- ENDMRK:"SITEMENU" -->
 
 		<div class="hxc2001">
 
@@ -171,7 +178,7 @@
 
 		<p style="text-align: center;font-size: 140%;"><a href="https://github.com/jfdelnero/HxCModPlayer" target="_blank"><b><i>&gt; HxC MOD github project page &lt;</i></b></a></p>
 
-		<script type="text/javascript">
+		<script>
 			if (wasm_supported!=0)
 			{
 				document.getElementById("Mode").innerHTML = "<b>Current Mode :</b> WebAssembly";
@@ -186,8 +193,10 @@
 
 		<br>
 
+		<!-- STRMRK:"PAGEFOOTER" -->
 		<hr>
 		<p class="rightalign">(C) HxC2001 / Jean-Fran&ccedil;ois DEL NERO</p>
+		<!-- ENDMRK:"PAGEFOOTER" -->
 
 	</body>
 
