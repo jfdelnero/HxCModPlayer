@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 
+<!-- STRMRK:"PAGEHEAD" -->
 	<head>
 		<link rel="stylesheet" type="text/css" href="../style.css">
 		<link rel="stylesheet" type="text/css" href="hxcmod.css">
@@ -18,7 +19,7 @@
 		<meta name="robots" content="index, follow">
 		<meta name="viewport" content="width=device-width, initial-scale=0.6">
 
-		<script type="text/javascript">
+		<script>
 			function isWebAssemblyAvailable() {
 				try
 				{
@@ -58,9 +59,9 @@
 			head.appendChild(js);
 		</script>
 
-		<script type="text/javascript" src="webaudio_layer.js"></script>
+		<script src="webaudio_layer.js"></script>
 
-		<script type="text/javascript">
+		<script>
 
 			var modplayer=null;
 
@@ -104,8 +105,11 @@
 			draganddropfile.ondragover = function(e){e.preventDefault();}
 		</script>
 	</head>
+<!-- ENDMRK:"PAGEHEAD" -->
 
-	<body>
+	<body data-pagefind-body>
+
+		<!-- STRMRK:"SITEMENU" -->
 		<table class="topmenu">
 			<tbody>
 				<tr>
@@ -140,7 +144,9 @@
 									<td><img alt="|" src="../img/separat.gif" width="9" height="9"></td>
 									<td><a href="../divers.htm">Divers</a></td>
 									<td><img alt="|" src="../img/separat.gif" width="9" height="9"></td>
-									<td><a href="../imiel.htm" target="_blank">Contact</a></td>
+									<td><a href="../imiel.htm">&#x1F4E7;Contact</a></td>
+									<td><img alt="|" src="../img/separat.gif" width="9" height="9"></td>
+									<td><a href="../search.html">&#x1F50D;Search</a></td>
 									<td><img alt="|" src="../img/separat.gif" width="9" height="9"></td>
 								</tr>
 							</tbody>
@@ -149,6 +155,7 @@
 				</tr>
 			</tbody>
 		</table>
+		<!-- ENDMRK:"SITEMENU" -->
 
 		<div class="hxc2001">
 
@@ -167,7 +174,7 @@
 
 			<h2>Test MOD files :</h2>
 
-			<p><b>Last update: 2022-10-23 07:48:43</b></p>
+			<p><b>Last update: 2025-03-26 23:18:03</b></p>
 
 			<div class="hxcthumbnailcont">
 				<div class="hxcthumbnail_mods">
@@ -312,6 +319,13 @@
 						<br><a href="mods/ANNOYANC.MOD">Download</a>
 					</div>
 					<div>
+						<div class="playzone" onclick="loadMOD('mods/arptest.mod')">
+							<img src="play.png" alt="Play arptest.mod !" width="64" height="63"><br>arptest.mod<br>2172 bytes - 4 Channels<br>
+							<div style="font-size: 55%;">Effects:  ARPEGGIO, VOL, BREAK, SPEED/TEMPO</div>
+						</div>
+						<br><a href="mods/arptest.mod">Download</a>
+					</div>
+					<div>
 						<div class="playzone" onclick="loadMOD('mods/ASM94.MOD')">
 							<img src="play.png" alt="Play ASM94.MOD !" width="64" height="63"><br>ASM94.MOD<br>139878 bytes - 4 Channels<br>
 							<div style="font-size: 55%;">Effects:  PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, OFFSET, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, RETRIG, NOTE_DELAY</div>
@@ -359,6 +373,13 @@
 							<div style="font-size: 55%;">Effects:  PORTA_DWN, TONE_PORTA, VIBRATO, VOL_TONEPORTA, OFFSET, VOLSLIDE, VOL, SPEED/TEMPO, FVOLSLIDE_UP</div>
 						</div>
 						<br><a href="mods/battle.mod">Download</a>
+					</div>
+					<div>
+						<div class="playzone" onclick="loadMOD('mods/battles3.mod')">
+							<img src="play.png" alt="Play battles3.mod !" width="64" height="63"><br>battles3.mod<br>7598 bytes - 4 Channels<br>
+							<div style="font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, OFFSET, VOLSLIDE, VOL, BREAK, PATTERN_LOOP</div>
+						</div>
+						<br><a href="mods/battles3.mod">Download</a>
 					</div>
 					<div>
 						<div class="playzone" onclick="loadMOD('mods/BINARY8C.MOD')">
@@ -417,6 +438,20 @@
 						<br><a href="mods/Chase.MOD">Download</a>
 					</div>
 					<div>
+						<div class="playzone" onclick="loadMOD('mods/chipa5.mod')">
+							<img src="play.png" alt="Play chipa5.mod !" width="64" height="63"><br>chipa5.mod<br>21794 bytes - 4 Channels<br>
+							<div style="font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, , PATTERN_LOOP, RETRIG, FVOLSLIDE_DWN, PATTERN_DELAY</div>
+						</div>
+						<br><a href="mods/chipa5.mod">Download</a>
+					</div>
+					<div>
+						<div class="playzone" onclick="loadMOD('mods/chippin5.mod')">
+							<img src="play.png" alt="Play chippin5.mod !" width="64" height="63"><br>chippin5.mod<br>25954 bytes - 4 Channels<br>
+							<div style="font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, VOL, SPEED/TEMPO</div>
+						</div>
+						<br><a href="mods/chippin5.mod">Download</a>
+					</div>
+					<div>
 						<div class="playzone" onclick="loadMOD('mods/CITRON.MOD')">
 							<img src="play.png" alt="Play CITRON.MOD !" width="64" height="63"><br>CITRON.MOD<br>301146 bytes - 4 Channels<br>
 							<div style="font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, OFFSET, VOLSLIDE, VOL, BREAK, SPEED/TEMPO, , RETRIG, FVOLSLIDE_UP, FVOLSLIDE_DWN, NOTE_CUT, NOTE_DELAY</div>
@@ -443,6 +478,20 @@
 							<div style="font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, TONE_PORTA, VIBRATO, VOL_VIBRA, VOL, SPEED/TEMPO</div>
 						</div>
 						<br><a href="mods/cover_action_team-enchantment33.mod">Download</a>
+					</div>
+					<div>
+						<div class="playzone" onclick="loadMOD('mods/Crusader-No-Remorse-M01.MOD')">
+							<img src="play.png" alt="Play Crusader-No-Remorse-M01.MOD !" width="64" height="63"><br>Crusader-No-Remorse-M01.MOD<br>367192 bytes - 8 Channels<br>
+							<div style="font-size: 55%;">Effects:  PORTA_UP, TONE_PORTA, PANNING, OFFSET, VOLSLIDE, VOL, SPEED/TEMPO, FPORTA_UP, PANNING2</div>
+						</div>
+						<br><a href="mods/Crusader-No-Remorse-M01.MOD">Download</a>
+					</div>
+					<div>
+						<div class="playzone" onclick="loadMOD('mods/Crusader-No-Remorse-MENU.MOD')">
+							<img src="play.png" alt="Play Crusader-No-Remorse-MENU.MOD !" width="64" height="63"><br>Crusader-No-Remorse-MENU.MOD<br>274382 bytes - 8 Channels<br>
+							<div style="font-size: 55%;">Effects:  TONE_PORTA, OFFSET, VOLSLIDE, JUMP, VOL, SPEED/TEMPO, PANNING2, RETRIG</div>
+						</div>
+						<br><a href="mods/Crusader-No-Remorse-MENU.MOD">Download</a>
 					</div>
 					<div>
 						<div class="playzone" onclick="loadMOD('mods/Cybernoid 2.MOD')">
@@ -611,6 +660,13 @@
 							<div style="font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, OFFSET, VOLSLIDE, JUMP, VOL, BREAK, SPEED/TEMPO, RETRIG, FVOLSLIDE_DWN, PATTERN_DELAY</div>
 						</div>
 						<br><a href="mods/fairlit3.mod">Download</a>
+					</div>
+					<div>
+						<div class="playzone" onclick="loadMOD('mods/flagada.mod')">
+							<img src="play.png" alt="Play flagada.mod !" width="64" height="63"><br>flagada.mod<br>15192 bytes - 4 Channels<br>
+							<div style="font-size: 55%;">Effects:  ARPEGGIO, TONE_PORTA, VIBRATO, VOL, SPEED/TEMPO</div>
+						</div>
+						<br><a href="mods/flagada.mod">Download</a>
 					</div>
 					<div>
 						<div class="playzone" onclick="loadMOD('mods/flow1.mod')">
@@ -788,6 +844,13 @@
 						<br><a href="mods/JustSpankIt.mod">Download</a>
 					</div>
 					<div>
+						<div class="playzone" onclick="loadMOD('mods/k1.mod')">
+							<img src="play.png" alt="Play k1.mod !" width="64" height="63"><br>k1.mod<br>17048 bytes - 4 Channels<br>
+							<div style="font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, SPEED/TEMPO</div>
+						</div>
+						<br><a href="mods/k1.mod">Download</a>
+					</div>
+					<div>
 						<div class="playzone" onclick="loadMOD('mods/kefrens.tune.1.MOD')">
 							<img src="play.png" alt="Play kefrens.tune.1.MOD !" width="64" height="63"><br>kefrens.tune.1.MOD<br>128920 bytes - 4 Channels<br>
 							<div style="font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, VOL, SPEED/TEMPO</div>
@@ -821,6 +884,13 @@
 							<div style="font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, VOL, BREAK, SPEED/TEMPO</div>
 						</div>
 						<br><a href="mods/LEM2-MEDIEVAL.MOD">Download</a>
+					</div>
+					<div>
+						<div class="playzone" onclick="loadMOD('mods/lhs_dvt.mod')">
+							<img src="play.png" alt="Play lhs_dvt.mod !" width="64" height="63"><br>lhs_dvt.mod<br>12558 bytes - 4 Channels<br>
+							<div style="font-size: 55%;">Effects:  ARPEGGIO, PORTA_DWN, TONE_PORTA, VIBRATO, VOL_VIBRA, VOLSLIDE, JUMP, VOL, SPEED/TEMPO</div>
+						</div>
+						<br><a href="mods/lhs_dvt.mod">Download</a>
 					</div>
 					<div>
 						<div class="playzone" onclick="loadMOD('mods/lotus_t3.mod')">
@@ -1236,6 +1306,13 @@
 						<br><a href="mods/rez-kenzalol.mod">Download</a>
 					</div>
 					<div>
+						<div class="playzone" onclick="loadMOD('mods/rez-kenzalol_vibratest.mod')">
+							<img src="play.png" alt="Play rez-kenzalol_vibratest.mod !" width="64" height="63"><br>rez-kenzalol_vibratest.mod<br>6760 bytes - 8 Channels<br>
+							<div style="font-size: 55%;">Effects:  PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOL, SPEED/TEMPO</div>
+						</div>
+						<br><a href="mods/rez-kenzalol_vibratest.mod">Download</a>
+					</div>
+					<div>
 						<div class="playzone" onclick="loadMOD('mods/rez-monday.mod')">
 							<img src="play.png" alt="Play rez-monday.mod !" width="64" height="63"><br>rez-monday.mod<br>37000 bytes - 14 Channels<br>
 							<div style="font-size: 55%;">Effects:  ARPEGGIO, PORTA_UP, PORTA_DWN, TONE_PORTA, VIBRATO, VOLSLIDE, VOL, SPEED/TEMPO</div>
@@ -1570,7 +1647,7 @@
 
 		<p style="text-align: center;font-size: 140%;"><a href="https://github.com/jfdelnero/HxCModPlayer" target="_blank"><b><i>&gt; HxC MOD github project page &lt;</i></b></a></p>
 
-		<script type="text/javascript">
+		<script>
 			if (wasm_supported!=0)
 			{
 				document.getElementById("Mode").innerHTML = "<b>Current Mode :</b> WebAssembly";
@@ -1585,8 +1662,10 @@
 
 		<br>
 
+		<!-- STRMRK:"PAGEFOOTER" -->
 		<hr>
 		<p class="rightalign">(C) HxC2001 / Jean-Fran&ccedil;ois DEL NERO</p>
+		<!-- ENDMRK:"PAGEFOOTER" -->
 
 	</body>
 
