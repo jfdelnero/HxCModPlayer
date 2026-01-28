@@ -17,9 +17,9 @@ hw_init_table_gen.o: hw_init_table_gen.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 clean:
-	rm -rf *.o *.bin hw_init_data.c hw_init_table_gen
+	rm -rf *.o *.bin hw_init_data.c $(EXEC) $(EXEC).exe
 
 mrproper: clean
-	rm -rf $(EXEC)
+	rm -rf $(EXEC) $(EXEC).exe
 
 .PHONY: clean mrproper
