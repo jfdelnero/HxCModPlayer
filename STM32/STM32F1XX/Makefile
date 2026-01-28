@@ -50,7 +50,7 @@ all: output_dir packed_data output_dir $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$
 packed_data: $(BUILD_DIR)/hw_init_table.o
 	cd tools && $(MAKE)
 
-$(BUILD_DIR)/$(TARGET).elf: $(objects) $(asm_objects) hxcmod.o
+$(BUILD_DIR)/$(TARGET).elf: $(objects) $(asm_objects) $(BUILD_DIR)/hxcmod.o
 	${CC} -o $@    $^ $(LDFLAGS)
 	$(SZ)    $@
 
@@ -66,7 +66,7 @@ $(objects): $(BUILD_DIR)/%.o: Src/%.c
 $(asm_objects): $(BUILD_DIR)/%.o: Src/%.s
 	$(AS) -c $(CFLAGS) $< -o $@
 
-hxcmod.o: ../../hxcmod.c
+$(BUILD_DIR)/hxcmod.o: ../../hxcmod.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 
